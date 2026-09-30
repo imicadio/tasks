@@ -93,10 +93,18 @@ makes the ESLint boundary rule in §4 mechanically enforceable.
 src/shared/
   ui/          # design-system primitives: button.tsx, input.tsx, dialog.tsx, card.tsx — no product concepts
   hooks/       # generic hooks: use-debounce.ts, use-media-query.ts, use-local-storage.ts
-  lib/         # generic utilities: cn.ts, fetcher.ts, http-error.ts, format-date.ts
+  lib/         # generic utilities: utils.ts (cn), fetcher.ts, http-error.ts, format-date.ts
   types/       # cross-cutting generic types: pagination.ts (Paginated<T>), result.ts (ApiResult<T>)
   config/      # env var access wrapper (env.ts), site constants
 ```
+
+**shadcn/ui** is configured (`components.json`) to install into this layer —
+its aliases point `ui`/`components`/`lib`/`hooks` at `@/shared/*` instead of
+the tool's own defaults (`@/components`, `@/lib`) — so `npx shadcn add
+<component>` adds primitives here rather than creating a competing
+top-level location. Don't hand-edit a shadcn-generated file's internals
+beyond what `shadcn add`'s diff already changed; re-run `shadcn add
+--overwrite` to update instead.
 
 **Test for feature vs. shared**: does the code encode any product/domain
 concept (a `User`, a `RoadAccident`, a business rule)? Yes → a feature. No,
