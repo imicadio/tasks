@@ -1,0 +1,20 @@
+# Tech debt log
+
+Interview feedback for this project specifically called out shallow answers
+on managing tech debt in larger codebases. The practice this file exists to
+demonstrate: a known shortcut is written down with *why it was acceptable
+at the time* and *what would make it worth revisiting*, instead of either
+(a) silently living forever as an unexplained oddity, or (b) being "fixed"
+preemptively before it's actually load-bearing. Not every decision belongs
+here — a decision made deliberately, with real trade-offs, belongs in
+`docs/decisions/` as an ADR instead. This file is for shortcuts: things
+done the fast way on purpose, with a note for whoever (including future me)
+wonders why.
+
+| # | Shortcut | Why it's acceptable now | Revisit when |
+|---|---|---|---|
+| 1 | `road-accidents` (GUS BDL data) still uses hand-rolled `fetch` + `useState` + `useEffect` for its filter refetch, instead of the React Query pattern introduced later for `hydro-monitor`/`weather` (see ADR 0002). | It was the first feature built, before the state-architecture decision existed. It works correctly and GUS's annual data changes rarely enough that React Query's caching/revalidation would add little value there. Rewriting working, low-churn code purely for stylistic consistency is itself a waste of effort with no user-facing benefit. | If `road-accidents` gains more interactive filters (making manual loading/error/race-condition handling more error-prone), or if a shared data-fetching convention across every feature becomes a real onboarding cost. |
+| 2 | No pagination on `/api/hydro-monitor` or `/api/weather` — both return the full filtered/sorted result set (~900 and ~60 rows respectively) in one response. | The client already has to hold the full list in memory for virtualization to work well (windowing needs to know the full scrollable extent), and both datasets are small enough (a few hundred KB at most) that a second round-trip for pagination would be pure overhead for a live-monitoring use case where the point is seeing everything at a glance, filtered. | If IMGW's hydro feed ever grows an order of magnitude, or if a mobile-data-constrained use case emerges where shipping the full payload matters more than avoiding a second request. |
+| 3 | `useRenderCount`'s on-screen badge (`src/shared/hooks/use-render-count.ts`, rendered in `StationRow`) is always on, not gated behind a dev-only flag. | This project's whole purpose is demonstrating the performance case study in `docs/decisions/0004-list-rendering-performance.md` live and on demand — hiding the evidence behind a flag would undercut the point during a review or interview. | If this app is ever deployed somewhere a real end user (not a reviewer) would see it — gate behind `process.env.NODE_ENV !== "production"` or a `?debug=1` query flag at that point. |
+| 4 | `apiNullableNumber()` (`src/shared/lib/api-validation.ts`) silently maps an unparseable numeric string to `null` rather than surfacing that the API returned garbage. | IMGW's feed has no SLA or schema contract; failing the whole request over one malformed field in one station record would make the entire dashboard unavailable for a cosmetic data issue on someone else's server. | If a "some fields for N stations failed to parse" observability signal becomes worth building — e.g. logging a count of coercion fallbacks per request, surfaced somewhere an operator would see it. |
+| 5 | No automated end-to-end test hits the real IMGW/GUS APIs; all tests validate against fixture data captured from live responses at a point in time. | The point of the unit/schema tests is pinning down parsing behavior (including the specific mixed-type regression in ADR 0003), not verifying that a third party's public API is currently reachable — that's a flakier, slower, different kind of test. | If this project ever needs a release gate that specifically verifies the upstream APIs haven't changed shape — that would be a separate, explicitly-flaky-tolerant contract test, not part of the regular suite. |

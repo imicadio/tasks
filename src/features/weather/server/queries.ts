@@ -1,0 +1,68 @@
+import "server-only";
+import { IMGW_SYNOP_URL } from "../constants";
+import { weatherStationsResponseSchema } from "../schemas";
+import type { SortDirection, WeatherSortField, WeatherStation } from "../types";
+
+export async function getWeatherStations(): Promise<WeatherStation[]> {
+  const response = await fetch(IMGW_SYNOP_URL, { next: { revalidate: 300 } });
+
+  if (!response.ok) {
+    throw new Error(
+      `IMGW synop request failed: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  return weatherStationsResponseSchema.parse(await response.json());
+}
+
+export function filterAndSortWeatherStations(
+  stations: WeatherStation[],
+  options: { q: string; sort: WeatherSortField; dir: SortDirection },
+): WeatherStation[] {
+  const { q, sort, dir } = options;
+  const needle = q.toLowerCase();
+
+  const filtered = q
+    ? stations.filter((s) => s.name.toLowerCase().includes(needle))
+    : stations;
+
+  const sorted = [...filtered].sort((a, b) => {
+    let comparison: number;
+    switch (sort) {
+      case "name":
+        comparison = a.name.localeCompare(b.name, "pl");
+        break;
+      case "temperatureC":
+        comparison = (a.temperatureC ?? -Infinity) - (b.temperatureC ?? -Infinity);
+        break;
+      case "windSpeedMs":
+        comparison = (a.windSpeedMs ?? -Infinity) - (b.windSpeedMs ?? -Infinity);
+        break;
+      default: {
+        const exhaustive: never = sort;
+        throw new Error(`Unhandled sort field: ${exhaustive}`);
+      }
+    }
+    return dir === "asc" ? comparison : -comparison;
+  });
+
+  return sorted;
+}
+
+export function summarizeWeather(stations: WeatherStation[]) {
+  const withTemp = stations.filter(
+    (s): s is WeatherStation & { temperatureC: number } =>
+      s.temperatureC !== null,
+  );
+  const avgTemperatureC = withTemp.length
+    ? withTemp.reduce((sum, s) => sum + s.temperatureC, 0) / withTemp.length
+    : null;
+  const warmest = withTemp.length
+    ? withTemp.reduce((a, b) => (a.temperatureC > b.temperatureC ? a : b))
+    : null;
+  const coldest = withTemp.length
+    ? withTemp.reduce((a, b) => (a.temperatureC < b.temperatureC ? a : b))
+    : null;
+
+  return { avgTemperatureC, warmest, coldest, stationCount: stations.length };
+}

@@ -91,12 +91,18 @@ makes the ESLint boundary rule in §4 mechanically enforceable.
 
 ```
 src/shared/
-  ui/          # design-system primitives: button.tsx, input.tsx, dialog.tsx, card.tsx — no product concepts
-  hooks/       # generic hooks: use-debounce.ts, use-media-query.ts, use-local-storage.ts
-  lib/         # generic utilities: utils.ts (cn), fetcher.ts, http-error.ts, format-date.ts
-  types/       # cross-cutting generic types: pagination.ts (Paginated<T>), result.ts (ApiResult<T>)
+  ui/          # design-system primitives: button.tsx, input.tsx, sidebar.tsx, card.tsx — no product concepts
+  hooks/       # generic hooks: use-url-state.ts, use-debounced-value.ts, use-render-count.ts, use-mobile.ts
+  lib/         # generic utilities: utils.ts (cn), api-validation.ts (apiNullableNumber)
+  types/       # cross-cutting generic types: pagination.ts (Paginated<T>)
+  providers/   # cross-cutting React context providers: app-providers.tsx (theme, React Query, tooltips)
   config/      # env var access wrapper (env.ts), site constants
 ```
+
+`providers/` holds app-wide context providers mounted once in the root
+layout (`src/app/layout.tsx`) — theme (`next-themes`), the React Query
+`QueryClient`, tooltip context. Generic infrastructure, same "no product
+concept" test as the rest of `shared/`.
 
 **shadcn/ui** is configured (`components.json`) to install into this layer —
 its aliases point `ui`/`components`/`lib`/`hooks` at `@/shared/*` instead of
@@ -215,6 +221,8 @@ Not fully designed here — out of scope for this document.
 | Feature | Path | Purpose | Owned routes | Public exports | Depends on |
 |---|---|---|---|---|---|
 | `road-accidents` | `src/features/road-accidents/` | Dashboard of Polish road-accident statistics sourced from GUS BDL (`api.stat.gov.pl`) | `/road-accidents`, `/api/road-accidents` | `RoadAccidentsDashboard`, `useRoadAccidents`, `roadAccidentsQueries`, types/schemas | `shared` only |
+| `hydro-monitor` | `src/features/hydro-monitor/` | Live river gauge station monitoring (water level vs. warning/alarm thresholds) from IMGW-PIB | `/hydrologia`, `/api/hydro-monitor` | `HydroMonitorDashboard`, `useHydroStations`, `useFavoriteStations`, `hydroMonitorQueries`, types/schemas | `shared` only |
+| `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/api/weather` | `WeatherDashboard`, `useWeatherStations`, `weatherQueries`, types/schemas | `shared` only |
 
 Kept in sync by the `document-feature` skill/agent.
 
@@ -222,3 +230,13 @@ Kept in sync by the `document-feature` skill/agent.
 
 This document is the spec. Propose changes to the pattern here first; agents
 must not silently deviate from it.
+
+## 11. Related documents
+
+- `docs/decisions/` — Architecture Decision Records for significant,
+  hard-to-reverse choices (state architecture, API data validation, list
+  rendering performance). See `docs/decisions/0001-record-architecture-decisions.md`
+  for what belongs there.
+- `docs/TECH_DEBT.md` — known shortcuts, why each was acceptable when made,
+  and what would make it worth revisiting. Lighter-weight than an ADR;
+  see that file's own intro for the distinction.
