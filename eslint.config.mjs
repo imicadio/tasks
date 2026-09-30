@@ -2,9 +2,78 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+// Feature-based architecture boundaries — see docs/ARCHITECTURE.md.
+//
+// A feature's public API is its `index.ts`; everything else in
+// `src/features/<name>/` is private. Code inside a feature uses relative
+// imports (`./server/queries`) among its own files, so these rules — which
+// only match the `@/...` path-alias form — restrict cross-module imports
+// without restricting a feature's own internals.
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/features/*/**"],
+              message:
+                "Import a feature's public API only (`@/features/<name>`, its index.ts). Deep imports into another feature's internals are not allowed — see docs/ARCHITECTURE.md.",
+            },
+            {
+              group: ["@/app/**/_*/**", "@/app/**/_*"],
+              message:
+                "Don't import another route segment's private (_folder) files. Promote shared code to src/features or src/shared.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // src/shared must stay generic: no dependency on features or app.
+  {
+    files: ["src/shared/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/features/**"],
+              message:
+                "src/shared must not depend on any feature — see docs/ARCHITECTURE.md.",
+            },
+            {
+              group: ["@/app/**"],
+              message:
+                "src/shared must not depend on src/app — see docs/ARCHITECTURE.md.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // src/features must not depend on the routing layer.
+  {
+    files: ["src/features/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/app/**"],
+              message:
+                "Features must not depend on src/app — see docs/ARCHITECTURE.md.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

@@ -3,6 +3,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Data-viz tokens — see docs/ARCHITECTURE.md §9 (road-accidents) and the
+     dataviz skill's references/palette.md (validated default palette). */
+  --chart-surface: #fcfcfb;
+  --chart-ink: #0b0b0b;
+  --chart-ink-secondary: #52514e;
+  --chart-muted: #898781;
+  --chart-grid: #e1e0d9;
+  --chart-baseline: #c3c2b7;
+  --metric-accidents: #2a78d6;
+  --metric-fatalities: #eb6834;
+  --metric-injured: #1baf7a;
 }
 
 @theme inline {
@@ -10,12 +22,32 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-chart-surface: var(--chart-surface);
+  --color-chart-ink: var(--chart-ink);
+  --color-chart-ink-secondary: var(--chart-ink-secondary);
+  --color-chart-muted: var(--chart-muted);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-baseline: var(--chart-baseline);
+  --color-metric-accidents: var(--metric-accidents);
+  --color-metric-fatalities: var(--metric-fatalities);
+  --color-metric-injured: var(--metric-injured);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --chart-surface: #1a1a19;
+    --chart-ink: #ffffff;
+    --chart-ink-secondary: #c3c2b7;
+    --chart-muted: #898781;
+    --chart-grid: #2c2c2a;
+    --chart-baseline: #383835;
+    --metric-accidents: #3987e5;
+    --metric-fatalities: #d95926;
+    --metric-injured: #199e70;
   }
 }
 
