@@ -59,7 +59,12 @@ export function AppSidebar({
                     <SidebarMenuButton
                       isActive={isActive}
                       tooltip={item.label}
-                      render={<Link href={item.href} />}
+                      render={
+                        <Link
+                          href={item.href}
+                          aria-current={isActive ? "page" : undefined}
+                        />
+                      }
                     >
                       {item.icon}
                       <span>{item.label}</span>

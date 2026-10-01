@@ -1,6 +1,6 @@
 import "server-only";
 import { IMGW_SYNOP_URL } from "../constants";
-import { weatherStationsResponseSchema } from "../schemas";
+import { weatherStationSchema, weatherStationsResponseSchema } from "../schemas";
 import type { SortDirection, WeatherSortField, WeatherStation } from "../types";
 
 export async function getWeatherStations(): Promise<WeatherStation[]> {
@@ -13,6 +13,34 @@ export async function getWeatherStations(): Promise<WeatherStation[]> {
   }
 
   return weatherStationsResponseSchema.parse(await response.json());
+}
+
+/**
+ * IMGW's single-station lookup (`/synop/id/{id}`) is a genuinely different
+ * endpoint from the list one, not just the list filtered down — it returns
+ * one JSON object (not an array), it 404s outright for an unknown id rather
+ * than returning an empty body, and every field (including id_stacji,
+ * normally a number on the list endpoint) comes back as a string. The same
+ * `weatherStationSchema` handles this fine, since its underlying field
+ * schemas already coerce string-or-number input — see
+ * docs/decisions/0003-api-data-validation.md.
+ */
+export async function getWeatherStationById(
+  id: string,
+): Promise<WeatherStation | null> {
+  const response = await fetch(
+    `${IMGW_SYNOP_URL}/id/${encodeURIComponent(id)}`,
+    { next: { revalidate: 300 } },
+  );
+
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new Error(
+      `IMGW synop request failed: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  return weatherStationSchema.parse(await response.json());
 }
 
 export function filterAndSortWeatherStations(

@@ -1,4 +1,8 @@
 import "@testing-library/jest-dom/vitest";
+import { expect } from "vitest";
+import { toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
 
 // jsdom has no ResizeObserver; recharts' ResponsiveContainer needs one.
 class ResizeObserverStub {

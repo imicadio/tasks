@@ -11,7 +11,10 @@
   --chart-surface: #fcfcfb;
   --chart-ink: #0b0b0b;
   --chart-ink-secondary: #52514e;
-  --chart-muted: #898781;
+  /* Darkened from the dataviz skill's reference #898781 (3.50:1 on this
+     surface, fails WCAG 1.4.3) to #65645e (5.78:1) — see
+     docs/decisions/0005-accessibility.md. */
+  --chart-muted: #65645e;
   --chart-grid: #e1e0d9;
   --chart-baseline: #c3c2b7;
   --metric-accidents: #2a78d6;
@@ -33,7 +36,10 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* shadcn's default oklch(0.556 0 0) is only 3.45:1 on white — fails
+     WCAG 1.4.3 for normal text. Reusing --chart-ink-secondary's value
+     (7.94:1) instead — see docs/decisions/0005-accessibility.md. */
+  --muted-foreground: #52514e;
   --accent: #f2effc;
   --accent-foreground: #4a3aa7;
   --destructive: oklch(0.577 0.245 27.325);

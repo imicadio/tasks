@@ -35,6 +35,22 @@ const STATUS_FILTERS: StatusFilter[] = [
   "unknown",
 ];
 
+const STATUS_FILTER_LABELS: Record<StatusFilter, string> = {
+  all: "Wszystkie statusy",
+  ...STATUS_LABELS,
+};
+
+const SORT_LABELS: Record<SortField, string> = {
+  status: "Sortuj: status",
+  waterLevelCm: "Sortuj: stan wody",
+  name: "Sortuj: nazwa",
+};
+
+const DIR_LABELS: Record<SortDirection, string> = {
+  desc: "Malejąco",
+  asc: "Rosnąco",
+};
+
 const ROW_HEIGHT = 56;
 const LIST_HEIGHT = 560;
 
@@ -144,13 +160,19 @@ export function HydroMonitorDashboard({
                 status === s ? "ring-2 ring-ring" : ""
               }`}
             >
-              <span className="text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <span
+                  aria-hidden="true"
+                  className="size-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: STATUS_COLORS[s] }}
+                />
                 {STATUS_LABELS[s]}
               </span>
-              <span
-                className="text-3xl font-semibold tabular-nums"
-                style={{ color: STATUS_COLORS[s] }}
-              >
+              {/* Ink text, not the status accent — see
+                  docs/decisions/0005-accessibility.md (the warning hue alone
+                  is 1.79:1 on this surface, well under WCAG's 3:1 floor for
+                  large text). The dot above carries the color identity. */}
+              <span className="text-3xl font-semibold tabular-nums text-foreground">
                 {statusCounts[s]}
               </span>
             </Card>
@@ -163,6 +185,7 @@ export function HydroMonitorDashboard({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Szukaj stacji lub rzeki…"
+          aria-label="Szukaj stacji lub rzeki"
           className="max-w-xs"
         />
 
@@ -170,13 +193,15 @@ export function HydroMonitorDashboard({
           value={status}
           onValueChange={(v) => v && setStatus(v as StatusFilter)}
         >
-          <SelectTrigger className="w-44">
-            <SelectValue />
+          <SelectTrigger aria-label="Filtruj według statusu" className="w-44">
+            <SelectValue>
+              {(v: StatusFilter) => STATUS_FILTER_LABELS[v]}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {STATUS_FILTERS.map((s) => (
               <SelectItem key={s} value={s}>
-                {s === "all" ? "Wszystkie statusy" : STATUS_LABELS[s]}
+                {STATUS_FILTER_LABELS[s]}
               </SelectItem>
             ))}
           </SelectContent>
@@ -186,8 +211,10 @@ export function HydroMonitorDashboard({
           value={voivodeship}
           onValueChange={(v) => setVoivodeship(v ?? "all")}
         >
-          <SelectTrigger className="w-52">
-            <SelectValue />
+          <SelectTrigger aria-label="Filtruj według województwa" className="w-52">
+            <SelectValue>
+              {(v: string) => (v === "all" ? "Wszystkie województwa" : v)}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Wszystkie województwa</SelectItem>
@@ -203,13 +230,13 @@ export function HydroMonitorDashboard({
           value={sort}
           onValueChange={(v) => v && setSort(v as SortField)}
         >
-          <SelectTrigger className="w-44">
-            <SelectValue />
+          <SelectTrigger aria-label="Sortuj wyniki według" className="w-44">
+            <SelectValue>{(v: SortField) => SORT_LABELS[v]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="status">Sortuj: status</SelectItem>
-            <SelectItem value="waterLevelCm">Sortuj: stan wody</SelectItem>
-            <SelectItem value="name">Sortuj: nazwa</SelectItem>
+            <SelectItem value="status">{SORT_LABELS.status}</SelectItem>
+            <SelectItem value="waterLevelCm">{SORT_LABELS.waterLevelCm}</SelectItem>
+            <SelectItem value="name">{SORT_LABELS.name}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -217,12 +244,12 @@ export function HydroMonitorDashboard({
           value={dir}
           onValueChange={(v) => v && setDir(v as SortDirection)}
         >
-          <SelectTrigger className="w-36">
-            <SelectValue />
+          <SelectTrigger aria-label="Kierunek sortowania" className="w-36">
+            <SelectValue>{(v: SortDirection) => DIR_LABELS[v]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="desc">Malejąco</SelectItem>
-            <SelectItem value="asc">Rosnąco</SelectItem>
+            <SelectItem value="desc">{DIR_LABELS.desc}</SelectItem>
+            <SelectItem value="asc">{DIR_LABELS.asc}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -255,6 +282,15 @@ export function HydroMonitorDashboard({
             />
             Tryb naiwny (demo wydajności) — patrz README.md
           </label>
+        </div>
+
+        <div className="grid h-9 grid-cols-[auto_1.4fr_1fr_1.2fr_auto_auto] items-center gap-3 border-b border-border px-3 text-xs font-medium text-muted-foreground">
+          <span className="sr-only">Ulubione</span>
+          <span>Stacja</span>
+          <span>Województwo</span>
+          <span>Stan wody</span>
+          <span>Status</span>
+          <span className="justify-self-end">Renderów</span>
         </div>
 
         <div
@@ -309,6 +345,47 @@ export function HydroMonitorDashboard({
             ))
           )}
         </div>
+
+        {/* The virtualized list above is the visual/interactive UI, but it's
+            plain divs — no table semantics a screen reader can navigate by
+            row/column, and retrofitting ARIA grid roles onto an absolutely
+            positioned, windowed list is easy to get subtly wrong (WAI-ARIA
+            Authoring Practices: "no ARIA is better than bad ARIA"). This
+            real <table> gives assistive tech the same data through native,
+            well-supported semantics instead — see
+            docs/decisions/0005-accessibility.md. It's additive, not a
+            replacement: the visual list above stays fully keyboard-operable
+            on its own. Favoriting isn't available from this table yet; see
+            docs/TECH_DEBT.md. */}
+        <table className="sr-only">
+          <caption>
+            Stacje wodowskazowe, {visibleStations.length} wyników
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Stacja</th>
+              <th scope="col">Rzeka</th>
+              <th scope="col">Województwo</th>
+              <th scope="col">Stan wody</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleStations.map((station) => (
+              <tr key={station.id}>
+                <td>{station.name}</td>
+                <td>{station.river}</td>
+                <td>{station.voivodeship}</td>
+                <td>
+                  {station.waterLevelCm === null
+                    ? "brak danych"
+                    : `${station.waterLevelCm} cm`}
+                </td>
+                <td>{STATUS_LABELS[station.status]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </Card>
     </div>
   );

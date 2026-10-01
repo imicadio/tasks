@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Card } from "@/shared/ui/card";
@@ -32,7 +34,19 @@ function formatTemp(value: number | null): string {
   return value === null ? "—" : `${value.toFixed(1)} °C`;
 }
 
+const SORT_LABELS: Record<WeatherSortField, string> = {
+  temperatureC: "Sortuj: temperatura",
+  windSpeedMs: "Sortuj: wiatr",
+  name: "Sortuj: nazwa",
+};
+
+const DIR_LABELS: Record<SortDirection, string> = {
+  desc: "Malejąco",
+  asc: "Rosnąco",
+};
+
 export function WeatherDashboard({ initialParams, initialData, summary }: Props) {
+  const router = useRouter();
   const [searchInput, setSearchInput] = useState(initialParams.q);
   const [sort, setSort] = useUrlState<WeatherSortField>(
     "sort",
@@ -95,25 +109,26 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Szukaj stacji…"
+          aria-label="Szukaj stacji pogodowej"
           className="max-w-xs"
         />
         <Select value={sort} onValueChange={(v) => v && setSort(v as WeatherSortField)}>
-          <SelectTrigger className="w-48">
-            <SelectValue />
+          <SelectTrigger aria-label="Sortuj wyniki według" className="w-48">
+            <SelectValue>{(v: WeatherSortField) => SORT_LABELS[v]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="temperatureC">Sortuj: temperatura</SelectItem>
-            <SelectItem value="windSpeedMs">Sortuj: wiatr</SelectItem>
-            <SelectItem value="name">Sortuj: nazwa</SelectItem>
+            <SelectItem value="temperatureC">{SORT_LABELS.temperatureC}</SelectItem>
+            <SelectItem value="windSpeedMs">{SORT_LABELS.windSpeedMs}</SelectItem>
+            <SelectItem value="name">{SORT_LABELS.name}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={dir} onValueChange={(v) => v && setDir(v as SortDirection)}>
-          <SelectTrigger className="w-36">
-            <SelectValue />
+          <SelectTrigger aria-label="Kierunek sortowania" className="w-36">
+            <SelectValue>{(v: SortDirection) => DIR_LABELS[v]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="desc">Malejąco</SelectItem>
-            <SelectItem value="asc">Rosnąco</SelectItem>
+            <SelectItem value="desc">{DIR_LABELS.desc}</SelectItem>
+            <SelectItem value="asc">{DIR_LABELS.asc}</SelectItem>
           </SelectContent>
         </Select>
         {isFetching && (
@@ -128,19 +143,44 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
 
       <Card>
         <table className="w-full text-left text-sm">
+          <caption className="sr-only">
+            Stacje pogodowe, {stations.length} wyników
+          </caption>
           <thead>
             <tr className="border-b border-border text-muted-foreground">
-              <th className="py-1.5 font-medium">Stacja</th>
-              <th className="py-1.5 text-right font-medium">Temperatura</th>
-              <th className="py-1.5 text-right font-medium">Wiatr</th>
-              <th className="py-1.5 text-right font-medium">Wilgotność</th>
-              <th className="py-1.5 text-right font-medium">Ciśnienie</th>
+              <th scope="col" className="py-1.5 font-medium">
+                Stacja
+              </th>
+              <th scope="col" className="py-1.5 text-right font-medium">
+                Temperatura
+              </th>
+              <th scope="col" className="py-1.5 text-right font-medium">
+                Wiatr
+              </th>
+              <th scope="col" className="py-1.5 text-right font-medium">
+                Wilgotność
+              </th>
+              <th scope="col" className="py-1.5 text-right font-medium">
+                Ciśnienie
+              </th>
             </tr>
           </thead>
           <tbody>
             {stations.map((s) => (
-              <tr key={s.id} className="border-b border-border/60">
-                <td className="py-1.5 text-foreground">{s.name}</td>
+              <tr
+                key={s.id}
+                onClick={() => router.push(`/pogoda/${s.id}`)}
+                className="cursor-pointer border-b border-border/60 hover:bg-accent"
+              >
+                <td className="py-1.5 text-foreground">
+                  <Link
+                    href={`/pogoda/${s.id}`}
+                    className="hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {s.name}
+                  </Link>
+                </td>
                 <td className="py-1.5 text-right tabular-nums">
                   {formatTemp(s.temperatureC)}
                 </td>

@@ -22,10 +22,9 @@ export const weatherStationSchema = rawSynopStationSchema.transform(
   (raw): WeatherStation => ({
     id: String(raw.id_stacji),
     name: raw.stacja,
-    measuredAt:
-      raw.data_pomiaru && raw.godzina_pomiaru !== null
-        ? `${raw.data_pomiaru} ${raw.godzina_pomiaru}:00`
-        : raw.data_pomiaru,
+    measurementDate: raw.data_pomiaru,
+    measurementHour:
+      raw.godzina_pomiaru === null ? null : String(raw.godzina_pomiaru),
     temperatureC: raw.temperatura,
     windSpeedMs: raw.predkosc_wiatru,
     windDirectionDeg: raw.kierunek_wiatru,

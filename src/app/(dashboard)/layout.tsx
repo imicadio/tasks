@@ -32,6 +32,12 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:text-primary-foreground"
+      >
+        Przejdź do treści głównej
+      </a>
       <AppSidebar
         navItems={NAV_ITEMS}
         repoUrl="https://github.com/imicadio/NASK"
@@ -44,7 +50,9 @@ export default function DashboardLayout({
             Dashboardy danych publicznych
           </span>
         </header>
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto">
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

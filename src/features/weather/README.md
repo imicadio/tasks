@@ -24,8 +24,16 @@ Data: IMGW-PIB public API, `https://danepubliczne.imgw.pl/api/data/synop`.
 
 ## Owned routes
 
-- `src/app/(dashboard)/pogoda/page.tsx`
+- `src/app/(dashboard)/pogoda/page.tsx` — list, with each row linking to its
+  station's detail page.
+- `src/app/(dashboard)/pogoda/[id]/page.tsx` — single-station detail view,
+  backed by IMGW's own per-station lookup endpoint
+  (`/api/data/synop/id/{id}`, not just the list filtered down — a real
+  404 for an unknown id, a single JSON object instead of an array, and
+  every field returned as a string rather than the list endpoint's mix of
+  numbers/strings; same `weatherStationSchema` handles both).
 - `src/app/api/weather/route.ts` — `GET ?q=&sort=&dir=`
+- `src/app/api/weather/[id]/route.ts` — `GET` → `{ data: WeatherStation }` or 404.
 
 ## Depends on
 

@@ -85,13 +85,23 @@ function StationRowImpl({
         )}
       </div>
 
+      {/* Pale tint stays as a decorative backdrop; the label itself stays
+          in a fixed ink color rather than the status hue — several status
+          colors (e.g. the warning yellow) fall well under WCAG's 3:1 floor
+          for text at this size. The dot carries the color identity instead.
+          See docs/decisions/0005-accessibility.md. */}
       <Badge
+        variant="outline"
         style={{
           backgroundColor: `color-mix(in oklch, ${STATUS_COLORS[station.status]}, transparent 85%)`,
-          color: STATUS_COLORS[station.status],
         }}
         className="border-0"
       >
+        <span
+          aria-hidden="true"
+          className="size-1.5 shrink-0 rounded-full"
+          style={{ backgroundColor: STATUS_COLORS[station.status] }}
+        />
         {STATUS_LABELS[station.status]}
       </Badge>
 

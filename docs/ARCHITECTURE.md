@@ -203,7 +203,10 @@ export default function NotificationsPage() {
 Test runner: Vitest + React Testing Library. Per layer:
 - `schemas.ts` — valid/invalid input cases.
 - `server/queries.ts` / `server/actions.ts` — happy path + validation/error cases.
-- `components/` — render + key interaction.
+- `components/` — render + key interaction + `jest-axe`'s `toHaveNoViolations`
+  (with the `color-contrast` rule disabled — jsdom doesn't do real
+  layout/paint, so that one has to be verified live in a browser instead;
+  see `docs/decisions/0005-accessibility.md`).
 - `hooks/` — state transitions.
 
 ## 8. Next.js 16 caveats (read before touching data-fetching/caching/middleware)
