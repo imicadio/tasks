@@ -20,6 +20,16 @@
   --metric-accidents: #2a78d6;
   --metric-fatalities: #eb6834;
   --metric-injured: #1baf7a;
+  /* Vehicle-type colors for the transit map — not decorative, each maps
+     to a real routeType from ZTM Gdańsk's own routes feed (see
+     src/features/transit/server/queries.ts), never guessed from the route
+     number. Slots 5 (magenta) and 6 (green) are otherwise unused in this
+     app; blue reuses categorical slot 1 (also --metric-accidents) since
+     the two never appear on the same page. Validated together as a
+     3-color categorical set — see docs/decisions/0006-realtime-map-rendering.md. */
+  --transit-bus: #e87ba4;
+  --transit-tram: #2a78d6;
+  --transit-other: #008300;
 
   /* Status palette — fixed, mode-invariant, never reused for series. */
   --status-good: #0ca30c;
@@ -129,6 +139,9 @@
   --metric-accidents: #3987e5;
   --metric-fatalities: #d95926;
   --metric-injured: #199e70;
+  --transit-bus: #d55181;
+  --transit-tram: #3987e5;
+  --transit-other: #008300;
 
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -173,4 +186,60 @@
   html {
     @apply font-sans;
   }
+}
+
+/* src/features/transit — vehicle markers on the Leaflet map. Plain CSS,
+   not Tailwind utilities: these are generated as raw HTML strings for
+   Leaflet's L.divIcon, outside React/Tailwind's usual class-scanning.
+   Each type modifier sets --marker-color; the base rules below consume it,
+   so the color itself is only ever declared once per type. */
+.transit-marker--bus {
+  --marker-color: var(--transit-bus);
+}
+.transit-marker--tram {
+  --marker-color: var(--transit-tram);
+}
+.transit-marker--other {
+  --marker-color: var(--transit-other);
+}
+.transit-marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--marker-color);
+  border: 2px solid var(--chart-surface);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15);
+  position: relative;
+}
+.transit-marker--selected {
+  width: 18px;
+  height: 18px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.15),
+    0 0 0 4px color-mix(in oklch, var(--marker-color), transparent 60%);
+}
+.transit-marker__arrow {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 6px solid var(--marker-color);
+  transform-origin: 50% 12px;
+  transition: transform 0.8s ease;
+  translate: -50% 0;
+}
+.leaflet-tooltip {
+  background: var(--chart-surface);
+  color: var(--chart-ink);
+  border: 1px solid var(--chart-baseline);
+}
+/* There's no free, no-API-key dark tile set to match OpenStreetMap's
+   standard tiles (verified — see transit-map.tsx), so dark mode fakes one
+   by inverting the tile layer only, leaving the marker pane (a sibling,
+   not a descendant) untouched. */
+.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
 }

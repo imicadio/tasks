@@ -87,8 +87,12 @@ export function HydroMonitorDashboard({
     "status",
     initialParams.status,
   );
+  // Key must match hydroQuerySchema's "voivodeship" field — page.tsx parses
+  // raw searchParams straight through that schema for SSR, so a mismatched
+  // URL key here silently drops the filter on first load/bookmark (this
+  // was "wojewodztwo" and didn't match; fixed).
   const [voivodeship, setVoivodeship] = useUrlState(
-    "wojewodztwo",
+    "voivodeship",
     initialParams.voivodeship,
   );
   const [sort, setSort] = useUrlState<SortField>("sort", initialParams.sort);

@@ -1,4 +1,4 @@
-import { CarFront, CloudSun, Waves } from "lucide-react";
+import { Bus, CarFront, CloudSun, Waves } from "lucide-react";
 import { AppSidebar, type NavItem } from "@/shared/ui/app-sidebar";
 import {
   SidebarInset,
@@ -22,6 +22,11 @@ const NAV_ITEMS: NavItem[] = [
     href: "/pogoda",
     label: "Pogoda",
     icon: <CloudSun className="size-4" />,
+  },
+  {
+    href: "/transport",
+    label: "Transport publiczny",
+    icon: <Bus className="size-4" />,
   },
 ];
 

@@ -226,6 +226,7 @@ Not fully designed here — out of scope for this document.
 | `road-accidents` | `src/features/road-accidents/` | Dashboard of Polish road-accident statistics sourced from GUS BDL (`api.stat.gov.pl`) | `/road-accidents`, `/api/road-accidents` | `RoadAccidentsDashboard`, `useRoadAccidents`, `roadAccidentsQueries`, types/schemas | `shared` only |
 | `hydro-monitor` | `src/features/hydro-monitor/` | Live river gauge station monitoring (water level vs. warning/alarm thresholds) from IMGW-PIB | `/hydrologia`, `/api/hydro-monitor` | `HydroMonitorDashboard`, `useHydroStations`, `useFavoriteStations`, `hydroMonitorQueries`, types/schemas | `shared` only |
 | `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/api/weather` | `WeatherDashboard`, `useWeatherStations`, `weatherQueries`, types/schemas | `shared` only |
+| `transit` | `src/features/transit/` | Live map of Gdańsk-area public transport vehicles (Tristar GPS feed) | `/transport`, `/api/transit` | `TransitDashboard`, `useVehiclePositions`, `transitQueries`, types/schemas | `shared` only |
 
 Kept in sync by the `document-feature` skill/agent.
 
