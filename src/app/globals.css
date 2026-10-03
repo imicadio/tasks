@@ -243,3 +243,49 @@
 .dark .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
 }
+/* Parking lot markers (src/features/parking/components/parking-map.tsx).
+   The label is the free-spot count as text, so the status color is only a
+   reinforcement (WCAG 1.4.1); text is --chart-ink on --chart-surface for
+   full 1.4.3 contrast in both themes, and a dark outer ring keeps the pill
+   distinguishable from light map tiles (1.4.11). */
+.parking-marker-icon {
+  border-radius: 9999px;
+}
+.parking-marker-icon:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.parking-marker {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--chart-surface);
+  color: var(--chart-ink);
+  border: 3px solid var(--marker-color);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.55);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.parking-marker--available {
+  --marker-color: var(--status-good);
+}
+.parking-marker--few {
+  --marker-color: var(--status-warning);
+}
+.parking-marker--full {
+  --marker-color: var(--status-critical);
+}
+.parking-marker--unknown {
+  --marker-color: var(--chart-muted);
+  border-style: dashed;
+}
+.parking-marker--selected {
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.55),
+    0 0 0 5px color-mix(in oklch, var(--ring), transparent 40%);
+}

@@ -227,6 +227,7 @@ Not fully designed here — out of scope for this document.
 | `hydro-monitor` | `src/features/hydro-monitor/` | Live river gauge station monitoring (water level vs. warning/alarm thresholds) from IMGW-PIB | `/hydrologia`, `/api/hydro-monitor` | `HydroMonitorDashboard`, `useHydroStations`, `useFavoriteStations`, `hydroMonitorQueries`, types/schemas | `shared` only |
 | `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/api/weather` | `WeatherDashboard`, `useWeatherStations`, `weatherQueries`, types/schemas | `shared` only |
 | `transit` | `src/features/transit/` | Live map of Gdańsk-area public transport vehicles (Tristar GPS feed) | `/transport`, `/api/transit` | `TransitDashboard`, `useVehiclePositions`, `transitQueries`, types/schemas | `shared` only |
+| `parking` | `src/features/parking/` | Gdańsk parking lots with live free-spot counts (ckan.multimediagdansk.pl), on a map + accessible table | `/parkingi`, `/api/parking` | `ParkingDashboard`, `useParkingLots`, `parkingQueries`, types | `shared` only |
 
 Kept in sync by the `document-feature` skill/agent.
 
