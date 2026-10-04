@@ -74,7 +74,6 @@ export function ParkingTable({
           )}
           {lots.map((lot) => {
             const selected = lot.id === selectedLotId;
-            const current = lot.status !== "unknown";
             return (
               <tr
                 key={lot.id}
@@ -92,17 +91,11 @@ export function ParkingTable({
                 </th>
                 <td className="px-3 py-2">{lot.streetEntrance || "—"}</td>
                 <td className="px-3 py-2 text-right tabular-nums">
-                  {current && lot.availableSpots !== null ? (
+                  {lot.availableSpots === null ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
                     <span className="text-base font-semibold text-foreground">
                       {lot.availableSpots}
-                    </span>
-                  ) : (
-                    // A stale count is still shown, but de-emphasized and
-                    // explicitly labelled — never presented as current.
-                    <span className="text-muted-foreground">
-                      {lot.availableSpots === null
-                        ? "—"
-                        : `${lot.availableSpots} (nieaktualne)`}
                     </span>
                   )}
                 </td>

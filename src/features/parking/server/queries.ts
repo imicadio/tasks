@@ -3,7 +3,6 @@ import {
   FEW_SPOTS_THRESHOLD,
   PARKING_AVAILABILITY_URL,
   PARKING_LOTS_URL,
-  STALE_AFTER_MS,
 } from "../constants";
 import {
   rawParkingAvailabilitySchema,
@@ -43,21 +42,12 @@ export async function getParkingLots(): Promise<ParkingSnapshot> {
 
   return {
     lastUpdate: availability.lastUpdate,
-    parkingLots: joinAvailability(lots, availability, Date.now()),
+    parkingLots: joinAvailability(lots, availability),
   };
 }
 
-/** Computed here, at fetch time, rather than in the client's render — a
- * `Date.now()`-dependent value rendered on both server and client would
- * otherwise risk a hydration mismatch. */
-export function availabilityStatus(
-  spots: number | null,
-  updatedAt: string | null,
-  now: number,
-): AvailabilityStatus {
-  if (spots === null || updatedAt === null) return "unknown";
-  const age = now - Date.parse(updatedAt);
-  if (Number.isNaN(age) || age > STALE_AFTER_MS) return "unknown";
+export function availabilityStatus(spots: number | null): AvailabilityStatus {
+  if (spots === null) return "unknown";
   if (spots <= 0) return "full";
   if (spots < FEW_SPOTS_THRESHOLD) return "few";
   return "available";
@@ -69,7 +59,6 @@ export function availabilityStatus(
 export function joinAvailability(
   lots: RawParkingLots,
   availability: RawParkingAvailability,
-  now: number,
 ): ParkingLot[] {
   const byId = new Map(
     availability.parkingLots.map((entry) => [entry.parkingId, entry]),
@@ -81,7 +70,6 @@ export function joinAvailability(
       if (latitude === null || longitude === null) return [];
       const live = byId.get(lot.id);
       const spots = live?.availableSpots ?? null;
-      const updatedAt = live?.lastUpdate ?? null;
       return [
         {
           id: lot.id as ParkingLotId,
@@ -92,8 +80,8 @@ export function joinAvailability(
           lat: latitude,
           lon: longitude,
           availableSpots: spots,
-          availabilityUpdatedAt: updatedAt,
-          status: availabilityStatus(spots, updatedAt, now),
+          availabilityUpdatedAt: live?.lastUpdate ?? null,
+          status: availabilityStatus(spots),
         },
       ];
     })

@@ -16,22 +16,13 @@ Data: ckan.multimediagdansk.pl (no API key), two feeds joined on
 The client starts from the SSR snapshot and polls `/api/parking` every
 `POLL_INTERVAL_MS` (60s).
 
-### Stale readings
-
-Some lots stop reporting for days but stay in the live feed with their last
-value. Verified 2026-10-03: PGE Arena, AmberExpo, Forum Gdańsk and
-Świętokrzyska all showed `0` with timestamps 4–15 days old. Presenting those
-as "0 free" would claim the lot is full right now, so a reading older than
-`STALE_AFTER_MS` (30 min) gets status `unknown`. The table still shows the
-old count, explicitly labelled as not current. The map shows `?`. The status
-is computed server-side at fetch time, so a `Date.now()` in render can't
-cause a hydration mismatch.
-
 ### Status
 
 The feed reports free spots only, not capacity, so the thresholds are
-absolute counts: `0` → full, `< FEW_SPOTS_THRESHOLD` (20) → few, otherwise
-available.
+absolute counts: `0` → full ("Brak miejsc"), `< FEW_SPOTS_THRESHOLD` (20)
+→ few, otherwise available. `unknown` ("Brak danych", `?` on the map) only
+when the live feed has no entry for a lot at all. Each reading's own
+timestamp is shown in the table's "Odczyt" column.
 
 ## Public API (`index.ts`)
 
@@ -64,10 +55,10 @@ See `docs/decisions/0005-accessibility.md`.
   "Pokaż na mapie: <name>" button that uses `aria-pressed` to show which lot
   is selected.
 - **Status is never color-only (1.4.1).**
-  - Map markers show the free-spot count as text, and the stale ones show
-    `?`.
+  - Map markers show the free-spot count as text (`?` when there's no
+    data).
   - The table and legend show the status label next to the colored dot.
-  - Stale markers also use a dashed border.
+  - Markers with no data also use a dashed border.
 - **Map markers are keyboard-operable.** Leaflet renders them as
   `role="button"` with `tabindex="0"`. Each one has an sr-only accessible
   name (e.g. "P01 Galeria Bałtycka: 869 wolnych miejsc") and a visible

@@ -27,11 +27,10 @@ function escapeHtml(value: string): string {
  * focusable `role="button"` for each marker; the sr-only text gives it a
  * full accessible name ("P01 Galeria Bałtycka: 869 wolnych miejsc"). */
 function createIcon(lot: ParkingLot, selected: boolean): L.DivIcon {
-  const current = lot.status !== "unknown" && lot.availableSpots !== null;
-  const visible = current ? String(lot.availableSpots) : "?";
-  const spoken = current
-    ? `${lot.availableSpots} wolnych ${spotsWord(lot.availableSpots!)}`
-    : "brak aktualnych danych";
+  const spots = lot.availableSpots;
+  const visible = spots === null ? "?" : String(spots);
+  const spoken =
+    spots === null ? "brak danych" : `${spots} wolnych ${spotsWord(spots)}`;
   const classes = ["parking-marker", `parking-marker--${lot.status}`];
   if (selected) classes.push("parking-marker--selected");
   return L.divIcon({

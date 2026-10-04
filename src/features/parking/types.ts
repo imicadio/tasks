@@ -1,8 +1,7 @@
 declare const parkingLotIdBrand: unique symbol;
 export type ParkingLotId = string & { readonly [parkingLotIdBrand]: true };
 
-/** "unknown" covers both a lot missing from the live feed and one whose
- * last reading is older than STALE_AFTER_MS — see constants.ts. */
+/** "unknown" only when the live feed has no entry for a lot at all. */
 export type AvailabilityStatus = "available" | "few" | "full" | "unknown";
 
 export type ParkingLot = {
@@ -13,9 +12,8 @@ export type ParkingLot = {
   streetEntrance: string;
   lat: number;
   lon: number;
-  /** Last reported free-spot count, even if stale; null when the live feed
-   * has no entry for this lot. Check `status` before presenting it as
-   * current. */
+  /** Free-spot count as reported by the live feed; null only when the
+   * feed has no entry for this lot. */
   availableSpots: number | null;
   /** Timestamp of that reading, if any. */
   availabilityUpdatedAt: string | null;

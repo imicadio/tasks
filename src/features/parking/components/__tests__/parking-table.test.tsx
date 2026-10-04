@@ -27,7 +27,7 @@ const LOTS: ParkingLot[] = [
     lon: 18.63675,
     availableSpots: 0,
     availabilityUpdatedAt: "2026-09-30T00:02:59Z",
-    status: "unknown",
+    status: "full",
   },
 ];
 
@@ -46,15 +46,13 @@ describe("ParkingTable", () => {
     expect(within(galeria).getByText("Wolne miejsca")).toBeInTheDocument();
   });
 
-  it("labels a stale count as not current instead of showing a bare 0", () => {
+  it("shows 0 free spots as a full lot", () => {
     render(
       <ParkingTable lots={LOTS} selectedLotId={null} onSelectLot={() => {}} />,
     );
     const arena = screen.getByRole("row", { name: /pge arena/i });
-    expect(within(arena).getByText("0 (nieaktualne)")).toBeInTheDocument();
-    expect(
-      within(arena).getByText("Brak aktualnych danych"),
-    ).toBeInTheDocument();
+    expect(within(arena).getByText("0")).toBeInTheDocument();
+    expect(within(arena).getByText("Brak miejsc")).toBeInTheDocument();
   });
 
   it("selects a lot from its named map button and reflects it with aria-pressed", () => {

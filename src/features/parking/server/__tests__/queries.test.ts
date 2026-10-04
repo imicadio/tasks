@@ -48,31 +48,24 @@ const AVAILABILITY: RawParkingAvailability = {
   lastUpdate: ago(0),
   parkingLots: [
     { parkingId: "1", availableSpots: 869, lastUpdate: ago(2 * MINUTE) },
-    // Real case from the live feed: a lot that stopped reporting days ago.
     { parkingId: "3", availableSpots: 0, lastUpdate: "2026-09-30T00:02:59Z" },
   ],
 };
 
 describe("availabilityStatus", () => {
-  it("classifies a fresh reading by free-spot count", () => {
-    expect(availabilityStatus(869, ago(MINUTE), NOW)).toBe("available");
-    expect(availabilityStatus(5, ago(MINUTE), NOW)).toBe("few");
-    expect(availabilityStatus(0, ago(MINUTE), NOW)).toBe("full");
+  it("classifies by free-spot count — 0 means the lot is full", () => {
+    expect(availabilityStatus(869)).toBe("available");
+    expect(availabilityStatus(5)).toBe("few");
+    expect(availabilityStatus(0)).toBe("full");
   });
 
-  it("never presents a stale reading as current — a days-old 0 is not 'full'", () => {
-    expect(availabilityStatus(0, ago(31 * MINUTE), NOW)).toBe("unknown");
-  });
-
-  it("is unknown without a count, a timestamp, or with an unparseable one", () => {
-    expect(availabilityStatus(null, ago(MINUTE), NOW)).toBe("unknown");
-    expect(availabilityStatus(10, null, NOW)).toBe("unknown");
-    expect(availabilityStatus(10, "garbage", NOW)).toBe("unknown");
+  it("is unknown only without a count", () => {
+    expect(availabilityStatus(null)).toBe("unknown");
   });
 });
 
 describe("joinAvailability", () => {
-  const joined = joinAvailability(LOTS, AVAILABILITY, NOW);
+  const joined = joinAvailability(LOTS, AVAILABILITY);
 
   it("joins live counts onto lots by id === parkingId", () => {
     const galeria = joined.find((lot) => lot.id === "1");
@@ -84,11 +77,11 @@ describe("joinAvailability", () => {
     });
   });
 
-  it("keeps a stale count but marks it unknown", () => {
+  it("reports 0 free spots as full, whatever the reading's age", () => {
     expect(joined.find((lot) => lot.id === "3")).toMatchObject({
       availableSpots: 0,
       availabilityUpdatedAt: "2026-09-30T00:02:59Z",
-      status: "unknown",
+      status: "full",
     });
   });
 

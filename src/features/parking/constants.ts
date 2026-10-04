@@ -19,12 +19,6 @@ export const PARKING_AVAILABILITY_URL =
 // would mostly return the same numbers.
 export const POLL_INTERVAL_MS = 60_000;
 
-// Some lots stop reporting for days while staying in the feed with their
-// last value — verified 2026-10-03: PGE Arena last reported 0 spots on
-// 2026-09-30. Showing that as "0 free" would claim the lot is full right
-// now; past this age the reading is shown as "no current data" instead.
-export const STALE_AFTER_MS = 30 * 60_000;
-
 // The feed reports free spots only, not capacity, so "few" is an absolute
 // count rather than a percentage.
 export const FEW_SPOTS_THRESHOLD = 20;
@@ -36,7 +30,7 @@ export const AVAILABILITY_LABELS = {
   available: "Wolne miejsca",
   few: "Mało miejsc",
   full: "Brak miejsc",
-  unknown: "Brak aktualnych danych",
+  unknown: "Brak danych",
 } as const satisfies Record<AvailabilityStatus, string>;
 
 // Color only reinforces the status — the free-spot count and the status

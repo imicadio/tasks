@@ -32,8 +32,9 @@ export function ParkingDashboard({ initialSnapshot }: Props) {
     null,
   );
 
-  const currentLots = lots.filter((lot) => lot.status !== "unknown");
-  const totalFree = currentLots.reduce(
+  const reportingLots = lots.filter((lot) => lot.availableSpots !== null);
+  const fullLots = lots.filter((lot) => lot.status === "full");
+  const totalFree = reportingLots.reduce(
     (sum, lot) => sum + (lot.availableSpots ?? 0),
     0,
   );
@@ -59,10 +60,10 @@ export function ParkingDashboard({ initialSnapshot }: Props) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card className="flex flex-col gap-1">
           <span className="text-sm text-muted-foreground">
-            Parkingi z aktualnymi danymi
+            Parkingi bez wolnych miejsc
           </span>
           <span className="text-3xl font-semibold tabular-nums text-foreground">
-            {currentLots.length} / {lots.length}
+            {fullLots.length} / {lots.length}
           </span>
         </Card>
         <Card className="flex flex-col gap-1">
@@ -106,8 +107,8 @@ export function ParkingDashboard({ initialSnapshot }: Props) {
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          Liczba na znaczniku to wolne miejsca; „?” oznacza brak aktualnych
-          danych (ostatni odczyt starszy niż 30 minut).
+          Liczba na znaczniku to wolne miejsca; „?” oznacza brak danych dla
+          parkingu.
         </p>
       </section>
 
