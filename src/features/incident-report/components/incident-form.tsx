@@ -1,0 +1,186 @@
+"use client";
+
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ArrowLeft, ArrowRight, CircleCheck, Send } from "lucide-react";
+import { Button } from "@/shared/ui/button";
+import { DISTRICTS, STEPS, SUBMIT_DELAY_MS } from "../constants";
+import { validateStep } from "../schemas";
+import { useIncidentReportStore } from "../store";
+import type { FormStep, Incident, StepErrors } from "../types";
+import { ContactStep, DetailsStep, LocationStep } from "./_internal/steps";
+import { Stepper } from "./_internal/stepper";
+
+/** Focus order for "jump to the first invalid field", per step. */
+const STEP_FIELDS: (keyof StepErrors)[][] = [
+  ["category", "severity", "title", "description"],
+  ["location", "address", "occurredAt"],
+  ["reporterName", "reporterEmail", "reporterPhone", "consent"],
+];
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export function IncidentForm({
+  onSubmitted,
+}: {
+  onSubmitted: (incident: Incident) => void;
+}) {
+  const draft = useIncidentReportStore((state) => state.draft);
+  const step = useIncidentReportStore((state) => state.step);
+  const setField = useIncidentReportStore((state) => state.setField);
+  const setLocation = useIncidentReportStore((state) => state.setLocation);
+  const setStep = useIncidentReportStore((state) => state.setStep);
+  const submit = useIncidentReportStore((state) => state.submit);
+
+  const [errors, setErrors] = useState<StepErrors>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState<Incident | null>(null);
+
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const successRef = useRef<HTMLHeadingElement>(null);
+  const movedFocus = useRef(false);
+
+  // Move focus to the new step's heading after Dalej/Wstecz — but not on the
+  // first render, which would yank focus away from the skip link / nav.
+  useEffect(() => {
+    if (!movedFocus.current) return;
+    headingRef.current?.focus();
+  }, [step]);
+
+  useEffect(() => {
+    if (submitted) successRef.current?.focus();
+  }, [submitted]);
+
+  const goTo = (next: FormStep) => {
+    movedFocus.current = true;
+    setErrors({});
+    setStep(next);
+  };
+
+  /** Validates the current step; on failure shows errors and focuses the
+   * first invalid field. */
+  const validateCurrent = (): boolean => {
+    const stepErrors = validateStep(step, draft);
+    setErrors(stepErrors);
+    const first = STEP_FIELDS[step].find((field) => stepErrors[field]);
+    if (!first) return true;
+    // After React commits the error markup, so aria-describedby resolves.
+    // `location` is the coordinates fieldset — focus its first input.
+    const target = first === "location" ? "lat" : first;
+    requestAnimationFrame(() => document.getElementById(target)?.focus());
+    return false;
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (submitting || !validateCurrent()) return;
+    if (step < 2) {
+      goTo((step + 1) as FormStep);
+      return;
+    }
+    setSubmitting(true);
+    await wait(SUBMIT_DELAY_MS);
+    const incident = submit();
+    setSubmitting(false);
+    setErrors({});
+    setSubmitted(incident);
+    onSubmitted(incident);
+  };
+
+  const pickDistrict = (districtId: string) => {
+    setField("district", districtId);
+    const district = DISTRICTS.find((d) => d.id === districtId);
+    if (district) setLocation(district.lat, district.lon);
+    setErrors((current) => ({ ...current, location: undefined }));
+  };
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-start gap-4 py-2">
+        <div
+          role="status"
+          className="flex w-full items-start gap-3 rounded-lg border border-status-good/50 bg-status-good/10 p-4"
+        >
+          <CircleCheck
+            aria-hidden="true"
+            className="mt-0.5 size-6 shrink-0 text-status-good"
+          />
+          <div className="flex flex-col gap-1">
+            <h2
+              ref={successRef}
+              tabIndex={-1}
+              className="text-lg font-semibold text-foreground outline-none"
+            >
+              Zgłoszenie zostało wysłane pomyślnie
+            </h2>
+            <p className="text-sm text-foreground">
+              Numer zgłoszenia:{" "}
+              <strong className="font-mono">{submitted.reference}</strong>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Incydent „{submitted.title}” jest już widoczny na mapie jako{" "}
+              <strong className="text-foreground">NOWY INCYDENT</strong>.
+            </p>
+          </div>
+        </div>
+        <Button variant="outline" onClick={() => setSubmitted(null)}>
+          Zgłoś kolejny incydent
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <Stepper current={step} />
+
+      <div className="flex flex-col gap-5">
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg font-semibold text-foreground outline-none"
+        >
+          {`Krok ${step + 1} z ${STEPS.length}: ${STEPS[step].title}`}
+        </h2>
+        {step === 0 && <DetailsStep draft={draft} errors={errors} setField={setField} />}
+        {step === 1 && (
+          <LocationStep
+            draft={draft}
+            errors={errors}
+            setField={setField}
+            onPickDistrict={pickDistrict}
+          />
+        )}
+        {step === 2 && <ContactStep draft={draft} errors={errors} setField={setField} />}
+      </div>
+
+      <div className="flex items-center justify-between gap-2 border-t pt-4">
+        {step > 0 ? (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={submitting}
+            onClick={() => goTo((step - 1) as FormStep)}
+          >
+            <ArrowLeft data-icon="inline-start" aria-hidden="true" />
+            Wstecz
+          </Button>
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            Szkic zapisuje się automatycznie.
+          </span>
+        )}
+        {step < 2 ? (
+          <Button type="submit" size="lg">
+            Dalej
+            <ArrowRight data-icon="inline-end" aria-hidden="true" />
+          </Button>
+        ) : (
+          <Button type="submit" size="lg" disabled={submitting}>
+            <Send data-icon="inline-start" aria-hidden="true" />
+            {submitting ? "Wysyłanie…" : "Wyślij zgłoszenie"}
+          </Button>
+        )}
+      </div>
+    </form>
+  );
+}

@@ -1,4 +1,11 @@
-import { Bus, CarFront, CloudSun, SquareParking, Waves } from "lucide-react";
+import {
+  Bus,
+  CarFront,
+  ClipboardPen,
+  CloudSun,
+  SquareParking,
+  Waves,
+} from "lucide-react";
 import { AppSidebar, type NavItem } from "@/shared/ui/app-sidebar";
 import {
   SidebarInset,
@@ -32,6 +39,11 @@ const NAV_ITEMS: NavItem[] = [
     href: "/parkingi",
     label: "Parkingi",
     icon: <SquareParking className="size-4" />,
+  },
+  {
+    href: "/formularz",
+    label: "Formularz",
+    icon: <ClipboardPen className="size-4" />,
   },
 ];
 

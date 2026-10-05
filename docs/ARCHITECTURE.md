@@ -228,6 +228,7 @@ Not fully designed here — out of scope for this document.
 | `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/api/weather` | `WeatherDashboard`, `useWeatherStations`, `weatherQueries`, types/schemas | `shared` only |
 | `transit` | `src/features/transit/` | Live map of Gdańsk-area public transport vehicles (Tristar GPS feed) | `/transport`, `/api/transit` | `TransitDashboard`, `useVehiclePositions`, `transitQueries`, types/schemas | `shared` only |
 | `parking` | `src/features/parking/` | Gdańsk parking lots with live free-spot counts (ckan.multimediagdansk.pl), on a map + accessible table | `/parkingi`, `/api/parking` | `ParkingDashboard`, `useParkingLots`, `parkingQueries`, types | `shared` only |
+| `incident-report` | `src/features/incident-report/` | Three-step incident report form with a map of Gdańsk incidents (3 seeded + submitted ones), persisted to localStorage; map click reverse-geocodes the address (OSM Nominatim) | `/formularz`, `/api/incident-report/geocode` | `IncidentReportDashboard`, `useIncidentReportStore`, `incidentReportQueries`, `incidentReportSchema`, `geocodeQuerySchema`, `validateStep`, `SEED_INCIDENTS`, types | `shared` only |
 
 Kept in sync by the `document-feature` skill/agent.
 
