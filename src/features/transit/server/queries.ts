@@ -1,5 +1,9 @@
 import "server-only";
-import { TRISTAR_GPS_URL, TRISTAR_ROUTES_URL } from "../constants";
+import {
+  GPS_REVALIDATE_S,
+  TRISTAR_GPS_URL,
+  TRISTAR_ROUTES_URL,
+} from "../constants";
 import { routeTypeMapSchema, vehiclesSnapshotSchema } from "../schemas";
 import type { VehicleType, VehiclesSnapshot } from "../types";
 import { applyVehicleTypes, filterByRoute } from "../utils/vehicles";
@@ -25,11 +29,11 @@ export async function getRouteTypes(): Promise<Map<number, VehicleType>> {
 
 export async function getVehiclePositions(): Promise<VehiclesSnapshot> {
   const [gpsResponse, routeTypes] = await Promise.all([
-    // Live positions — caching this would defeat the point of a real-time
-    // map, so no `next: { revalidate }` here (unlike every other feature's
-    // queries, which fetch from much slower-moving sources, and unlike
-    // getRouteTypes() above).
-    fetch(TRISTAR_GPS_URL, { cache: "no-store" }),
+    // Live positions, cached for only a few seconds: the source refreshes
+    // each vehicle every ~20s anyway, and sharing one upstream read across
+    // every viewer keeps page loads from waiting on Tristar each time —
+    // see GPS_REVALIDATE_S.
+    fetch(TRISTAR_GPS_URL, { next: { revalidate: GPS_REVALIDATE_S } }),
     getRouteTypes(),
   ]);
 

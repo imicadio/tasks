@@ -37,8 +37,10 @@ live at the time this was built: every currently-active vehicle's `routeId`
 resolved to `BUS` or `TRAM` — `"other"` is a real, handled case (a third
 marker color and legend entry exist for it) but wasn't observed in
 practice. The route list changes at most daily, so it's cached for an hour
-— a different cache policy from the GPS feed itself, which is never
-cached.
+— a different cache policy from the GPS feed itself, which is cached for
+only `GPS_REVALIDATE_S` (10s): below both the client's 15s poll and the
+source's own ~20s refresh, so it never hides a newer position, but it lets
+page loads and concurrent viewers share one upstream read.
 
 ## Owned routes
 

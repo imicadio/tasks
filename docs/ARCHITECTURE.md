@@ -222,6 +222,15 @@ guarantees with zero extra dependencies.)
   links) and `app/_constants/fonts.ts` (font loaders). Anything reusable
   across ≥2 routes, or with business logic, belongs in `features/` or
   `shared/`.
+- Every dashboard route has a `loading.tsx` rendering `DashboardSkeleton`
+  (`src/shared/ui/dashboard-skeleton.tsx`) shaped like the page, and
+  `(dashboard)/error.tsx` catches failed renders. Not optional: without
+  `loading.tsx`, Next.js doesn't prefetch a dynamic route (one that reads
+  `searchParams`), so a click waits for the full server render — including
+  the upstream API calls — before anything changes on screen
+  (`node_modules/next/dist/docs/01-app/02-guides/prefetching.md`).
+- Vercel functions run in `fra1` (`vercel.json`), next to the Polish public
+  APIs every feature reads from.
 - A `route.ts` delegates to `features/<feature>/server/`:
 
 ```ts

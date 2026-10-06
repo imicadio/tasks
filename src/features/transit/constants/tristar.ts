@@ -17,3 +17,9 @@ export const TRISTAR_ROUTES_URL =
 // "who's still out there" stays reasonably current without hammering a
 // public, unauthenticated endpoint.
 export const POLL_INTERVAL_MS = 15_000;
+
+// Server-side cache of the GPS feed. Short enough that a page load is at
+// most one poll behind (below POLL_INTERVAL_MS and the source's own ~20s
+// refresh), long enough that concurrent viewers and SSR share one upstream
+// read instead of each waiting on Tristar.
+export const GPS_REVALIDATE_S = 10;
