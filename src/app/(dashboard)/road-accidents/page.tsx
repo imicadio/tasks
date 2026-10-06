@@ -6,7 +6,7 @@ import {
 import type { Metric } from "@/features/road-accidents";
 
 export const metadata = {
-  title: "Wypadki drogowe w Polsce | nask",
+  title: "Wypadki drogowe w Polsce | Dashboardy",
   description:
     "Dashboard statystyk wypadków drogowych w Polsce na podstawie danych GUS BDL.",
 };

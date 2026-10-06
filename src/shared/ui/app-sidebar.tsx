@@ -41,10 +41,10 @@ export function AppSidebar({
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-            N
+            D
           </div>
           <span className="truncate text-sm font-semibold group-data-[collapsible=icon]:hidden">
-            NASK Dashboardy
+            Dashboardy
           </span>
         </div>
       </SidebarHeader>

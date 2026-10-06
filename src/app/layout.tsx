@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NASK Dashboardy",
+  title: "Dashboardy",
   description:
     "Dashboardy danych publicznych: wypadki drogowe (GUS BDL), hydrologia i pogoda (IMGW).",
 };

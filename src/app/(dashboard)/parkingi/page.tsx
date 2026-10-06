@@ -1,7 +1,7 @@
 import { ParkingDashboard, parkingQueries } from "@/features/parking";
 
 export const metadata = {
-  title: "Gdańsk — parkingi | NASK Dashboardy",
+  title: "Gdańsk — parkingi | Dashboardy",
   description:
     "Parkingi w Gdańsku z liczbą wolnych miejsc na żywo (ckan.multimediagdansk.pl).",
 };

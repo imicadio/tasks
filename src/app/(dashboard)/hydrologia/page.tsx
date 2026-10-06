@@ -6,7 +6,7 @@ import {
 import type { StationStatus } from "@/features/hydro-monitor";
 
 export const metadata = {
-  title: "Monitoring hydrologiczny | NASK Dashboardy",
+  title: "Monitoring hydrologiczny | Dashboardy",
   description:
     "Poziomy wody i statusy alarmowe stacji wodowskazowych w Polsce na podstawie danych IMGW-PIB.",
 };

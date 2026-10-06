@@ -1,7 +1,7 @@
 import { WeatherDashboard, weatherQueries, weatherQuerySchema } from "@/features/weather";
 
 export const metadata = {
-  title: "Pogoda | NASK Dashboardy",
+  title: "Pogoda | Dashboardy",
   description:
     "Bieżące warunki pogodowe na stacjach synoptycznych IMGW-PIB w Polsce.",
 };

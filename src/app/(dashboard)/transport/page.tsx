@@ -5,7 +5,7 @@ import {
 } from "@/features/transit";
 
 export const metadata = {
-  title: "Gdańsk — transport publiczny | NASK Dashboardy",
+  title: "Gdańsk — transport publiczny | Dashboardy",
   description:
     "Mapa pozycji GPS pojazdów komunikacji publicznej w Gdańsku na żywo (Tristar / ZTM Gdańsk).",
 };

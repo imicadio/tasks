@@ -62,7 +62,7 @@ export default function DashboardLayout({
       </a>
       <AppSidebar
         navItems={NAV_ITEMS}
-        repoUrl="https://github.com/imicadio/NASK"
+        repoUrl="https://github.com/imicadio/tasks"
       />
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">

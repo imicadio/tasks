@@ -24,7 +24,7 @@ export const STORAGE_KEY = "incident-report:v1";
  * only from our own route handler (cached per point), never from the browser.
  * https://operations.osmfoundation.org/policies/nominatim/ */
 export const NOMINATIM_REVERSE_URL = "https://nominatim.openstreetmap.org/reverse";
-export const GEOCODE_USER_AGENT = "NASK-Dashboardy/0.1 (https://github.com/imicadio/NASK)";
+export const GEOCODE_USER_AGENT = "Dashboardy/0.1 (https://github.com/imicadio/tasks)";
 /** Addresses don't move; a day of caching per rounded point is plenty. */
 export const GEOCODE_REVALIDATE_S = 86_400;
 /** Map clicks are rounded to this many decimals (~11 cm) — enough precision,

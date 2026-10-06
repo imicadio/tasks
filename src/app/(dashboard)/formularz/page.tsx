@@ -1,7 +1,7 @@
 import { IncidentReportDashboard } from "@/features/incident-report";
 
 export const metadata = {
-  title: "Gdańsk — zgłoś incydent | NASK Dashboardy",
+  title: "Gdańsk — zgłoś incydent | Dashboardy",
   description:
     "Wieloetapowy formularz zgłoszenia incydentu w Gdańsku z mapą zgłoszeń.",
 };

@@ -10,8 +10,8 @@ export async function generateMetadata({
   const station = await weatherQueries.getWeatherStationById(id);
   return {
     title: station
-      ? `${station.name} — Pogoda | NASK Dashboardy`
-      : "Nie znaleziono stacji | NASK Dashboardy",
+      ? `${station.name} — Pogoda | Dashboardy`
+      : "Nie znaleziono stacji | Dashboardy",
   };
 }
 

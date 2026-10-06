@@ -38,7 +38,7 @@ describe("reverseGeocode", () => {
     const [url, init] = fetchMock.mock.calls[0] as [URL, RequestInit];
     expect(url.searchParams.get("lat")).toBe("54.3485");
     expect(url.searchParams.get("accept-language")).toBe("pl");
-    expect((init.headers as Record<string, string>)["User-Agent"]).toMatch(/NASK/);
+    expect((init.headers as Record<string, string>)["User-Agent"]).toMatch(/Dashboardy/);
   });
 
   it("throws on an upstream error", async () => {
