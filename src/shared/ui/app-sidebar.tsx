@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CodeXml } from "lucide-react";
@@ -16,16 +15,7 @@ import {
   SidebarMenuItem,
 } from "@/shared/ui/sidebar";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
-
-export type NavItem = {
-  href: string;
-  label: string;
-  /** A pre-rendered icon element (e.g. `<CarFront className="size-4" />`) —
-   * not a component reference, since this crosses a server→client prop
-   * boundary and raw function/component references aren't serializable
-   * there. */
-  icon: ReactNode;
-};
+import type { NavItem } from "@/shared/types/nav";
 
 export function AppSidebar({
   navItems,

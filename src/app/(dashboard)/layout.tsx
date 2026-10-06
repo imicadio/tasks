@@ -1,57 +1,13 @@
-import {
-  Bus,
-  CarFront,
-  ClipboardPen,
-  CloudSun,
-  SquareParking,
-  Waves,
-} from "lucide-react";
-import { AppSidebar, type NavItem } from "@/shared/ui/app-sidebar";
+import { AppSidebar } from "@/shared/ui/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/shared/ui/sidebar";
 import { Separator } from "@/shared/ui/separator";
+import { NAV_ITEMS, REPO_URL } from "./_constants/nav-items";
 
-const NAV_ITEMS: NavItem[] = [
-  {
-    href: "/road-accidents",
-    label: "Wypadki drogowe",
-    icon: <CarFront className="size-4" />,
-  },
-  {
-    href: "/hydrologia",
-    label: "Hydrologia",
-    icon: <Waves className="size-4" />,
-  },
-  {
-    href: "/pogoda",
-    label: "Pogoda",
-    icon: <CloudSun className="size-4" />,
-  },
-  {
-    href: "/transport",
-    label: "Transport publiczny",
-    icon: <Bus className="size-4" />,
-  },
-  {
-    href: "/parkingi",
-    label: "Parkingi",
-    icon: <SquareParking className="size-4" />,
-  },
-  {
-    href: "/formularz",
-    label: "Formularz",
-    icon: <ClipboardPen className="size-4" />,
-  },
-];
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: LayoutProps<"/">) {
   return (
     <SidebarProvider>
       <a
@@ -62,7 +18,7 @@ export default function DashboardLayout({
       </a>
       <AppSidebar
         navItems={NAV_ITEMS}
-        repoUrl="https://github.com/imicadio/tasks"
+        repoUrl={REPO_URL}
       />
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
