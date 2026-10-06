@@ -43,7 +43,7 @@ Split the work by what actually needs to be reactive:
   `Map<VehicleId, Marker>` in a ref — never in React state — so per-frame
   position updates never touch React's reconciler.
 
-The interpolation itself (`lib/interpolate.ts`) is a small, pure,
+The interpolation itself (`utils/interpolate.ts`) is a small, pure,
 independently-tested function (`interpolateLatLng`) — linear interpolation
 between the vehicle's previous and current reported fix, parameterized by
 elapsed time since the update landed. It is explicitly **not** map-matched

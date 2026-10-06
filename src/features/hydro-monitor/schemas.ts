@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { apiNullableNumber } from "@/shared/lib/api-validation";
-import { deriveStationStatus, toStationId } from "./types";
+import { apiNullableNumber } from "@/shared/utils/api-validation";
+import { deriveStationStatus } from "./utils/derive-station-status";
+import { toStationId } from "./utils/to-station-id";
 import type { HydroStation } from "./types";
 
 // IMGW's hydro feed is NOT uniformly typed across its own ~900 records: most

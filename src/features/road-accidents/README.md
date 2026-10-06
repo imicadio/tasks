@@ -15,17 +15,21 @@ ofiary" — no API key required at this call volume.
 - `RoadAccidentsDashboard` — the top-level client component.
 - `useRoadAccidents` — the hook managing metric/year filter state.
 - `roadAccidentsQueries.getNationalTrend(metric, fromYear?, toYear?)` and
-  `roadAccidentsQueries.getVoivodeshipBreakdown(metric, year?)` — server-only
-  GUS BDL data access.
+  `roadAccidentsQueries.getVoivodeshipBreakdown(metric, year?)`,
+  `roadAccidentsQueries.getYearValue(metric, year?)` — server-only GUS BDL
+  data access.
+- `getRoadAccidentsPageData()` — the page's initial data (default metric's
+  trend + breakdown, every metric's latest value) in one call.
 - `trendQuerySchema`, `breakdownQuerySchema`, `metricSchema` — zod schemas
   used by `src/app/api/road-accidents/route.ts` to validate query params.
 - `METRIC_LABELS`, `METRIC_COLORS`, `MIN_YEAR`, `MAX_YEAR` — display
   constants.
-- Types: `Metric`, `YearDatum`, `VoivodeshipDatum`.
+- Types: `Metric`, `YearDatum`, `VoivodeshipDatum`, `LatestByMetric`,
+  `RoadAccidentsPageData`.
 
 ## Owned routes
 
-- `src/app/road-accidents/page.tsx` — the dashboard page.
+- `src/app/(dashboard)/road-accidents/page.tsx` — the dashboard page.
 - `src/app/api/road-accidents/route.ts` — `GET ?kind=trend&metric=&page=&pageSize=`
   and `GET ?kind=breakdown&metric=&year=`.
 

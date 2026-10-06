@@ -2,16 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { POLL_INTERVAL_MS } from "../constants";
-import type { VehiclesSnapshot } from "../types";
-
-async function fetchVehiclePositions(route: string): Promise<VehiclesSnapshot> {
-  const search = new URLSearchParams(route ? { route } : {});
-  const response = await fetch(`/api/transit?${search.toString()}`);
-  if (!response.ok) {
-    throw new Error("Nie udało się pobrać pozycji pojazdów.");
-  }
-  return response.json();
-}
+import { fetchVehiclePositions } from "../utils/fetch-vehicle-positions";
 
 export function useVehiclePositions(route: string) {
   return useQuery({

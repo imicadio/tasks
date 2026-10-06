@@ -3,12 +3,7 @@
 import { Badge } from "@/shared/ui/badge";
 import { VEHICLE_TYPE_COLOR_VAR, VEHICLE_TYPE_LABELS } from "../constants";
 import type { Vehicle, VehicleId } from "../types";
-
-function formatDelay(seconds: number): string {
-  if (Math.abs(seconds) < 60) return "na czas";
-  const minutes = Math.round(seconds / 60);
-  return minutes > 0 ? `+${minutes} min` : `${minutes} min`;
-}
+import { formatDelay } from "../utils/format";
 
 export function VehicleList({
   vehicles,
@@ -35,7 +30,7 @@ export function VehicleList({
             type="button"
             onClick={() => onSelectVehicle(vehicle.id)}
             aria-current={vehicle.id === selectedVehicleId ? "true" : undefined}
-            className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
+            className={`relative flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
               vehicle.id === selectedVehicleId ? "bg-accent" : ""
             }`}
           >
@@ -50,6 +45,11 @@ export function VehicleList({
               <Badge variant="outline" className="shrink-0 font-mono">
                 {vehicle.routeShortName}
               </Badge>
+              {/* The button is `relative` so this absolutely positioned
+                  sr-only span stays anchored inside the scrolling list.
+                  Without it, each span escapes the list's overflow clip
+                  and the spans for rows far down stretch the page's
+                  scroll height. */}
               <span className="sr-only">
                 {VEHICLE_TYPE_LABELS[vehicle.vehicleType]}
               </span>

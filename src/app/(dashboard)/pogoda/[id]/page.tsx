@@ -1,25 +1,17 @@
 import { notFound } from "next/navigation";
 import { WeatherStationDetail, weatherQueries } from "@/features/weather";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export async function generateMetadata({ params }: PageProps<"/pogoda/[id]">) {
   const { id } = await params;
   const station = await weatherQueries.getWeatherStationById(id);
   return {
     title: station
-      ? `${station.name} — Pogoda | NASK Dashboardy`
-      : "Nie znaleziono stacji | NASK Dashboardy",
+      ? `${station.name} — Pogoda | Dashboardy`
+      : "Nie znaleziono stacji | Dashboardy",
   };
 }
 
-export default async function WeatherStationPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function WeatherStationPage({ params }: PageProps<"/pogoda/[id]">) {
   const { id } = await params;
   const station = await weatherQueries.getWeatherStationById(id);
 

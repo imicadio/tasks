@@ -1,0 +1,88 @@
+import { describe, expect, it } from "vitest";
+import { EMPTY_DRAFT } from "../../constants";
+import type { Incident } from "../../types";
+import { draftPoint, toIncident } from "../draft";
+import { describedBy, errorId, hintId } from "../field-ids";
+import { mapFocusTarget } from "../map-focus";
+import { parseCoordinate } from "../parse-coordinate";
+import { roundCoord } from "../round-coord";
+
+describe("parseCoordinate", () => {
+  it("accepts a decimal point or a Polish decimal comma", () => {
+    expect(parseCoordinate("54.3812")).toBe(54.3812);
+    expect(parseCoordinate(" 54,3812 ")).toBe(54.3812);
+  });
+
+  it("is null for empty or non-numeric text", () => {
+    expect(parseCoordinate("")).toBeNull();
+    expect(parseCoordinate("abc")).toBeNull();
+  });
+});
+
+describe("roundCoord", () => {
+  it("rounds to six decimals", () => {
+    expect(roundCoord(54.123456789)).toBe(54.123457);
+  });
+});
+
+describe("field ids", () => {
+  it("joins the hint and error ids that apply", () => {
+    expect(errorId("title")).toBe("title-error");
+    expect(hintId("title")).toBe("title-hint");
+    expect(describedBy("title", true, "Wymagane")).toBe("title-hint title-error");
+    expect(describedBy("title", false, undefined)).toBeUndefined();
+  });
+});
+
+describe("draftPoint", () => {
+  it("is null until both coordinates are set", () => {
+    expect(draftPoint(EMPTY_DRAFT)).toBeNull();
+    expect(draftPoint({ ...EMPTY_DRAFT, lat: 54.3 })).toBeNull();
+    expect(draftPoint({ ...EMPTY_DRAFT, lat: 54.3, lon: 18.6 })).toEqual([54.3, 18.6]);
+  });
+});
+
+describe("mapFocusTarget", () => {
+  const selected = { lat: 54.1, lon: 18.1 } as Incident;
+
+  it("prefers the selected incident", () => {
+    expect(mapFocusTarget(selected, [54.2, 18.2], true)).toEqual([54.1, 18.1]);
+  });
+
+  it("uses the picked point only while picking", () => {
+    expect(mapFocusTarget(undefined, [54.2, 18.2], true)).toEqual([54.2, 18.2]);
+    expect(mapFocusTarget(undefined, [54.2, 18.2], false)).toBeNull();
+  });
+});
+
+describe("toIncident", () => {
+  it("builds a new incident with a reference and ISO timestamps", () => {
+    const now = new Date("2026-10-05T10:00:00Z");
+    const incident = toIncident(
+      {
+        category: "road",
+        severity: "high",
+        title: "Tytuł",
+        description: "Opis zdarzenia na drodze",
+        lat: 54.3,
+        lon: 18.6,
+        address: "Długa 1",
+        occurredAt: "2026-10-05T09:30",
+        reporterName: "Jan Kowalski",
+        reporterEmail: "jan@example.com",
+        reporterPhone: "",
+        consent: true,
+      } as Parameters<typeof toIncident>[0],
+      now,
+      "id-1",
+    );
+
+    expect(incident).toMatchObject({
+      id: "id-1",
+      status: "new",
+      reportedAt: now.toISOString(),
+      reporter: { name: "Jan Kowalski", email: "jan@example.com", phone: "" },
+    });
+    expect(incident.reference).toMatch(/^ZGL-20261005-\d{4}$/);
+  });
+});

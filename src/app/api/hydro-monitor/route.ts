@@ -1,18 +1,11 @@
 import { NextResponse } from "next/server";
 import { hydroMonitorQueries, hydroQuerySchema } from "@/features/hydro-monitor";
+import { badRequest } from "@/shared/utils/http";
+import { requestSearchParams } from "@/shared/utils/search-params";
 
 export async function GET(request: Request) {
-  const searchParams = Object.fromEntries(
-    new URL(request.url).searchParams.entries(),
-  );
-
-  const parsed = hydroQuerySchema.safeParse(searchParams);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten() },
-      { status: 400 },
-    );
-  }
+  const parsed = hydroQuerySchema.safeParse(requestSearchParams(request));
+  if (!parsed.success) return badRequest(parsed.error);
 
   const stations = await hydroMonitorQueries.getHydroStations();
   const data = hydroMonitorQueries.filterAndSortStations(stations, parsed.data);

@@ -32,8 +32,34 @@ missing.
    - **Logic leaking into `app/`**: a `page.tsx`/`route.ts`/`layout.tsx`
      containing direct DB/ORM calls, zod schema definitions, or non-trivial
      branching instead of delegating to a feature's public API.
+   - **Multi-step data assembly in `app/`**: a page or route that chains
+     several feature calls, or post-processes their results inline
+     (`Promise.all` over queries, `Object.fromEntries`, `reduce`, `.map`
+     into a new shape, `as` casts). It should make one call — e.g. a
+     `get<Feature>PageData()` in the feature's `server/page-data.ts` (see
+     "What goes where" in `docs/ARCHITECTURE.md` §2).
+   - **Mixed-content file** (see "What goes where", §2): in a file under
+     `components/`, `hooks/`, `store.ts` or `src/app/`, any top-level
+     - `const` other than the exported component/hook itself (→ `constants/`),
+     - `type`/`interface` other than the component's own `Props`
+       (→ `types/`),
+     - helper `function` (→ `utils/`, with a test),
+     - second component (→ `components/_internal/`, one per file).
+     Also flag functions defined in `types/` or `constants/`, and
+     `constants.ts` / `types.ts` / `lib/` used instead of the
+     `constants/` / `types/` / `utils/` folders. shadcn-generated files in
+     `src/shared/ui/` are exempt.
+   - **Duplicated helper or constant across features**: the same function
+     or value (e.g. an HTML escaper, map tile URL, query-string parsing)
+     defined in two or more features — it belongs in
+     `src/shared/{constants,types,utils}/`.
+   - **Untested util**: an exported function in `utils/` with no test in
+     the matching `utils/__tests__/`.
    - **Incomplete feature scaffolding**: a `src/features/<name>/` missing
      `index.ts`, `README.md`, or any `__tests__/` directory.
+   - **Leaflet (or other `window`-dependent code) in a barrel**: a
+     `utils/index.ts` or `constants/index.ts` re-exporting a file that
+     imports `leaflet` — a server import of the barrel would crash.
    - **Bypassing the public API**: a feature itself importing from another
      feature's internals rather than that feature's `index.ts`.
 

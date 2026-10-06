@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { filterAndSortStations } from "../queries";
-import { toStationId } from "../../types";
+import { toStationId } from "../../utils/to-station-id";
 import type { HydroStation } from "../../types";
 
 function station(overrides: Partial<HydroStation>): HydroStation {

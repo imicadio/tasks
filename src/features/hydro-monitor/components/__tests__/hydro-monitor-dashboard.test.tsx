@@ -4,7 +4,7 @@ import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { HydroMonitorDashboard } from "../hydro-monitor-dashboard";
-import { toStationId } from "../../types";
+import { toStationId } from "../../utils/to-station-id";
 import type { HydroStation } from "../../types";
 
 vi.mock("next/navigation", () => ({

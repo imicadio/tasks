@@ -9,6 +9,7 @@ import {
 } from "../constants";
 import { gusByVariableResponseSchema } from "../schemas";
 import type { Metric, VoivodeshipDatum, YearDatum } from "../types";
+import { yearRange } from "../utils/year-range";
 
 async function fetchGusByVariable(
   variableId: number,
@@ -41,10 +42,7 @@ export async function getNationalTrend(
   fromYear: number = MIN_YEAR,
   toYear: number = MAX_YEAR,
 ): Promise<YearDatum[]> {
-  const years = Array.from(
-    { length: toYear - fromYear + 1 },
-    (_, i) => fromYear + i,
-  );
+  const years = yearRange(fromYear, toYear);
   const data = await fetchGusByVariable(
     METRIC_VARIABLE_ID[metric],
     POLAND_UNIT_LEVEL,
@@ -73,4 +71,13 @@ export async function getVoivodeshipBreakdown(
       value: result.values[0]?.val ?? null,
     }))
     .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+}
+
+/** A metric's national value for a single year (`null` when GUS has none). */
+export async function getYearValue(
+  metric: Metric,
+  year: number = MAX_YEAR,
+): Promise<number | null> {
+  const [datum] = await getNationalTrend(metric, year, year);
+  return datum?.value ?? null;
 }

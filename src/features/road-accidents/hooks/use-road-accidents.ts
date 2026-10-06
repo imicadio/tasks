@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MAX_YEAR, MIN_YEAR } from "../constants";
-import type { Metric, VoivodeshipDatum, YearDatum } from "../types";
+import { YEARS_DESC } from "../constants";
+import type {
+  Metric,
+  RoadAccidentsInitialState,
+  VoivodeshipDatum,
+  YearDatum,
+} from "../types";
 import type { Paginated } from "@/shared/types/pagination";
 
-type InitialData = {
-  metric: Metric;
-  year: number;
-  trend: YearDatum[];
-  breakdown: VoivodeshipDatum[];
-};
-
-export function useRoadAccidents(initial: InitialData) {
+export function useRoadAccidents(initial: RoadAccidentsInitialState) {
   const [metric, setMetric] = useState<Metric>(initial.metric);
   const [year, setYear] = useState<number>(initial.year);
   const [trend, setTrend] = useState<YearDatum[]>(initial.trend);
@@ -33,10 +31,9 @@ export function useRoadAccidents(initial: InitialData) {
     setIsLoading(true);
     setError(null);
 
-    const yearCount = MAX_YEAR - MIN_YEAR + 1;
     Promise.all([
       fetch(
-        `/api/road-accidents?kind=trend&metric=${metric}&page=1&pageSize=${yearCount}`,
+        `/api/road-accidents?kind=trend&metric=${metric}&page=1&pageSize=${YEARS_DESC.length}`,
       ).then((res) => res.json() as Promise<Paginated<YearDatum>>),
       fetch(
         `/api/road-accidents?kind=breakdown&metric=${metric}&year=${year}`,

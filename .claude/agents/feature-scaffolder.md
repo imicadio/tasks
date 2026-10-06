@@ -30,17 +30,30 @@ doesn't exist, stop and tell the user to create it before scaffolding.
    `docs/ARCHITECTURE.md` §2:
    - `index.ts` — barrel exporting only what's meant to be public
    - `README.md` — purpose, public exports, owned routes, dependencies
-   - `types.ts`, `schemas.ts` (one placeholder zod schema)
+   - `schemas.ts` (one placeholder zod schema)
+   - `constants/` with one topic file + `index.ts` barrel
+   - `types/` with one topic file (domain types) + `index.ts` barrel
+   - `utils/index.ts` (empty barrel) + `utils/__tests__/`
+   - Follow "What goes where" in §2 in everything you generate: no
+     top-level constants, shared types or helper functions inside
+     component/hook/page files, one component per file (extra ones in
+     `components/_internal/`).
    - `components/<Feature>Overview.tsx` (placeholder) + `components/__tests__/`
    - `hooks/use-<name>.ts` (placeholder) + `hooks/__tests__/`
    - `server/queries.ts` (starts with `import "server-only"`) and, if the
      feature has mutations, `server/actions.ts` (starts with `"use server"`)
      + `server/__tests__/`
+   - `server/page-data.ts` exporting `get<Feature>PageData()` if the page
+     needs data from more than one query
 
 4. Wire a thin route under `src/app/` that imports the feature's top-level
    component from its public index (`@/features/<name>`), and, if an API
    was requested, `src/app/api/<name>/route.ts` delegating to
-   `@/features/<name>`'s exported server queries/actions.
+   `@/features/<name>`'s exported server queries/actions. The page makes
+   one call into the feature; parse params with `firstValues` /
+   `requestSearchParams` (`@/shared/utils/search-params`), return 400s via
+   `badRequest` (`@/shared/utils/http`), and type params with Next's
+   `PageProps<"/route">` / `RouteContext<"/api/route">`.
 
 5. Append a row for this feature to the Feature Index table in
    `docs/ARCHITECTURE.md` §9.

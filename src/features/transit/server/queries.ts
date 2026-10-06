@@ -1,7 +1,8 @@
 import "server-only";
 import { TRISTAR_GPS_URL, TRISTAR_ROUTES_URL } from "../constants";
 import { routeTypeMapSchema, vehiclesSnapshotSchema } from "../schemas";
-import type { Vehicle, VehicleType, VehiclesSnapshot } from "../types";
+import type { VehicleType, VehiclesSnapshot } from "../types";
+import { applyVehicleTypes, filterByRoute } from "../utils/vehicles";
 
 /**
  * routeId → vehicle type, from ZTM Gdańsk's own route list — not guessed
@@ -46,25 +47,14 @@ export async function getVehiclePositions(): Promise<VehiclesSnapshot> {
   };
 }
 
-/** Pulled out as a pure function purely so the join logic is testable
- * without mocking two HTTP requests. */
-export function applyVehicleTypes(
-  vehicles: Vehicle[],
-  routeTypes: Map<number, VehicleType>,
-): Vehicle[] {
-  return vehicles.map((vehicle) => ({
-    ...vehicle,
-    vehicleType: routeTypes.get(vehicle.routeId) ?? "other",
-  }));
-}
-
-export function filterByRoute(
-  vehicles: Vehicle[],
+/** The current snapshot narrowed to vehicles on routes matching `route`
+ * (see `filterByRoute`); the whole fleet when `route` is empty. */
+export async function getVehiclesByRoute(
   route: string,
-): Vehicle[] {
-  if (!route) return vehicles;
-  const needle = route.trim().toLowerCase();
-  return vehicles.filter((v) =>
-    v.routeShortName.toLowerCase().includes(needle),
-  );
+): Promise<VehiclesSnapshot> {
+  const snapshot = await getVehiclePositions();
+  return {
+    lastUpdate: snapshot.lastUpdate,
+    vehicles: filterByRoute(snapshot.vehicles, route),
+  };
 }

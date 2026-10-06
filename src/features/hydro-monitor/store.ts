@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { StationId } from "./types";
+import type { FavoriteStationsState } from "./types";
 
 /**
  * Global client state: which stations the viewer pinned. Not server data
@@ -12,12 +12,6 @@ import type { StationId } from "./types";
  * small global store rather than prop-drilled local state.
  * See docs/decisions/0002-state-architecture.md.
  */
-type FavoriteStationsState = {
-  favoriteIds: StationId[];
-  toggleFavorite: (id: StationId) => void;
-  isFavorite: (id: StationId) => boolean;
-};
-
 export const useFavoriteStations = create<FavoriteStationsState>()(
   persist(
     (set, get) => ({

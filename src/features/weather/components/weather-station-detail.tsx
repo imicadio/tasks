@@ -1,21 +1,14 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Card } from "@/shared/ui/card";
-import { degreesToCompass } from "@/shared/lib/compass";
+import { MISSING_VALUE } from "../constants";
 import type { WeatherStation } from "../types";
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <Card className="flex flex-col gap-1">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-2xl font-semibold tabular-nums text-foreground">
-        {value}
-      </span>
-    </Card>
-  );
-}
-
-const DASH = "—";
+import {
+  formatMeasurementHour,
+  formatTemp,
+  formatWindDirection,
+  formatWithUnit,
+} from "../utils/format";
+import { Stat } from "./_internal/stat";
 
 /**
  * Shows every one of the 10 raw fields IMGW's single-station endpoint
@@ -49,56 +42,34 @@ export function WeatherStationDetail({ station }: { station: WeatherStation }) {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Stat label="ID stacji" value={station.id} />
-        <Stat label="Data pomiaru" value={station.measurementDate ?? DASH} />
+        <Stat
+          label="Data pomiaru"
+          value={station.measurementDate ?? MISSING_VALUE}
+        />
         <Stat
           label="Godzina pomiaru"
-          value={
-            station.measurementHour === null
-              ? DASH
-              : `${station.measurementHour}:00`
-          }
+          value={formatMeasurementHour(station.measurementHour)}
         />
-        <Stat
-          label="Temperatura"
-          value={
-            station.temperatureC === null
-              ? DASH
-              : `${station.temperatureC.toFixed(1)} °C`
-          }
-        />
+        <Stat label="Temperatura" value={formatTemp(station.temperatureC)} />
         <Stat
           label="Prędkość wiatru"
-          value={
-            station.windSpeedMs === null ? DASH : `${station.windSpeedMs} m/s`
-          }
+          value={formatWithUnit(station.windSpeedMs, " m/s")}
         />
         <Stat
           label="Kierunek wiatru"
-          value={
-            station.windDirectionDeg === null
-              ? DASH
-              : `${station.windDirectionDeg}° (${degreesToCompass(station.windDirectionDeg)})`
-          }
+          value={formatWindDirection(station.windDirectionDeg)}
         />
         <Stat
           label="Wilgotność względna"
-          value={
-            station.humidityPct === null ? DASH : `${station.humidityPct}%`
-          }
+          value={formatWithUnit(station.humidityPct, "%")}
         />
         <Stat
           label="Suma opadu"
-          value={
-            station.precipitationMm === null
-              ? DASH
-              : `${station.precipitationMm} mm`
-          }
+          value={formatWithUnit(station.precipitationMm, " mm")}
         />
         <Stat
           label="Ciśnienie"
-          value={
-            station.pressureHpa === null ? DASH : `${station.pressureHpa} hPa`
-          }
+          value={formatWithUnit(station.pressureHpa, " hPa")}
         />
       </div>
     </div>
