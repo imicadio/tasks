@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
-import { useUrlState } from "@/shared/hooks/use-url-state";
-import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
+import { useState } from "react";
 import { Card } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
-import { SEARCH_DEBOUNCE_MS } from "../constants";
-import { useVehiclePositions } from "../hooks/use-vehicle-positions";
+import { useRouteVehicles } from "../hooks/use-route-vehicles";
 import type { Vehicle, VehicleId, VehiclesSnapshot } from "../types";
 import { LazyTransitMap } from "./_internal/lazy-transit-map";
 import { TransitKpiTiles } from "./_internal/transit-kpi-tiles";
@@ -19,33 +16,14 @@ type Props = {
 };
 
 export const TransitDashboard = ({ initialRoute, initialSnapshot }: Props) => {
-  const [searchInput, setSearchInput] = useState(initialRoute);
-  // The URL key must match transitQuerySchema's field name ("route") —
-  // page.tsx parses raw searchParams straight through that schema for SSR,
-  // so a mismatched key here would silently drop the filter on first
-  // load/bookmark (an existing bug elsewhere in this app, just fixed
-  // alongside this feature — see hydro-monitor-dashboard.tsx's history).
-  const [route, setRoute] = useUrlState("route", initialRoute);
-  const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId | null>(
-    null,
+  const { vehicles, isError, searchInput, handleSearchChange } = useRouteVehicles(
+    initialRoute,
+    initialSnapshot,
   );
-
-  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
-  useEffect(() => {
-    if (debouncedSearch !== route) setRoute(debouncedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only route's setter should react to the debounced value
-  }, [debouncedSearch]);
-
-  const { data, isError } = useVehiclePositions(route);
-  const isInitial = route === initialRoute;
-  const snapshot = data ?? (isInitial ? initialSnapshot : null);
-  const vehicles = useMemo(() => snapshot?.vehicles ?? [], [snapshot]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId | null>(null);
 
   const selectedVehicle: Vehicle | null =
     vehicles.find((v) => v.id === selectedVehicleId) ?? null;
-
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
-    setSearchInput(event.target.value);
 
   return (
     <div className="flex flex-col gap-6">

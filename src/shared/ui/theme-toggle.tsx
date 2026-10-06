@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { ThemeIcon } from "./theme-icon";
 import { useTheme } from "next-themes";
 import { Button } from "@/shared/ui/button";
 
@@ -24,11 +24,7 @@ export const ThemeToggle = () => {
       aria-label="Przełącz motyw"
       onClick={handleToggle}
     >
-      {mounted && resolvedTheme === "dark" ? (
-        <Sun className="size-4" />
-      ) : (
-        <Moon className="size-4" />
-      )}
+      <ThemeIcon dark={mounted && resolvedTheme === "dark"} />
     </Button>
   );
 };

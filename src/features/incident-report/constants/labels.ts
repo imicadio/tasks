@@ -38,6 +38,9 @@ export const STATUS_LABELS: Record<IncidentStatus, string> = {
   resolved: "Rozwiązany",
 };
 
+/** Id of the address lookup status line (referenced by aria-describedby). */
+export const LOOKUP_STATUS_ID = "address-lookup-status";
+
 /** Status line under the address field while it's filled from the map. */
 export const LOOKUP_MESSAGES: Record<AddressLookupStatus, string> = {
   idle: "",

@@ -86,3 +86,69 @@ describe("toIncident", () => {
     expect(incident.reference).toMatch(/^ZGL-20261005-\d{4}$/);
   });
 });
+
+describe("joinIds", () => {
+  it("joins the non-empty ids, or returns undefined", async () => {
+    const { joinIds } = await import("../field-ids");
+    expect(joinIds("a-hint", false, undefined, "status")).toBe("a-hint status");
+    expect(joinIds(false, undefined)).toBeUndefined();
+  });
+});
+
+describe("firstInvalidFieldId", () => {
+  it("returns the first invalid field in on-screen order", async () => {
+    const { firstInvalidFieldId } = await import("../first-invalid-field");
+    expect(firstInvalidFieldId(0, { title: "x", category: "y" })).toBe("category");
+  });
+
+  it("maps the coordinates fieldset to its first input, and is null when valid", async () => {
+    const { firstInvalidFieldId } = await import("../first-invalid-field");
+    expect(firstInvalidFieldId(1, { location: "x" })).toBe("lat");
+    expect(firstInvalidFieldId(2, {})).toBeNull();
+  });
+});
+
+describe("markerZIndex", () => {
+  it("stacks new above selected above the rest", async () => {
+    const { markerZIndex } = await import("../marker-z-index");
+    expect(markerZIndex({ status: "new" }, false)).toBe(1000);
+    expect(markerZIndex({ status: "verified" }, true)).toBe(500);
+    expect(markerZIndex({ status: "resolved" }, false)).toBe(0);
+  });
+});
+
+describe("formatIncidentMeta", () => {
+  it("joins category and lower-cased severity", async () => {
+    const { formatIncidentMeta } = await import("../format");
+    expect(formatIncidentMeta({ category: "road", severity: "high" })).toBe(
+      "Zagrożenie drogowe · zagrożenie wysoki",
+    );
+  });
+});
+
+describe("draftSummary", () => {
+  it("shows dashes for an empty draft", async () => {
+    const { draftSummary } = await import("../draft-summary");
+    expect(draftSummary(EMPTY_DRAFT)).toEqual({
+      category: "—",
+      severity: "—",
+      title: "—",
+      place: "—",
+      when: "—",
+    });
+  });
+
+  it("labels filled fields and appends the district to the place", async () => {
+    const { draftSummary } = await import("../draft-summary");
+    const summary = draftSummary({
+      ...EMPTY_DRAFT,
+      category: "road",
+      severity: "low",
+      address: "Długa 1",
+      district: "srodmiescie",
+    });
+    expect(summary.category).toBe("Zagrożenie drogowe");
+    expect(summary.severity).toBe("Niski");
+    expect(summary.place).toBe("Długa 1, Śródmieście");
+  });
+});

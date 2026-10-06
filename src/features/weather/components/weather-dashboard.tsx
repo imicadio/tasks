@@ -1,29 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useUrlState } from "@/shared/hooks/use-url-state";
-import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
-import { labelOf } from "@/shared/utils/label-of";
-import { Card } from "@/shared/ui/card";
-import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
-import { DIR_LABELS, SEARCH_DEBOUNCE_MS, SORT_LABELS } from "../constants";
-import { useWeatherStations } from "../hooks/use-weather-stations";
-import type {
-  SortDirection,
-  WeatherPageData,
-  WeatherSortField,
-  WeatherStationsParams,
-} from "../types";
-import { formatTemp, formatWithUnit } from "../utils/format";
+import { useStationList } from "../hooks/use-station-list";
+import { useWeatherFilters } from "../hooks/use-weather-filters";
+import type { WeatherPageData, WeatherStationsParams } from "../types";
+import { FiltersBar } from "./_internal/filters-bar";
+import { StationsTable } from "./_internal/stations-table";
 import { SummaryTiles } from "./_internal/summary-tiles";
 
 type Props = WeatherPageData & {
@@ -31,39 +12,12 @@ type Props = WeatherPageData & {
 };
 
 export const WeatherDashboard = ({ initialParams, initialData, summary }: Props) => {
-  const router = useRouter();
-  const [searchInput, setSearchInput] = useState(initialParams.q);
-  const [sort, setSort] = useUrlState<WeatherSortField>(
-    "sort",
-    initialParams.sort,
-  );
-  const [dir, setDir] = useUrlState<SortDirection>("dir", initialParams.dir);
-  const [q, setQ] = useUrlState("q", initialParams.q);
-
-  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
-  useEffect(() => {
-    if (debouncedSearch !== q) setQ(debouncedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only q's setter should react to the debounced value
-  }, [debouncedSearch]);
-
-  const queryParams = { q, sort, dir };
-  const isInitialParams =
-    q === initialParams.q && sort === initialParams.sort && dir === initialParams.dir;
-  const { data, isFetching, isError } = useWeatherStations(queryParams);
-  const stations = data?.data ?? (isInitialParams ? initialData.data : []);
-
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
-    setSearchInput(event.target.value);
-  const handleSortChange = (value: WeatherSortField | null) => {
-    if (value) setSort(value);
-  };
-  const handleDirChange = (value: SortDirection | null) => {
-    if (value) setDir(value);
-  };
-  // The whole row is clickable for pointer users; the name link inside it
-  // is the keyboard/screen-reader path and mustn't trigger a second push.
-  const handleRowClick = (id: string) => () => router.push(`/pogoda/${id}`);
-  const handleLinkClick = (event: MouseEvent) => event.stopPropagation();
+  const filters = useWeatherFilters(initialParams);
+  const { stations, isFetching, isError } = useStationList({
+    params: filters.params,
+    initialParams,
+    initialData,
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -76,101 +30,8 @@ export const WeatherDashboard = ({ initialParams, initialData, summary }: Props)
       </header>
 
       <SummaryTiles summary={summary} />
-
-      <Card className="flex flex-wrap items-center gap-3">
-        <Input
-          value={searchInput}
-          onChange={handleSearchChange}
-          placeholder="Szukaj stacji…"
-          aria-label="Szukaj stacji pogodowej"
-          className="max-w-xs"
-        />
-        <Select value={sort} onValueChange={handleSortChange}>
-          <SelectTrigger aria-label="Sortuj wyniki według" className="w-48">
-            <SelectValue>{labelOf(SORT_LABELS)}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="temperatureC">{SORT_LABELS.temperatureC}</SelectItem>
-            <SelectItem value="windSpeedMs">{SORT_LABELS.windSpeedMs}</SelectItem>
-            <SelectItem value="name">{SORT_LABELS.name}</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={dir} onValueChange={handleDirChange}>
-          <SelectTrigger aria-label="Kierunek sortowania" className="w-36">
-            <SelectValue>{labelOf(DIR_LABELS)}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="desc">{DIR_LABELS.desc}</SelectItem>
-            <SelectItem value="asc">{DIR_LABELS.asc}</SelectItem>
-          </SelectContent>
-        </Select>
-        {isFetching && (
-          <span className="text-sm text-muted-foreground">Odświeżanie…</span>
-        )}
-        {isError && (
-          <span className="text-sm text-destructive">
-            Nie udało się pobrać danych.
-          </span>
-        )}
-      </Card>
-
-      <Card>
-        <table className="w-full text-left text-sm">
-          <caption className="sr-only">
-            Stacje pogodowe, {stations.length} wyników
-          </caption>
-          <thead>
-            <tr className="border-b border-border text-muted-foreground">
-              <th scope="col" className="py-1.5 font-medium">
-                Stacja
-              </th>
-              <th scope="col" className="py-1.5 text-right font-medium">
-                Temperatura
-              </th>
-              <th scope="col" className="py-1.5 text-right font-medium">
-                Wiatr
-              </th>
-              <th scope="col" className="py-1.5 text-right font-medium">
-                Wilgotność
-              </th>
-              <th scope="col" className="py-1.5 text-right font-medium">
-                Ciśnienie
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {stations.map((s) => (
-              <tr
-                key={s.id}
-                onClick={handleRowClick(s.id)}
-                className="cursor-pointer border-b border-border/60 hover:bg-accent"
-              >
-                <td className="py-1.5 text-foreground">
-                  <Link
-                    href={`/pogoda/${s.id}`}
-                    className="hover:underline"
-                    onClick={handleLinkClick}
-                  >
-                    {s.name}
-                  </Link>
-                </td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {formatTemp(s.temperatureC)}
-                </td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {formatWithUnit(s.windSpeedMs, " m/s")}
-                </td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {formatWithUnit(s.humidityPct, "%")}
-                </td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {formatWithUnit(s.pressureHpa, " hPa")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+      <FiltersBar filters={filters} isFetching={isFetching} isError={isError} />
+      <StationsTable stations={stations} />
     </div>
   );
 };

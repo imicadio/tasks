@@ -1,4 +1,4 @@
-import type { SortDirection, SortField } from "../types";
+import type { SortField } from "../types";
 
 export const SORT_LABELS: Record<SortField, string> = {
   status: "Sortuj: status",
@@ -6,7 +6,7 @@ export const SORT_LABELS: Record<SortField, string> = {
   name: "Sortuj: nazwa",
 };
 
-export const DIR_LABELS: Record<SortDirection, string> = {
-  desc: "Malejąco",
-  asc: "Rosnąco",
-};
+export { DIR_LABELS, SORT_DIRECTIONS } from "@/shared/constants/sort";
+
+/** Sort-field options, in dropdown order. */
+export const SORT_FIELDS: SortField[] = ["status", "waterLevelCm", "name"];

@@ -8,7 +8,7 @@ import {
   formatWindDirection,
   formatWithUnit,
 } from "../utils/format";
-import { Stat } from "./_internal/stat";
+import { StatTile } from "@/shared/ui/stat-tile";
 
 /**
  * Shows every one of the 10 raw fields IMGW's single-station endpoint
@@ -41,33 +41,40 @@ export const WeatherStationDetail = ({ station }: { station: WeatherStation }) =
       </header>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <Stat label="ID stacji" value={station.id} />
-        <Stat
+        <StatTile size="md" label="ID stacji" value={station.id} />
+        <StatTile
+          size="md"
           label="Data pomiaru"
           value={station.measurementDate ?? MISSING_VALUE}
         />
-        <Stat
+        <StatTile
+          size="md"
           label="Godzina pomiaru"
           value={formatMeasurementHour(station.measurementHour)}
         />
-        <Stat label="Temperatura" value={formatTemp(station.temperatureC)} />
-        <Stat
+        <StatTile size="md" label="Temperatura" value={formatTemp(station.temperatureC)} />
+        <StatTile
+          size="md"
           label="Prędkość wiatru"
           value={formatWithUnit(station.windSpeedMs, " m/s")}
         />
-        <Stat
+        <StatTile
+          size="md"
           label="Kierunek wiatru"
           value={formatWindDirection(station.windDirectionDeg)}
         />
-        <Stat
+        <StatTile
+          size="md"
           label="Wilgotność względna"
           value={formatWithUnit(station.humidityPct, "%")}
         />
-        <Stat
+        <StatTile
+          size="md"
           label="Suma opadu"
           value={formatWithUnit(station.precipitationMm, " mm")}
         />
-        <Stat
+        <StatTile
+          size="md"
           label="Ciśnienie"
           value={formatWithUnit(station.pressureHpa, " hPa")}
         />

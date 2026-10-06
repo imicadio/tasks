@@ -6,3 +6,6 @@ export const LIST_HEIGHT = 560;
 
 /** How long the search box waits after the last keystroke before querying. */
 export const SEARCH_DEBOUNCE_MS = 300;
+
+/** Rows rendered beyond the visible window, so fast scrolling doesn't flash blanks. */
+export const VIRTUAL_OVERSCAN = 8;

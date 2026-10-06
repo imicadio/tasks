@@ -3,7 +3,9 @@ import type { HydroStation, StationStatus } from "./station";
 export type StatusFilter = StationStatus | "all";
 
 export type SortField = "name" | "waterLevelCm" | "status";
-export type SortDirection = "asc" | "desc";
+import type { SortDirection } from "@/shared/types/sort";
+
+export type { SortDirection };
 
 /** Filters and sort order of the station list — mirrors `hydroQuerySchema`. */
 export type HydroStationsParams = {

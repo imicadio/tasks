@@ -306,6 +306,56 @@ export default function NotificationsPage() {
   `road-accidents`).
 - Tests: `*.test.ts(x)` inside a colocated `__tests__/`.
 
+### Engineering principles
+
+These apply to every file; reviewers (human and the `architecture-reviewer`
+agent) hold code to them.
+
+- **Single responsibility (SOLID's S).** A component renders one thing; a
+  hook owns one piece of state or one effect; a util does one
+  transformation. State, URL sync, fetching and effects live in hooks
+  (`hooks/use-<name>.ts`); components only wire hooks to JSX. A top-level
+  dashboard reads like a table of contents: header, then a handful of
+  named sections (`<StatusKpiTiles>`, `<FiltersBar>`, `<StationList>`).
+- **Open/closed, dependency inversion.** Prefer props and composition over
+  flags that switch a component's internals — e.g. `<StationRows>` picks
+  `<VirtualStationRows>` or `<NaiveStationRows>` instead of one component
+  branching everywhere. Pass data and callbacks in; don't reach into
+  stores from deep presentational components when the parent already has
+  the data.
+- **DRY.** The second time the same logic or markup appears, extract it —
+  across features into `src/shared/` (e.g. `useDebouncedUrlParam`,
+  `OptionSelect`, `StatTile`, `FetchStatus`, `whenPresent`,
+  `shallowEqual`), within a feature into its `utils/` or
+  `components/_internal/`.
+- **YAGNI.** No speculative props, options, config tables or abstraction
+  layers "for later". Delete code that nothing uses, including effects
+  that duplicate another effect's work.
+- **KISS.** Explicit beats clever: write five `<th>`s rather than mapping
+  over a column config with index-based styling; one early `return` beats
+  a nested condition.
+- **Early returns over JSX conditionals.** When a component renders one of
+  two trees, don't put a ternary in the JSX — move the choice into a small
+  component that `return`s early:
+
+  ```tsx
+  export const StationRows = ({ perfMode, ...props }: Props) => {
+    if (perfMode === "naive") return <NaiveStationRows {...props} />;
+    return <VirtualStationRows {...props} />;
+  };
+  ```
+
+  `{cond && <X />}` for showing/hiding one element and ternaries choosing
+  between plain values (`className`, text, numbers) are fine. No nested
+  ternaries anywhere.
+- **Small files.** A component file has at most **100 lines of code**
+  (blank lines and comments excluded). Past that, split out sub-components,
+  a hook, or utils — usually the file already does more than one job.
+
+Enforced by ESLint where it can be (`max-lines`, `no-nested-ternary`, and
+`no-restricted-syntax` for JSX ternaries choosing between trees); the rest
+is checked in review.
+
 ## 7. Testing conventions
 
 Test runner: Vitest + React Testing Library. Per layer:

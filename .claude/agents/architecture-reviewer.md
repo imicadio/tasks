@@ -70,6 +70,17 @@ missing.
      should be a named `handleX` in the component body, a curried handler
      inside `.map`, or a util. ESLint's `no-restricted-syntax` catches the
      direct cases; also look for ones nested deeper in the expression.
+   - **Engineering principles** (`docs/ARCHITECTURE.md` §6): flag
+     - a component file over 100 lines of code, or one doing several jobs
+       (state + fetching + layout + rows) — suggest the hook /
+       sub-component split;
+     - a JSX ternary choosing between two element trees, or a nested
+       ternary — suggest a small component with early returns;
+     - the same logic or markup in two places (DRY) — name the shared
+       home (`src/shared/…` or the feature's `utils/` / `_internal/`);
+     - speculative props, options or abstractions nothing uses (YAGNI),
+       and redundant effects or dead code;
+     - clever indirection where explicit code would be simpler (KISS).
    - **Bypassing the public API**: a feature itself importing from another
      feature's internals rather than that feature's `index.ts`.
 

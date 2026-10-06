@@ -1,7 +1,7 @@
-import { Check } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { STEPS } from "../../constants";
 import type { FormStep } from "../../types";
+import { StepMarker } from "./step-marker";
 
 export const Stepper = ({ current }: { current: FormStep }) => {
   return (
@@ -32,7 +32,7 @@ export const Stepper = ({ current }: { current: FormStep }) => {
                   !done && !active && "border-input text-muted-foreground",
                 )}
               >
-                {done ? <Check className="size-3.5" /> : index + 1}
+                <StepMarker done={done} number={index + 1} />
               </span>
               <span className="flex min-w-0 flex-col">
                 <span

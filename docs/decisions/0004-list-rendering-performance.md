@@ -17,7 +17,7 @@ build and demonstrate this rather than construct an artificial example.
 ## Decision
 
 Two independent optimizations, both real and both toggleable live in the
-running app (`src/features/hydro-monitor/components/hydro-monitor-dashboard.tsx`,
+running app (`src/features/hydro-monitor/components/_internal/station-rows.tsx`,
 the "Tryb naiwny" switch):
 
 1. **Row memoization.** `StationRow` (`components/station-row.tsx`) is

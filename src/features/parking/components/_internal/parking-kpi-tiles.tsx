@@ -1,4 +1,4 @@
-import { Card } from "@/shared/ui/card";
+import { StatTile } from "@/shared/ui/stat-tile";
 import type { ParkingLot } from "../../types";
 import { formatTime } from "../../utils/format";
 import { countFullLots, totalFreeSpots } from "../../utils/stats";
@@ -12,30 +12,12 @@ type Props = {
 export const ParkingKpiTiles = ({ lots, lastUpdate }: Props) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <Card className="flex flex-col gap-1">
-        <span className="text-sm text-muted-foreground">
-          Parkingi bez wolnych miejsc
-        </span>
-        <span className="text-3xl font-semibold tabular-nums text-foreground">
-          {countFullLots(lots)} / {lots.length}
-        </span>
-      </Card>
-      <Card className="flex flex-col gap-1">
-        <span className="text-sm text-muted-foreground">
-          Wolne miejsca łącznie
-        </span>
-        <span className="text-3xl font-semibold tabular-nums text-foreground">
-          {totalFreeSpots(lots)}
-        </span>
-      </Card>
-      <Card className="flex flex-col gap-1">
-        <span className="text-sm text-muted-foreground">
-          Ostatnia aktualizacja
-        </span>
-        <span className="text-3xl font-semibold tabular-nums text-foreground">
-          {formatTime(lastUpdate)}
-        </span>
-      </Card>
+      <StatTile
+        label="Parkingi bez wolnych miejsc"
+        value={`${countFullLots(lots)} / ${lots.length}`}
+      />
+      <StatTile label="Wolne miejsca łącznie" value={totalFreeSpots(lots)} />
+      <StatTile label="Ostatnia aktualizacja" value={formatTime(lastUpdate)} />
     </div>
   );
 };

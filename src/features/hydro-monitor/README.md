@@ -57,8 +57,10 @@ minutes by IMGW itself.
 Flip **"Tryb naiwny (demo wydajności)"** above the station list. In
 optimized mode, hovering a row re-renders exactly two rows (the row you
 left, the row you entered). In naive mode, every mounted row re-renders on
-any hover — because `StationRowUnmemoized` skips `React.memo` and receives
-a freshly-created inline handler every render.
+any hover — because `NaiveStationRows` (`components/_internal/naive-station-rows.tsx`) renders
+every row as `StationRowUnmemoized`, which skips `React.memo`, and hands
+it handlers recreated on every render. `VirtualStationRows` is the
+optimized counterpart.
 
 **To verify this yourself** (this is the actual point, not just reading
 about it):

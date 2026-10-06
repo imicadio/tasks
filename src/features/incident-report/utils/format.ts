@@ -1,4 +1,10 @@
-import { DATE_TIME_FORMAT, MISSING_VALUE } from "../constants";
+import {
+  CATEGORY_LABELS,
+  DATE_TIME_FORMAT,
+  MISSING_VALUE,
+  SEVERITY_LABELS,
+} from "../constants";
+import type { Incident } from "../types";
 
 export function formatDateTime(iso: string): string {
   const date = new Date(iso);
@@ -22,4 +28,9 @@ export function createReference(now: Date, random: number = Math.random()): stri
 export function toDateTimeLocal(date: Date): string {
   const offset = date.getTimezoneOffset() * 60_000;
   return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+/** "Zagrożenie drogowe · zagrożenie wysoki" — category and severity line. */
+export function formatIncidentMeta(incident: Pick<Incident, "category" | "severity">): string {
+  return `${CATEGORY_LABELS[incident.category]} · zagrożenie ${SEVERITY_LABELS[incident.severity].toLowerCase()}`;
 }

@@ -9,3 +9,6 @@ export * from "./nominatim-address";
 export * from "./parse-coordinate";
 export * from "./round-coord";
 export * from "./field-handlers";
+export * from "./first-invalid-field";
+export * from "./marker-z-index";
+export * from "./draft-summary";

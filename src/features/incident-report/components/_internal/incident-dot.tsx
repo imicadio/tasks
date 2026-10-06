@@ -1,0 +1,16 @@
+import { SEVERITY_COLOR_VAR } from "../../constants";
+import type { Incident } from "../../types";
+
+/** Severity-colored dot; a pulsing live dot for new reports. Decorative. */
+export const IncidentDot = ({ incident }: { incident: Incident }) => {
+  if (incident.status === "new") {
+    return <span aria-hidden="true" className="incident-live-dot mt-1.5 shrink-0" />;
+  }
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-1.5 size-2.5 shrink-0 rounded-full"
+      style={{ backgroundColor: SEVERITY_COLOR_VAR[incident.severity] }}
+    />
+  );
+};

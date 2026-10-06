@@ -42,6 +42,11 @@ doesn't exist, stop and tell the user to create it before scaffolding.
      special files — as an arrow function, with no functions inline in
      JSX: named handlers in the component body instead
      (`docs/ARCHITECTURE.md` §6).
+   - Follow §6's engineering principles: state/effects in hooks,
+     components ≤100 lines of code, early returns instead of JSX ternaries
+     between trees, reuse `src/shared/` pieces (`StatTile`, `OptionSelect`,
+     `FetchStatus`, `useDebouncedUrlParam`, …) instead of copying markup,
+     and nothing speculative.
    - `components/<Feature>Overview.tsx` (placeholder) + `components/__tests__/`
    - `hooks/use-<name>.ts` (placeholder) + `hooks/__tests__/`
    - `server/queries.ts` (starts with `import "server-only"`) and, if the

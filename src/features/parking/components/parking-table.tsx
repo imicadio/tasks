@@ -1,12 +1,7 @@
 "use client";
 
-import { MapPin } from "lucide-react";
-import { Button } from "@/shared/ui/button";
-import { cn } from "@/shared/utils/cn";
-import { AvailabilityBadge } from "./availability-badge";
-import { MISSING_VALUE } from "../constants";
-import { formatDateTime } from "../utils/format";
 import type { ParkingLot, ParkingLotId } from "../types";
+import { ParkingRow } from "./_internal/parking-row";
 
 /**
  * The primary, fully keyboard- and screen-reader-accessible view of the
@@ -75,54 +70,14 @@ export const ParkingTable = ({
               </td>
             </tr>
           )}
-          {lots.map((lot) => {
-            const selected = lot.id === selectedLotId;
-            return (
-              <tr
-                key={lot.id}
-                className={cn(
-                  "border-b border-border last:border-b-0",
-                  selected && "bg-accent",
-                )}
-              >
-                <td className="px-3 py-2 font-mono">{lot.shortName}</td>
-                <th scope="row" className="px-3 py-2 text-left font-medium text-foreground">
-                  {lot.name}
-                  <span className="block text-xs font-normal text-muted-foreground">
-                    {lot.address}
-                  </span>
-                </th>
-                <td className="px-3 py-2">{lot.streetEntrance || MISSING_VALUE}</td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {lot.availableSpots === null ? (
-                    <span className="text-muted-foreground">{MISSING_VALUE}</span>
-                  ) : (
-                    <span className="text-base font-semibold text-foreground">
-                      {lot.availableSpots}
-                    </span>
-                  )}
-                </td>
-                <td className="px-3 py-2">
-                  <AvailabilityBadge status={lot.status} />
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap tabular-nums text-muted-foreground">
-                  {formatDateTime(lot.availabilityUpdatedAt)}
-                </td>
-                <td className="px-3 py-2 text-right">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={handleShowOnMap(lot.id)}
-                    aria-pressed={selected}
-                    aria-label={`Pokaż na mapie: ${lot.name}`}
-                  >
-                    <MapPin aria-hidden="true" />
-                    Mapa
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
+          {lots.map((lot) => (
+            <ParkingRow
+              key={lot.id}
+              lot={lot}
+              selected={lot.id === selectedLotId}
+              onShowOnMap={handleShowOnMap(lot.id)}
+            />
+          ))}
         </tbody>
       </table>
     </div>

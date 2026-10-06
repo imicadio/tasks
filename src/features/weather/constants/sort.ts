@@ -1,4 +1,4 @@
-import type { SortDirection, WeatherSortField } from "../types";
+import type { WeatherSortField } from "../types";
 
 export const SORT_LABELS: Record<WeatherSortField, string> = {
   temperatureC: "Sortuj: temperatura",
@@ -6,7 +6,7 @@ export const SORT_LABELS: Record<WeatherSortField, string> = {
   name: "Sortuj: nazwa",
 };
 
-export const DIR_LABELS: Record<SortDirection, string> = {
-  desc: "Malejąco",
-  asc: "Rosnąco",
-};
+export { DIR_LABELS, SORT_DIRECTIONS } from "@/shared/constants/sort";
+
+/** Sort-field options, in dropdown order. */
+export const SORT_FIELDS: WeatherSortField[] = ["temperatureC", "windSpeedMs", "name"];

@@ -1,7 +1,9 @@
 import type { WeatherStation } from "./station";
 
 export type WeatherSortField = "name" | "temperatureC" | "windSpeedMs";
-export type SortDirection = "asc" | "desc";
+import type { SortDirection } from "@/shared/types/sort";
+
+export type { SortDirection };
 
 /** Search and sort order of the station list — mirrors `weatherQuerySchema`. */
 export type WeatherStationsParams = {

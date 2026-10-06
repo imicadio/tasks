@@ -6,3 +6,4 @@ export * from "./format-voivodeship-option";
 export * from "./gauge-percent";
 export * from "./list-voivodeships";
 export * from "./to-station-id";
+export * from "./virtual-row-style";

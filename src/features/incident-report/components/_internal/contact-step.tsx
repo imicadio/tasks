@@ -1,22 +1,12 @@
 import { Input } from "@/shared/ui/input";
-import {
-  CATEGORY_LABELS,
-  DISTRICTS,
-  MISSING_VALUE,
-  SEVERITY_LABELS,
-} from "../../constants";
 import type { StepProps } from "../../types";
-import {
-  checkboxFieldHandler,
-  textFieldHandler,
-} from "../../utils/field-handlers";
-import { describedBy, errorId } from "../../utils/field-ids";
-import { formatDateTime } from "../../utils/format";
+import { textFieldHandler } from "../../utils/field-handlers";
+import { describedBy } from "../../utils/field-ids";
+import { ConsentField } from "./consent-field";
 import { Field } from "./field";
-import { FieldError } from "./field-error";
+import { ReportSummary } from "./report-summary";
 
 export const ContactStep = ({ draft, errors, setField }: StepProps) => {
-  const district = DISTRICTS.find((d) => d.id === draft.district);
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -57,51 +47,8 @@ export const ContactStep = ({ draft, errors, setField }: StepProps) => {
         </Field>
       </div>
 
-      <section aria-labelledby="summary-heading" className="rounded-lg bg-muted/50 p-4">
-        <h3 id="summary-heading" className="mb-3 text-sm font-semibold text-foreground">
-          Podsumowanie zgłoszenia
-        </h3>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-          <dt className="text-muted-foreground">Kategoria</dt>
-          <dd className="text-foreground">
-            {draft.category ? CATEGORY_LABELS[draft.category] : MISSING_VALUE}
-          </dd>
-          <dt className="text-muted-foreground">Zagrożenie</dt>
-          <dd className="text-foreground">
-            {draft.severity ? SEVERITY_LABELS[draft.severity] : MISSING_VALUE}
-          </dd>
-          <dt className="text-muted-foreground">Tytuł</dt>
-          <dd className="text-foreground">{draft.title || MISSING_VALUE}</dd>
-          <dt className="text-muted-foreground">Miejsce</dt>
-          <dd className="text-foreground">
-            {draft.address || MISSING_VALUE}
-            {district && `, ${district.name}`}
-          </dd>
-          <dt className="text-muted-foreground">Kiedy</dt>
-          <dd className="text-foreground">
-            {draft.occurredAt ? formatDateTime(draft.occurredAt) : MISSING_VALUE}
-          </dd>
-        </dl>
-      </section>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="flex items-start gap-2.5 text-sm text-foreground">
-          <input
-            id="consent"
-            type="checkbox"
-            checked={draft.consent}
-            aria-invalid={errors.consent ? true : undefined}
-            aria-describedby={errors.consent ? errorId("consent") : undefined}
-            onChange={checkboxFieldHandler(setField, "consent")}
-            className="mt-0.5 size-4 shrink-0 accent-primary"
-          />
-          <span>
-            Potwierdzam, że podane informacje są prawdziwe, i zgadzam się na
-            kontakt w sprawie zgłoszenia.
-          </span>
-        </label>
-        <FieldError id="consent" message={errors.consent} />
-      </div>
+      <ReportSummary draft={draft} />
+      <ConsentField draft={draft} errors={errors} setField={setField} />
     </>
   );
 };

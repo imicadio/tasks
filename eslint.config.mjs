@@ -106,8 +106,16 @@ const eslintConfig = defineConfig([
             "JSXExpressionContainer > :matches(ConditionalExpression, LogicalExpression) > :matches(ArrowFunctionExpression, FunctionExpression)",
           message:
             "Don't write functions inline in JSX — extract a named handler (`const handleX = …`) or a util. See docs/ARCHITECTURE.md §6.",
+        },        {
+          selector:
+            "JSXExpressionContainer > ConditionalExpression:matches([consequent.type=/^JSX/], [alternate.type=/^JSX/])",
+          message:
+            "Don't choose between two JSX trees with a ternary — move the choice into a small component with early returns. See docs/ARCHITECTURE.md §6.",
         },
       ],
+      // Small files, one job each — see docs/ARCHITECTURE.md §6.
+      "max-lines": ["error", { max: 100, skipBlankLines: true, skipComments: true }],
+      "no-nested-ternary": "error",
     },
   },
   // Override default ignores of eslint-config-next.
