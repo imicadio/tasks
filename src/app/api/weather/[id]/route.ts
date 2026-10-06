@@ -3,7 +3,7 @@ import { weatherQueries } from "@/features/weather";
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: RouteContext<"/api/weather/[id]">,
 ) {
   const { id } = await params;
   const station = await weatherQueries.getWeatherStationById(id);

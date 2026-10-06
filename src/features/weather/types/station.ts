@@ -17,5 +17,5 @@ export type WeatherStation = {
   pressureHpa: number | null;
 };
 
-export type WeatherSortField = "name" | "temperatureC" | "windSpeedMs";
-export type SortDirection = "asc" | "desc";
+/** A station known to have a temperature reading. */
+export type WeatherStationWithTemp = WeatherStation & { temperatureC: number };

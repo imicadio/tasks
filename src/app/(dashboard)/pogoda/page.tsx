@@ -1,4 +1,9 @@
-import { WeatherDashboard, weatherQueries, weatherQuerySchema } from "@/features/weather";
+import {
+  WeatherDashboard,
+  getWeatherPageData,
+  weatherQuerySchema,
+} from "@/features/weather";
+import { firstValues } from "@/shared/utils/search-params";
 
 export const metadata = {
   title: "Pogoda | Dashboardy",
@@ -6,35 +11,13 @@ export const metadata = {
     "Bieżące warunki pogodowe na stacjach synoptycznych IMGW-PIB w Polsce.",
 };
 
-export default async function PogodaPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const rawParams = await searchParams;
-  const parsed = weatherQuerySchema.parse(
-    Object.fromEntries(
-      Object.entries(rawParams).map(([key, value]) => [
-        key,
-        Array.isArray(value) ? value[0] : value,
-      ]),
-    ),
-  );
-
-  const allStations = await weatherQueries.getWeatherStations();
-  const initialData = {
-    data: weatherQueries.filterAndSortWeatherStations(allStations, parsed),
-    total: allStations.length,
-  };
-  const summary = weatherQueries.summarizeWeather(allStations);
+export default async function PogodaPage({ searchParams }: PageProps<"/pogoda">) {
+  const params = weatherQuerySchema.parse(firstValues(await searchParams));
+  const pageData = await getWeatherPageData(params);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <WeatherDashboard
-        initialParams={parsed}
-        initialData={initialData}
-        summary={summary}
-      />
+      <WeatherDashboard initialParams={params} {...pageData} />
     </main>
   );
 }

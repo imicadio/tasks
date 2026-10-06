@@ -14,35 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
+import { DIR_LABELS, SEARCH_DEBOUNCE_MS, SORT_LABELS } from "../constants";
 import { useWeatherStations } from "../hooks/use-weather-stations";
-import type { SortDirection, WeatherSortField, WeatherStation } from "../types";
+import type {
+  SortDirection,
+  WeatherPageData,
+  WeatherSortField,
+  WeatherStationsParams,
+} from "../types";
+import { formatTemp, formatWithUnit } from "../utils/format";
+import { SummaryTiles } from "./_internal/summary-tiles";
 
-type Summary = {
-  avgTemperatureC: number | null;
-  warmest: WeatherStation | null;
-  coldest: WeatherStation | null;
-  stationCount: number;
-};
-
-type Props = {
-  initialParams: { q: string; sort: WeatherSortField; dir: SortDirection };
-  initialData: { data: WeatherStation[]; total: number };
-  summary: Summary;
-};
-
-function formatTemp(value: number | null): string {
-  return value === null ? "—" : `${value.toFixed(1)} °C`;
-}
-
-const SORT_LABELS: Record<WeatherSortField, string> = {
-  temperatureC: "Sortuj: temperatura",
-  windSpeedMs: "Sortuj: wiatr",
-  name: "Sortuj: nazwa",
-};
-
-const DIR_LABELS: Record<SortDirection, string> = {
-  desc: "Malejąco",
-  asc: "Rosnąco",
+type Props = WeatherPageData & {
+  initialParams: WeatherStationsParams;
 };
 
 export function WeatherDashboard({ initialParams, initialData, summary }: Props) {
@@ -55,7 +39,7 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
   const [dir, setDir] = useUrlState<SortDirection>("dir", initialParams.dir);
   const [q, setQ] = useUrlState("q", initialParams.q);
 
-  const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
   useEffect(() => {
     if (debouncedSearch !== q) setQ(debouncedSearch);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only q's setter should react to the debounced value
@@ -77,32 +61,7 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">
-            Średnia temperatura
-          </span>
-          <span className="text-3xl font-semibold tabular-nums text-primary">
-            {formatTemp(summary.avgTemperatureC)}
-          </span>
-        </Card>
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">Najcieplej</span>
-          <span className="text-2xl font-semibold tabular-nums text-foreground">
-            {summary.warmest
-              ? `${formatTemp(summary.warmest.temperatureC)} — ${summary.warmest.name}`
-              : "—"}
-          </span>
-        </Card>
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">Najzimniej</span>
-          <span className="text-2xl font-semibold tabular-nums text-foreground">
-            {summary.coldest
-              ? `${formatTemp(summary.coldest.temperatureC)} — ${summary.coldest.name}`
-              : "—"}
-          </span>
-        </Card>
-      </div>
+      <SummaryTiles summary={summary} />
 
       <Card className="flex flex-wrap items-center gap-3">
         <Input
@@ -185,13 +144,13 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
                   {formatTemp(s.temperatureC)}
                 </td>
                 <td className="py-1.5 text-right tabular-nums">
-                  {s.windSpeedMs === null ? "—" : `${s.windSpeedMs} m/s`}
+                  {formatWithUnit(s.windSpeedMs, " m/s")}
                 </td>
                 <td className="py-1.5 text-right tabular-nums">
-                  {s.humidityPct === null ? "—" : `${s.humidityPct}%`}
+                  {formatWithUnit(s.humidityPct, "%")}
                 </td>
                 <td className="py-1.5 text-right tabular-nums">
-                  {s.pressureHpa === null ? "—" : `${s.pressureHpa} hPa`}
+                  {formatWithUnit(s.pressureHpa, " hPa")}
                 </td>
               </tr>
             ))}

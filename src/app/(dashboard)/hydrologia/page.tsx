@@ -3,7 +3,6 @@ import {
   getHydroPageData,
   hydroQuerySchema,
 } from "@/features/hydro-monitor";
-import type { PageSearchParams } from "@/shared/types/search-params";
 import { firstValues } from "@/shared/utils/search-params";
 
 export const metadata = {
@@ -12,11 +11,7 @@ export const metadata = {
     "Poziomy wody i statusy alarmowe stacji wodowskazowych w Polsce na podstawie danych IMGW-PIB.",
 };
 
-export default async function HydrologiaPage({
-  searchParams,
-}: {
-  searchParams: Promise<PageSearchParams>;
-}) {
+export default async function HydrologiaPage({ searchParams }: PageProps<"/hydrologia">) {
   const params = hydroQuerySchema.parse(firstValues(await searchParams));
   const pageData = await getHydroPageData(params);
 

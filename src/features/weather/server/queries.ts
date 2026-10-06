@@ -1,7 +1,7 @@
 import "server-only";
 import { IMGW_SYNOP_URL } from "../constants";
 import { weatherStationSchema, weatherStationsResponseSchema } from "../schemas";
-import type { SortDirection, WeatherSortField, WeatherStation } from "../types";
+import type { WeatherStation, WeatherStationsParams } from "../types";
 
 export async function getWeatherStations(): Promise<WeatherStation[]> {
   const response = await fetch(IMGW_SYNOP_URL, { next: { revalidate: 300 } });
@@ -45,7 +45,7 @@ export async function getWeatherStationById(
 
 export function filterAndSortWeatherStations(
   stations: WeatherStation[],
-  options: { q: string; sort: WeatherSortField; dir: SortDirection },
+  options: WeatherStationsParams,
 ): WeatherStation[] {
   const { q, sort, dir } = options;
   const needle = q.toLowerCase();
@@ -75,22 +75,4 @@ export function filterAndSortWeatherStations(
   });
 
   return sorted;
-}
-
-export function summarizeWeather(stations: WeatherStation[]) {
-  const withTemp = stations.filter(
-    (s): s is WeatherStation & { temperatureC: number } =>
-      s.temperatureC !== null,
-  );
-  const avgTemperatureC = withTemp.length
-    ? withTemp.reduce((sum, s) => sum + s.temperatureC, 0) / withTemp.length
-    : null;
-  const warmest = withTemp.length
-    ? withTemp.reduce((a, b) => (a.temperatureC > b.temperatureC ? a : b))
-    : null;
-  const coldest = withTemp.length
-    ? withTemp.reduce((a, b) => (a.temperatureC < b.temperatureC ? a : b))
-    : null;
-
-  return { avgTemperatureC, warmest, coldest, stationCount: stations.length };
 }
