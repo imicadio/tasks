@@ -8,14 +8,14 @@ import { parseCoordinate } from "../../utils/parse-coordinate";
  * cursor, and resyncs only when the value changes from outside (a map
  * click, a district pick).
  */
-export function CoordinateInput({
+export const CoordinateInput = ({
   value,
   onChange,
   ...props
 }: Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> & {
   value: number | null;
   onChange: (value: number | null) => void;
-}) {
+}) => {
   const [text, setText] = useState(value === null ? "" : String(value));
   const [syncedValue, setSyncedValue] = useState(value);
   // Adjusting state during render (not in an effect) — see
@@ -37,4 +37,4 @@ export function CoordinateInput({
       }}
     />
   );
-}
+};

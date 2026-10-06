@@ -9,7 +9,7 @@ type Props = {
 };
 
 /** Full lots, total free spots and the feed's last update time. */
-export function ParkingKpiTiles({ lots, lastUpdate }: Props) {
+export const ParkingKpiTiles = ({ lots, lastUpdate }: Props) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <Card className="flex flex-col gap-1">
@@ -38,4 +38,4 @@ export function ParkingKpiTiles({ lots, lastUpdate }: Props) {
       </Card>
     </div>
   );
-}
+};

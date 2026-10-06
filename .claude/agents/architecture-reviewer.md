@@ -60,6 +60,11 @@ missing.
    - **Leaflet (or other `window`-dependent code) in a barrel**: a
      `utils/index.ts` or `constants/index.ts` re-exporting a file that
      imports `leaflet` — a server import of the barrel would crash.
+   - **Component not an arrow function** (`docs/ARCHITECTURE.md` §6): a
+     component declared with `function` — including `export default
+     function` in `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx`.
+     ESLint's `react/function-component-definition` catches the named
+     ones; check default exports by eye.
    - **Bypassing the public API**: a feature itself importing from another
      feature's internals rather than that feature's `index.ts`.
 

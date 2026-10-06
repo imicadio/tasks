@@ -7,7 +7,7 @@ import {
 import { Separator } from "@/shared/ui/separator";
 import { NAV_ITEMS, REPO_URL } from "./_constants/nav-items";
 
-export default function DashboardLayout({ children }: LayoutProps<"/">) {
+const DashboardLayout = ({ children }: LayoutProps<"/">) => {
   return (
     <SidebarProvider>
       <a
@@ -34,4 +34,6 @@ export default function DashboardLayout({ children }: LayoutProps<"/">) {
       </SidebarInset>
     </SidebarProvider>
   );
-}
+};
+
+export default DashboardLayout;

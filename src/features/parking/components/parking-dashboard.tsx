@@ -13,7 +13,7 @@ type Props = {
   initialSnapshot: ParkingSnapshot;
 };
 
-export function ParkingDashboard({ initialSnapshot }: Props) {
+export const ParkingDashboard = ({ initialSnapshot }: Props) => {
   const { data, isError } = useParkingLots(initialSnapshot);
   const lots = useMemo(() => data?.parkingLots ?? [], [data]);
   const [selectedLotId, setSelectedLotId] = useState<ParkingLotId | null>(
@@ -82,4 +82,4 @@ export function ParkingDashboard({ initialSnapshot }: Props) {
       </section>
     </div>
   );
-}
+};

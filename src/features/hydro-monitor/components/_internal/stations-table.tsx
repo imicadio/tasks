@@ -3,7 +3,7 @@ import type { HydroStation } from "../../types";
 
 /** Screen-reader-only table of the visible stations — see the comment
  * where it's rendered in hydro-monitor-dashboard.tsx. */
-export function StationsTable({ stations }: { stations: HydroStation[] }) {
+export const StationsTable = ({ stations }: { stations: HydroStation[] }) => {
   // `sr-only` sits on a wrapper div, not on the <table> itself: tables size
   // to their content and ignore `width/height: 1px`, so the hidden table
   // stayed ~22000px tall and stretched the page's scroll area. A
@@ -41,4 +41,4 @@ export function StationsTable({ stations }: { stations: HydroStation[] }) {
       </table>
     </div>
   );
-}
+};

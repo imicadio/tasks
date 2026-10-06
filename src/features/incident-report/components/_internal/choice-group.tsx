@@ -5,7 +5,7 @@ import { FieldError } from "./field-error";
 
 /** A radio group rendered as selectable cards. Native radios underneath, so
  * arrow-key navigation and the group semantics come for free. */
-export function ChoiceGroup<T extends string>({
+export const ChoiceGroup = <T extends string>({
   id,
   legend,
   name,
@@ -23,7 +23,7 @@ export function ChoiceGroup<T extends string>({
   error?: string;
   columns?: 2 | 3;
   onChange: (value: T) => void;
-}) {
+}) => {
   return (
     <fieldset
       id={id}
@@ -78,4 +78,4 @@ export function ChoiceGroup<T extends string>({
       <FieldError id={id} message={error} />
     </fieldset>
   );
-}
+};

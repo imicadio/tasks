@@ -4,7 +4,7 @@ import { FOCUS_ZOOM } from "../../constants";
 import type { LatLng } from "../../types";
 
 /** Pans and zooms the map to the selected vehicle. Renders nothing. */
-export function FlyToVehicle({ target }: { target: LatLng | null }) {
+export const FlyToVehicle = ({ target }: { target: LatLng | null }) => {
   const map = useMap();
   useEffect(() => {
     if (!target) return;
@@ -15,4 +15,4 @@ export function FlyToVehicle({ target }: { target: LatLng | null }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target?.lat, target?.lon]);
   return null;
-}
+};

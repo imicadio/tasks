@@ -11,7 +11,7 @@ import { formatDateTime } from "../../utils/format";
 import { Field } from "./field";
 import { FieldError } from "./field-error";
 
-export function ContactStep({ draft, errors, setField }: StepProps) {
+export const ContactStep = ({ draft, errors, setField }: StepProps) => {
   const district = DISTRICTS.find((d) => d.id === draft.district);
   return (
     <>
@@ -100,4 +100,4 @@ export function ContactStep({ draft, errors, setField }: StepProps) {
       </div>
     </>
   );
-}
+};

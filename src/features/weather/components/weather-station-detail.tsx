@@ -17,7 +17,7 @@ import { Stat } from "./_internal/stat";
  * version folded into a single "last measured" sentence instead of
  * surfacing individually.
  */
-export function WeatherStationDetail({ station }: { station: WeatherStation }) {
+export const WeatherStationDetail = ({ station }: { station: WeatherStation }) => {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -74,4 +74,4 @@ export function WeatherStationDetail({ station }: { station: WeatherStation }) {
       </div>
     </div>
   );
-}
+};

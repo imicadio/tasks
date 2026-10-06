@@ -10,7 +10,7 @@ type Props = {
 
 /** Shown when a dashboard's server render fails — typically an upstream
  * public API (IMGW, GUS, Tristar, ckan) timing out or erroring. */
-export default function DashboardError({ error, retry }: Props) {
+const DashboardError = ({ error, retry }: Props) => {
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -27,4 +27,6 @@ export default function DashboardError({ error, retry }: Props) {
       <Button onClick={() => retry()}>Spróbuj ponownie</Button>
     </div>
   );
-}
+};
+
+export default DashboardError;

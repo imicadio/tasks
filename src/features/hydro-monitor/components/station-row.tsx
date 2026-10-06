@@ -14,13 +14,13 @@ export type StationRowProps = {
   onToggleFavorite: (id: StationId) => void;
 };
 
-function StationRowImpl({
+const StationRowImpl = ({
   station,
   isFavorite,
   isHovered,
   onHover,
   onToggleFavorite,
-}: StationRowProps) {
+}: StationRowProps) => {
   const gaugePct = gaugePercent(station);
 
   return (
@@ -95,7 +95,7 @@ function StationRowImpl({
       </Badge>
     </div>
   );
-}
+};
 
 /** Optimized: skips re-rendering rows whose props haven't changed. */
 export const StationRow = memo(StationRowImpl);

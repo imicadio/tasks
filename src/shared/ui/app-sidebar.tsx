@@ -17,13 +17,13 @@ import {
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import type { NavItem } from "@/shared/types/nav";
 
-export function AppSidebar({
+export const AppSidebar = ({
   navItems,
   repoUrl,
 }: {
   navItems: NavItem[];
   repoUrl?: string;
-}) {
+}) => {
   const pathname = usePathname();
 
   return (
@@ -87,4 +87,4 @@ export function AppSidebar({
       </SidebarFooter>
     </Sidebar>
   );
-}
+};

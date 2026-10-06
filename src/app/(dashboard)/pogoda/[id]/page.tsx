@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: PageProps<"/pogoda/[id]">) {
   };
 }
 
-export default async function WeatherStationPage({ params }: PageProps<"/pogoda/[id]">) {
+const WeatherStationPage = async ({ params }: PageProps<"/pogoda/[id]">) => {
   const { id } = await params;
   const station = await weatherQueries.getWeatherStationById(id);
 
@@ -24,4 +24,6 @@ export default async function WeatherStationPage({ params }: PageProps<"/pogoda/
       <WeatherStationDetail station={station} />
     </main>
   );
-}
+};
+
+export default WeatherStationPage;

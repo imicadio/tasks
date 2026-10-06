@@ -8,7 +8,7 @@ import type { ParkingLot, ParkingLotId } from "../types";
 import { FlyToLot } from "./_internal/fly-to-lot";
 import { LotMarker } from "./_internal/lot-marker";
 
-export function ParkingMap({
+export const ParkingMap = ({
   lots,
   selectedLotId,
   onSelectLot,
@@ -16,7 +16,7 @@ export function ParkingMap({
   lots: ParkingLot[];
   selectedLotId: ParkingLotId | null;
   onSelectLot: (id: ParkingLotId) => void;
-}) {
+}) => {
   const selectedLot = lots.find((lot) => lot.id === selectedLotId) ?? null;
   return (
     <MapContainer
@@ -38,4 +38,4 @@ export function ParkingMap({
       <FlyToLot target={selectedLot} />
     </MapContainer>
   );
-}
+};

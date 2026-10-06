@@ -3,7 +3,7 @@ import { cn } from "@/shared/utils/cn";
 import { STEPS } from "../../constants";
 import type { FormStep } from "../../types";
 
-export function Stepper({ current }: { current: FormStep }) {
+export const Stepper = ({ current }: { current: FormStep }) => {
   return (
     <ol aria-label="Kroki formularza" className="grid grid-cols-3 gap-2">
       {STEPS.map((step, index) => {
@@ -57,4 +57,4 @@ export function Stepper({ current }: { current: FormStep }) {
       })}
     </ol>
   );
-}
+};

@@ -11,7 +11,7 @@ import { LazyIncidentMap } from "./_internal/lazy-incident-map";
 import { IncidentForm } from "./incident-form";
 import { IncidentList } from "./incident-list";
 
-export function IncidentReportDashboard() {
+export const IncidentReportDashboard = () => {
   const [hydrated, setHydrated] = useState(false);
   const reports = useIncidentReportStore((state) => state.reports);
   const step = useIncidentReportStore((state) => state.step);
@@ -111,4 +111,4 @@ export function IncidentReportDashboard() {
       </div>
     </div>
   );
-}
+};

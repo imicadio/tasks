@@ -3,7 +3,7 @@ import type { LatestByMetric } from "../../types";
 import { formatNumber } from "../../utils/format-number";
 import { Card } from "@/shared/ui/card";
 
-export function KpiRow({ latest }: { latest: LatestByMetric }) {
+export const KpiRow = ({ latest }: { latest: LatestByMetric }) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {METRICS.map((m) => (
@@ -28,4 +28,4 @@ export function KpiRow({ latest }: { latest: LatestByMetric }) {
       ))}
     </div>
   );
-}
+};

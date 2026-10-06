@@ -262,6 +262,30 @@ export default function NotificationsPage() {
 ## 6. Naming conventions
 
 - Files/folders: kebab-case. Components: PascalCase exports.
+- **Components are arrow functions**, including Next.js special files
+  (`page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`), which export
+  them as a separate default:
+
+  ```tsx
+  export const StationRow = ({ station }: StationRowProps) => {
+    return <div>{station.name}</div>;
+  };
+
+  const HydrologiaPage = async ({ searchParams }: PageProps<"/hydrologia">) => {
+    // …
+  };
+
+  export default HydrologiaPage;
+  ```
+
+  Generic components keep the type parameter on the arrow:
+  `export const ChoiceGroup = <T extends string>({ … }: Props<T>) => { … };`.
+  Enforced by ESLint's `react/function-component-definition` (fixable with
+  `npx eslint --fix` for named components; default exports need the
+  manual split above). shadcn-generated primitives in `src/shared/ui/` are
+  exempt, since `shadcn add` regenerates them. Non-component functions —
+  utils, hooks, server queries, `generateMetadata`, route handlers — stay
+  as `function` declarations.
 - Feature folder names: singular product noun, kebab-case (`billing`,
   `road-accidents`).
 - Tests: `*.test.ts(x)` inside a colocated `__tests__/`.

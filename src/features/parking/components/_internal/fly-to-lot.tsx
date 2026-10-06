@@ -4,7 +4,7 @@ import { FOCUS_ZOOM } from "../../constants";
 import type { ParkingLot } from "../../types";
 
 /** Pans and zooms the map to the selected lot. Renders nothing. */
-export function FlyToLot({ target }: { target: ParkingLot | null }) {
+export const FlyToLot = ({ target }: { target: ParkingLot | null }) => {
   const map = useMap();
   useEffect(() => {
     if (!target) return;
@@ -15,4 +15,4 @@ export function FlyToLot({ target }: { target: ParkingLot | null }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target?.id]);
   return null;
-}
+};

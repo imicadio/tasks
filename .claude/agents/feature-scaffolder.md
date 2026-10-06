@@ -38,6 +38,8 @@ doesn't exist, stop and tell the user to create it before scaffolding.
      top-level constants, shared types or helper functions inside
      component/hook/page files, one component per file (extra ones in
      `components/_internal/`).
+   - Write every component — including `page.tsx` and other Next.js
+     special files — as an arrow function (`docs/ARCHITECTURE.md` §6).
    - `components/<Feature>Overview.tsx` (placeholder) + `components/__tests__/`
    - `hooks/use-<name>.ts` (placeholder) + `hooks/__tests__/`
    - `server/queries.ts` (starts with `import "server-only"`) and, if the

@@ -1,7 +1,7 @@
 import { Card } from "@/shared/ui/card";
 
 /** One labelled measurement tile. */
-export function Stat({ label, value }: { label: string; value: string }) {
+export const Stat = ({ label, value }: { label: string; value: string }) => {
   return (
     <Card className="flex flex-col gap-1">
       <span className="text-sm text-muted-foreground">{label}</span>
@@ -10,4 +10,4 @@ export function Stat({ label, value }: { label: string; value: string }) {
       </span>
     </Card>
   );
-}
+};

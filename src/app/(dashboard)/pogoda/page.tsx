@@ -11,7 +11,7 @@ export const metadata = {
     "Bieżące warunki pogodowe na stacjach synoptycznych IMGW-PIB w Polsce.",
 };
 
-export default async function PogodaPage({ searchParams }: PageProps<"/pogoda">) {
+const PogodaPage = async ({ searchParams }: PageProps<"/pogoda">) => {
   const params = weatherQuerySchema.parse(firstValues(await searchParams));
   const pageData = await getWeatherPageData(params);
 
@@ -20,4 +20,6 @@ export default async function PogodaPage({ searchParams }: PageProps<"/pogoda">)
       <WeatherDashboard initialParams={params} {...pageData} />
     </main>
   );
-}
+};
+
+export default PogodaPage;

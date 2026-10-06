@@ -3,7 +3,7 @@ import { formatTemp, formatTempAtStation } from "../../utils/format";
 import { Card } from "@/shared/ui/card";
 
 /** Average, warmest and coldest temperature across all stations. */
-export function SummaryTiles({ summary }: { summary: WeatherSummary }) {
+export const SummaryTiles = ({ summary }: { summary: WeatherSummary }) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <Card className="flex flex-col gap-1">
@@ -28,4 +28,4 @@ export function SummaryTiles({ summary }: { summary: WeatherSummary }) {
       </Card>
     </div>
   );
-}
+};

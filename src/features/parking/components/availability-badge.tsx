@@ -2,7 +2,7 @@ import { AVAILABILITY_COLOR_VAR, AVAILABILITY_LABELS } from "../constants";
 import type { AvailabilityStatus } from "../types";
 
 /** Status as text, with color only as a reinforcing dot (WCAG 1.4.1). */
-export function AvailabilityBadge({ status }: { status: AvailabilityStatus }) {
+export const AvailabilityBadge = ({ status }: { status: AvailabilityStatus }) => {
   return (
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
       <span
@@ -13,4 +13,4 @@ export function AvailabilityBadge({ status }: { status: AvailabilityStatus }) {
       {AVAILABILITY_LABELS[status]}
     </span>
   );
-}
+};

@@ -18,7 +18,7 @@ type Props = {
   initialSnapshot: VehiclesSnapshot;
 };
 
-export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
+export const TransitDashboard = ({ initialRoute, initialSnapshot }: Props) => {
   const [searchInput, setSearchInput] = useState(initialRoute);
   // The URL key must match transitQuerySchema's field name ("route") —
   // page.tsx parses raw searchParams straight through that schema for SSR,
@@ -94,4 +94,4 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
       </div>
     </div>
   );
-}
+};

@@ -10,7 +10,8 @@ description: Review the current diff or branch for violations of this repo's fea
 3. Make sure the report covers the "What goes where" rule from
    `docs/ARCHITECTURE.md` §2 (inline constants, types, helpers or extra
    components; multi-step data assembly in `app/`; helpers duplicated
-   across features; untested utils) — not only import boundaries.
+   across features; untested utils) and the arrow-function component rule
+   from §6 — not only import boundaries.
 4. Present its Violations / Warnings / Suggestions report to the user
    as-is — this skill and its underlying agent are read-only; they report,
    they don't fix.

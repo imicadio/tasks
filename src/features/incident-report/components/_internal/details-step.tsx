@@ -9,7 +9,7 @@ import { describedBy } from "../../utils/field-ids";
 import { ChoiceGroup } from "./choice-group";
 import { Field } from "./field";
 
-export function DetailsStep({ draft, errors, setField }: StepProps) {
+export const DetailsStep = ({ draft, errors, setField }: StepProps) => {
   return (
     <>
       <ChoiceGroup
@@ -64,4 +64,4 @@ export function DetailsStep({ draft, errors, setField }: StepProps) {
       </Field>
     </>
   );
-}
+};

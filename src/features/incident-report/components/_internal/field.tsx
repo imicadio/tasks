@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { hintId } from "../../utils/field-ids";
 import { FieldError } from "./field-error";
 
-export function Field({
+export const Field = ({
   id,
   label,
   hint,
@@ -16,7 +16,7 @@ export function Field({
   error?: string;
   optional?: boolean;
   children: ReactNode;
-}) {
+}) => {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-foreground">
@@ -34,4 +34,4 @@ export function Field({
       <FieldError id={id} message={error} />
     </div>
   );
-}
+};

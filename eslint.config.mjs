@@ -74,6 +74,23 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Components are arrow functions — see docs/ARCHITECTURE.md §6.
+  // shadcn-generated primitives are exempt: `shadcn add` regenerates them.
+  {
+    files: ["src/**/*.tsx"],
+    ignores: [
+      "src/shared/ui/{badge,button,input,scroll-area,select,separator,sheet,sidebar,skeleton,switch,tooltip}.tsx",
+    ],
+    rules: {
+      "react/function-component-definition": [
+        "error",
+        {
+          namedComponents: "arrow-function",
+          unnamedComponents: "arrow-function",
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

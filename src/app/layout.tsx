@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Dashboardy danych publicznych: wypadki drogowe (GUS BDL), hydrologia i pogoda (IMGW).",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+const RootLayout = ({ children }: LayoutProps<"/">) => {
   return (
     <html
       lang="pl"
@@ -21,4 +21,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

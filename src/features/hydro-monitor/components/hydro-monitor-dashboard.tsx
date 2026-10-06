@@ -42,12 +42,12 @@ type Props = HydroPageData & {
   initialParams: HydroStationsParams;
 };
 
-export function HydroMonitorDashboard({
+export const HydroMonitorDashboard = ({
   initialParams,
   initialData,
   voivodeships,
   statusCounts,
-}: Props) {
+}: Props) => {
   // --- Local state: transient, UI-only, not worth sharing or persisting.
   const [searchInput, setSearchInput] = useState(initialParams.q);
   const [hoveredId, setHoveredId] = useState<StationId | null>(null);
@@ -308,4 +308,4 @@ export function HydroMonitorDashboard({
       </Card>
     </div>
   );
-}
+};

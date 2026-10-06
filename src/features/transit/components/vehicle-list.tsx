@@ -5,7 +5,7 @@ import { VEHICLE_TYPE_COLOR_VAR, VEHICLE_TYPE_LABELS } from "../constants";
 import type { Vehicle, VehicleId } from "../types";
 import { formatDelay } from "../utils/format";
 
-export function VehicleList({
+export const VehicleList = ({
   vehicles,
   selectedVehicleId,
   onSelectVehicle,
@@ -13,7 +13,7 @@ export function VehicleList({
   vehicles: Vehicle[];
   selectedVehicleId: VehicleId | null;
   onSelectVehicle: (id: VehicleId) => void;
-}) {
+}) => {
   return (
     <ul
       aria-label="Lista pojazdów"
@@ -65,4 +65,4 @@ export function VehicleList({
       ))}
     </ul>
   );
-}
+};

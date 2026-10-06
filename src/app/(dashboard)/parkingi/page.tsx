@@ -6,7 +6,7 @@ export const metadata = {
     "Parkingi w Gdańsku z liczbą wolnych miejsc na żywo (ckan.multimediagdansk.pl).",
 };
 
-export default async function ParkingiPage() {
+const ParkingiPage = async () => {
   const snapshot = await parkingQueries.getParkingLots();
 
   return (
@@ -14,4 +14,6 @@ export default async function ParkingiPage() {
       <ParkingDashboard initialSnapshot={snapshot} />
     </div>
   );
-}
+};
+
+export default ParkingiPage;

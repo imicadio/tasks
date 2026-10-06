@@ -29,7 +29,7 @@ type Props = WeatherPageData & {
   initialParams: WeatherStationsParams;
 };
 
-export function WeatherDashboard({ initialParams, initialData, summary }: Props) {
+export const WeatherDashboard = ({ initialParams, initialData, summary }: Props) => {
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(initialParams.q);
   const [sort, setSort] = useUrlState<WeatherSortField>(
@@ -159,4 +159,4 @@ export function WeatherDashboard({ initialParams, initialData, summary }: Props)
       </Card>
     </div>
   );
-}
+};

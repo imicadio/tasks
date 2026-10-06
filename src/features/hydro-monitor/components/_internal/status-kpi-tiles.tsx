@@ -10,7 +10,7 @@ type Props = {
 
 /** One tile per status with its station count; clicking a tile filters
  * the list to that status. */
-export function StatusKpiTiles({ counts, activeStatus, onSelect }: Props) {
+export const StatusKpiTiles = ({ counts, activeStatus, onSelect }: Props) => {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {STATUS_KPI_ORDER.map((s) => (
@@ -45,4 +45,4 @@ export function StatusKpiTiles({ counts, activeStatus, onSelect }: Props) {
       ))}
     </div>
   );
-}
+};

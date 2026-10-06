@@ -11,9 +11,9 @@ export const metadata = {
     "Mapa pozycji GPS pojazdów komunikacji publicznej w Gdańsku na żywo (Tristar / ZTM Gdańsk).",
 };
 
-export default async function TransportPage({
+const TransportPage = async ({
   searchParams,
-}: PageProps<"/transport">) {
+}: PageProps<"/transport">) => {
   const { route } = transitQuerySchema.parse(firstValues(await searchParams));
   const snapshot = await transitQueries.getVehiclesByRoute(route);
 
@@ -22,4 +22,6 @@ export default async function TransportPage({
       <TransitDashboard initialRoute={route} initialSnapshot={snapshot} />
     </main>
   );
-}
+};
+
+export default TransportPage;

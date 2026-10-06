@@ -28,7 +28,7 @@ import { BreakdownTable } from "./_internal/breakdown-table";
 import { KpiRow } from "./_internal/kpi-row";
 import { Card } from "@/shared/ui/card";
 
-export function RoadAccidentsDashboard({
+export const RoadAccidentsDashboard = ({
   initialTrend,
   initialBreakdown,
   initialLatest,
@@ -36,7 +36,7 @@ export function RoadAccidentsDashboard({
   initialTrend: YearDatum[];
   initialBreakdown: VoivodeshipDatum[];
   initialLatest: LatestByMetric;
-}) {
+}) => {
   const { metric, setMetric, year, setYear, trend, breakdown, isLoading, error } =
     useRoadAccidents({
       metric: DEFAULT_METRIC,
@@ -187,4 +187,4 @@ export function RoadAccidentsDashboard({
       </Card>
     </div>
   );
-}
+};

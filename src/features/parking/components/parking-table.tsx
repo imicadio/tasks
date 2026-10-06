@@ -14,7 +14,7 @@ import type { ParkingLot, ParkingLotId } from "../types";
  * caption and scoped headers. The map is a visual complement, not the only
  * way to get at a lot's numbers.
  */
-export function ParkingTable({
+export const ParkingTable = ({
   lots,
   selectedLotId,
   onSelectLot,
@@ -22,7 +22,7 @@ export function ParkingTable({
   lots: ParkingLot[];
   selectedLotId: ParkingLotId | null;
   onSelectLot: (id: ParkingLotId) => void;
-}) {
+}) => {
   return (
     // Focusable scroll container: on narrow screens the table scrolls
     // horizontally, and keyboard users must be able to reach that scroll
@@ -125,4 +125,4 @@ export function ParkingTable({
       </table>
     </div>
   );
-}
+};

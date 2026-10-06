@@ -20,11 +20,11 @@ import { LocationStep } from "./_internal/location-step";
 import { Stepper } from "./_internal/stepper";
 import { SubmitSuccess } from "./_internal/submit-success";
 
-export function IncidentForm({
+export const IncidentForm = ({
   onSubmitted,
 }: {
   onSubmitted: (incident: Incident) => void;
-}) {
+}) => {
   const draft = useIncidentReportStore((state) => state.draft);
   const step = useIncidentReportStore((state) => state.step);
   const setField = useIncidentReportStore((state) => state.setField);
@@ -149,4 +149,4 @@ export function IncidentForm({
       </div>
     </form>
   );
-}
+};

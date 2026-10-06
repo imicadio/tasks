@@ -5,7 +5,7 @@ import { formatLotName } from "../../utils/format";
 import { createLotIcon } from "../../utils/marker-icon";
 
 /** One lot's map marker, labelled with its free-spot count. */
-export function LotMarker({
+export const LotMarker = ({
   lot,
   selected,
   onSelect,
@@ -13,7 +13,7 @@ export function LotMarker({
   lot: ParkingLot;
   selected: boolean;
   onSelect: (id: ParkingLotId) => void;
-}) {
+}) => {
   const icon = useMemo(() => createLotIcon(lot, selected), [lot, selected]);
   return (
     <Marker
@@ -25,4 +25,4 @@ export function LotMarker({
       <Tooltip>{formatLotName(lot)}</Tooltip>
     </Marker>
   );
-}
+};

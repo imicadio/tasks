@@ -6,7 +6,7 @@ import { formatDateTime } from "../../utils/format";
 import { createIncidentIcon } from "../../utils/marker-icon";
 
 /** One incident's map marker with a details popup. */
-export function IncidentMarker({
+export const IncidentMarker = ({
   incident,
   selected,
   onSelect,
@@ -14,7 +14,7 @@ export function IncidentMarker({
   incident: Incident;
   selected: boolean;
   onSelect: (id: string) => void;
-}) {
+}) => {
   const icon = useMemo(() => createIncidentIcon(incident, selected), [incident, selected]);
   return (
     <Marker
@@ -37,4 +37,4 @@ export function IncidentMarker({
       </Popup>
     </Marker>
   );
-}
+};

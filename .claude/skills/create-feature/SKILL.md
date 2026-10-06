@@ -14,7 +14,7 @@ description: Scaffold a new feature module following this repo's feature-based a
 4. Invoke the `feature-scaffolder` agent with the feature name, purpose,
    and these decisions, instructing it to read `docs/ARCHITECTURE.md`
    first (it already knows to, but state it explicitly) — in particular
-   the `constants/` / `types/` / `utils/` folder layout and the "What goes
-   where" rule in §2.
+   the `constants/` / `types/` / `utils/` folder layout, the "What goes
+   where" rule in §2, and arrow-function components (§6).
 5. After it finishes, run `npm run lint` and report the created file tree
    plus what the user should fill in next (real logic, real tests).

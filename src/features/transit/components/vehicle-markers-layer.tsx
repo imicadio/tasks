@@ -20,7 +20,7 @@ import { createVehicleIcon } from "../utils/marker-icon";
  * never touching React state. See
  * docs/decisions/0006-realtime-map-rendering.md.
  */
-export function VehicleMarkersLayer({
+export const VehicleMarkersLayer = ({
   vehicles,
   selectedVehicleId,
   onSelectVehicle,
@@ -28,7 +28,7 @@ export function VehicleMarkersLayer({
   vehicles: Vehicle[];
   selectedVehicleId: VehicleId | null;
   onSelectVehicle: (id: VehicleId) => void;
-}) {
+}) => {
   const map = useMap();
   const markersRef = useRef<Map<VehicleId, TrackedMarker>>(new Map());
   const vehiclesRef = useRef<Vehicle[]>(vehicles);
@@ -143,4 +143,4 @@ export function VehicleMarkersLayer({
   }, [map]);
 
   return null;
-}
+};

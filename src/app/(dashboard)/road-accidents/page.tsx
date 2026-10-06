@@ -9,7 +9,7 @@ export const metadata = {
     "Dashboard statystyk wypadków drogowych w Polsce na podstawie danych GUS BDL.",
 };
 
-export default async function RoadAccidentsPage() {
+const RoadAccidentsPage = async () => {
   const { trend, breakdown, latest } = await getRoadAccidentsPageData();
 
   return (
@@ -21,4 +21,6 @@ export default async function RoadAccidentsPage() {
       />
     </main>
   );
-}
+};
+
+export default RoadAccidentsPage;

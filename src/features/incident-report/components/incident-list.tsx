@@ -10,7 +10,7 @@ import type { Incident } from "../types";
 
 /** The map's text equivalent: every incident as a list item; activating one
  * flies the map to it. */
-export function IncidentList({
+export const IncidentList = ({
   incidents,
   selectedId,
   onSelect,
@@ -18,7 +18,7 @@ export function IncidentList({
   incidents: Incident[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-}) {
+}) => {
   return (
     <ul aria-label="Lista incydentów" className="flex flex-col gap-2">
       {incidents.map((incident) => {
@@ -68,4 +68,4 @@ export function IncidentList({
       })}
     </ul>
   );
-}
+};

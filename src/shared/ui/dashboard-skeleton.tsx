@@ -16,11 +16,11 @@ type Props = {
  * tiles, filters, main content) closely enough that the swap to real
  * content doesn't jump.
  */
-export function DashboardSkeleton({
+export const DashboardSkeleton = ({
   kpis,
   filters = true,
   content = "block",
-}: Props) {
+}: Props) => {
   return (
     <div className="flex flex-col gap-6" aria-busy="true">
       <p role="status" className="sr-only">
@@ -62,4 +62,4 @@ export function DashboardSkeleton({
       )}
     </div>
   );
-}
+};

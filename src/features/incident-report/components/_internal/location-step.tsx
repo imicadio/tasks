@@ -10,12 +10,12 @@ import { CoordinateInput } from "./coordinate-input";
 import { Field } from "./field";
 import { FieldError } from "./field-error";
 
-export function LocationStep({
+export const LocationStep = ({
   draft,
   errors,
   setField,
   onPickDistrict,
-}: StepProps & { onPickDistrict: (districtId: string) => void }) {
+}: StepProps & { onPickDistrict: (districtId: string) => void }) => {
   const addressLookup = useIncidentReportStore((state) => state.addressLookup);
   const lookupAddress = useIncidentReportStore((state) => state.lookupAddress);
   const hasPoint = draft.lat !== null && draft.lon !== null;
@@ -148,4 +148,4 @@ export function LocationStep({
       </Field>
     </>
   );
-}
+};

@@ -5,7 +5,7 @@ import { formatAverageDelay } from "../../utils/format";
 import { averageDelaySeconds, countRoutes } from "../../utils/vehicles";
 
 /** Active vehicles, distinct routes and the fleet's average delay. */
-export function TransitKpiTiles({ vehicles }: { vehicles: Vehicle[] }) {
+export const TransitKpiTiles = ({ vehicles }: { vehicles: Vehicle[] }) => {
   const routeCount = useMemo(() => countRoutes(vehicles), [vehicles]);
   const avgDelay = useMemo(() => averageDelaySeconds(vehicles), [vehicles]);
 
@@ -33,4 +33,4 @@ export function TransitKpiTiles({ vehicles }: { vehicles: Vehicle[] }) {
       </Card>
     </div>
   );
-}
+};

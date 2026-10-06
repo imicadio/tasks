@@ -10,7 +10,7 @@ type Props = {
 
 /** Confirmation shown after a report is stored; takes focus so screen
  * readers announce it. */
-export function SubmitSuccess({ incident, onReset }: Props) {
+export const SubmitSuccess = ({ incident, onReset }: Props) => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     headingRef.current?.focus();
@@ -49,4 +49,4 @@ export function SubmitSuccess({ incident, onReset }: Props) {
       </Button>
     </div>
   );
-}
+};
