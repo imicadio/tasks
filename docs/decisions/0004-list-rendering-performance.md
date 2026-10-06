@@ -40,31 +40,24 @@ claimed optimization but a **demonstrated** one: flipping "Tryb naiwny"
 swaps in `StationRowUnmemoized` — the identical component body, minus the
 `memo()` wrapper — fed by inline arrow-function handlers created fresh on
 every render, with virtualization also disabled (all ~900 rows mounted
-directly). Every row carries a live render counter
-(`src/shared/hooks/use-render-count.ts`) visible on screen. Hovering a
-single row in optimized mode moves the counter on exactly two rows; the
-same action in naive mode moves every visible row's counter simultaneously
-— reproducible in this repo without needing a canned screen recording, and
-exactly what React DevTools Profiler's flamegraph or Chrome's Performance
-panel would show as "commit re-rendered N components" vs. "commit
-re-rendered 2 components."
+directly). Hovering a single row in optimized mode re-renders exactly two
+rows; the same action in naive mode re-renders every mounted row — visible
+in React DevTools Profiler's flamegraph or Chrome's Performance panel as
+"commit re-rendered N components" vs. "commit re-rendered 2 components."
+(An earlier version showed a per-row render counter on screen; it was
+removed because it surfaced debug data to end users.)"
 
 ## Consequences
 
 - Verifying this claim yourself (not just trusting the README) is the
   point: open React DevTools' Profiler tab, start recording, hover a few
   rows in optimized mode, stop, look at the flamegraph — then repeat in
-  naive mode. The row-count badges give an immediate visual signal even
-  without the Profiler open; the Profiler gives the authoritative one.
+  naive mode.
 - Virtualization means row height must stay fixed (`ROW_HEIGHT = 56`,
   `h-14` in the row's own class) — a variable-height row (e.g. wrapping
   long station names onto two lines) would need `useVirtualizer`'s dynamic
   measurement mode instead. Not needed yet; noted as a constraint, not
   solved speculatively.
-- The debug render-count badge (`useRenderCount`) is intentionally
-  dev/demo-only instrumentation, not a production feature — see
-  `docs/TECH_DEBT.md` for the note on gating it behind an env flag if this
-  code is ever deployed somewhere a real end user would see it.
 - Server-side filtering/sorting (the API route, not the client) means the
   client never has to `useMemo` a large filter/sort pass on every keystroke
   in the first place — the "expensive computation" that `useMemo` classically

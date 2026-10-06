@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Star } from "lucide-react";
-import { useRenderCount } from "@/shared/hooks/use-render-count";
 import { Badge } from "@/shared/ui/badge";
 import { STATUS_COLORS, STATUS_LABELS } from "../constants";
 import type { HydroStation, StationId } from "../types";
@@ -11,8 +10,6 @@ export type StationRowProps = {
   isHovered: boolean;
   onHover: (id: StationId) => void;
   onToggleFavorite: (id: StationId) => void;
-  /** Shows a live render counter — see the perf case study in README.md. */
-  showRenderCount: boolean;
 };
 
 function formatCm(value: number | null): string {
@@ -25,9 +22,7 @@ function StationRowImpl({
   isHovered,
   onHover,
   onToggleFavorite,
-  showRenderCount,
 }: StationRowProps) {
-  const renderCount = useRenderCount();
   const gaugeMax = station.alarmLevelCm ?? station.warningLevelCm ?? null;
   const gaugePct =
     gaugeMax && station.waterLevelCm !== null
@@ -37,7 +32,7 @@ function StationRowImpl({
   return (
     <div
       onMouseEnter={() => onHover(station.id)}
-      className={`grid h-14 grid-cols-[auto_1.4fr_1fr_1.2fr_auto_auto] items-center gap-3 border-b border-border px-3 text-sm transition-colors ${
+      className={`grid h-14 grid-cols-[auto_1.4fr_1fr_1.2fr_auto] items-center gap-3 border-b border-border px-3 text-sm transition-colors ${
         isHovered ? "bg-accent" : ""
       }`}
     >
@@ -104,15 +99,6 @@ function StationRowImpl({
         />
         {STATUS_LABELS[station.status]}
       </Badge>
-
-      {showRenderCount && (
-        <span
-          className="justify-self-end font-mono text-xs text-muted-foreground"
-          title="Liczba renderów tego wiersza — patrz README.md (case study wydajności)"
-        >
-          {renderCount}
-        </span>
-      )}
     </div>
   );
 }

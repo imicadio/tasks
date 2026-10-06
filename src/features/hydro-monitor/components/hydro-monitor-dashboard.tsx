@@ -288,13 +288,12 @@ export function HydroMonitorDashboard({
           </label>
         </div>
 
-        <div className="grid h-9 grid-cols-[auto_1.4fr_1fr_1.2fr_auto_auto] items-center gap-3 border-b border-border px-3 text-xs font-medium text-muted-foreground">
+        <div className="grid h-9 grid-cols-[auto_1.4fr_1fr_1.2fr_auto] items-center gap-3 border-b border-border px-3 text-xs font-medium text-muted-foreground">
           <span className="sr-only">Ulubione</span>
           <span>Stacja</span>
           <span>Województwo</span>
           <span>Stan wody</span>
           <span>Status</span>
-          <span className="justify-self-end">Renderów</span>
         </div>
 
         <div
@@ -329,7 +328,6 @@ export function HydroMonitorDashboard({
                       isHovered={hoveredId === station.id}
                       onHover={handleHover}
                       onToggleFavorite={handleToggleFavorite}
-                      showRenderCount
                     />
                   </div>
                 );
@@ -344,7 +342,6 @@ export function HydroMonitorDashboard({
                 isHovered={hoveredId === station.id}
                 onHover={(id) => setHoveredId(id)}
                 onToggleFavorite={(id) => toggleFavorite(id)}
-                showRenderCount
               />
             ))
           )}

@@ -92,7 +92,7 @@ makes the ESLint boundary rule in §4 mechanically enforceable.
 ```
 src/shared/
   ui/          # design-system primitives: button.tsx, input.tsx, sidebar.tsx, card.tsx — no product concepts
-  hooks/       # generic hooks: use-url-state.ts, use-debounced-value.ts, use-render-count.ts, use-mobile.ts
+  hooks/       # generic hooks: use-url-state.ts, use-debounced-value.ts, use-mobile.ts
   lib/         # generic utilities: utils.ts (cn), api-validation.ts (apiNullableNumber)
   types/       # cross-cutting generic types: pagination.ts (Paginated<T>)
   providers/   # cross-cutting React context providers: app-providers.tsx (theme, React Query, tooltips)

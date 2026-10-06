@@ -51,12 +51,11 @@ minutes by IMGW itself.
 
 ## Performance case study (see ADR 0004)
 
-Flip **"Tryb naiwny (demo wydajności)"** above the station list. Each row
-shows a live render count. In optimized mode, hovering a row moves exactly
-two counters (the row you left, the row you entered). In naive mode, every
-visible row's counter moves together on any hover — because
-`StationRowUnmemoized` skips `React.memo` and receives a freshly-created
-inline handler every render.
+Flip **"Tryb naiwny (demo wydajności)"** above the station list. In
+optimized mode, hovering a row re-renders exactly two rows (the row you
+left, the row you entered). In naive mode, every mounted row re-renders on
+any hover — because `StationRowUnmemoized` skips `React.memo` and receives
+a freshly-created inline handler every render.
 
 **To verify this yourself** (this is the actual point, not just reading
 about it):
