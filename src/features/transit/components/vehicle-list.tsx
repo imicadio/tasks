@@ -35,7 +35,7 @@ export function VehicleList({
             type="button"
             onClick={() => onSelectVehicle(vehicle.id)}
             aria-current={vehicle.id === selectedVehicleId ? "true" : undefined}
-            className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
+            className={`relative flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
               vehicle.id === selectedVehicleId ? "bg-accent" : ""
             }`}
           >
@@ -50,6 +50,11 @@ export function VehicleList({
               <Badge variant="outline" className="shrink-0 font-mono">
                 {vehicle.routeShortName}
               </Badge>
+              {/* The button is `relative` so this absolutely positioned
+                  sr-only span stays anchored inside the scrolling list.
+                  Without it, each span escapes the list's overflow clip
+                  and the spans for rows far down stretch the page's
+                  scroll height. */}
               <span className="sr-only">
                 {VEHICLE_TYPE_LABELS[vehicle.vehicleType]}
               </span>

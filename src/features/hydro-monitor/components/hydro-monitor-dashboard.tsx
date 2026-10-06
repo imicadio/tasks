@@ -358,35 +358,41 @@ export function HydroMonitorDashboard({
             replacement: the visual list above stays fully keyboard-operable
             on its own. Favoriting isn't available from this table yet; see
             docs/TECH_DEBT.md. */}
-        <table className="sr-only">
-          <caption>
-            Stacje wodowskazowe, {visibleStations.length} wyników
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Stacja</th>
-              <th scope="col">Rzeka</th>
-              <th scope="col">Województwo</th>
-              <th scope="col">Stan wody</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleStations.map((station) => (
-              <tr key={station.id}>
-                <td>{station.name}</td>
-                <td>{station.river}</td>
-                <td>{station.voivodeship}</td>
-                <td>
-                  {station.waterLevelCm === null
-                    ? "brak danych"
-                    : `${station.waterLevelCm} cm`}
-                </td>
-                <td>{STATUS_LABELS[station.status]}</td>
+        {/* `sr-only` sits on a wrapper div, not on the <table> itself: tables
+            size to their content and ignore `width/height: 1px`, so the
+            hidden table stayed ~22000px tall and stretched the page's
+            scroll area. A block-level div honors the 1px box and clips it. */}
+        <div className="sr-only">
+          <table>
+            <caption>
+              Stacje wodowskazowe, {visibleStations.length} wyników
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Stacja</th>
+                <th scope="col">Rzeka</th>
+                <th scope="col">Województwo</th>
+                <th scope="col">Stan wody</th>
+                <th scope="col">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {visibleStations.map((station) => (
+                <tr key={station.id}>
+                  <td>{station.name}</td>
+                  <td>{station.river}</td>
+                  <td>{station.voivodeship}</td>
+                  <td>
+                    {station.waterLevelCm === null
+                      ? "brak danych"
+                      : `${station.waterLevelCm} cm`}
+                  </td>
+                  <td>{STATUS_LABELS[station.status]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );
