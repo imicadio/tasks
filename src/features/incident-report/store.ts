@@ -2,18 +2,12 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { COORD_DECIMALS, EMPTY_DRAFT, STORAGE_KEY } from "./constants";
-import { createReference } from "./lib/format";
+import { EMPTY_DRAFT, STORAGE_KEY } from "./constants";
 import { incidentReportSchema } from "./schemas";
-import type {
-  AddressLookupStatus,
-  FormStep,
-  GeocodeResult,
-  Incident,
-  IncidentDraft,
-} from "./types";
-
-const round = (value: number) => Number(value.toFixed(COORD_DECIMALS));
+import type { IncidentReportState } from "./types";
+import { toIncident } from "./utils/draft";
+import { fetchAddress } from "./utils/fetch-address";
+import { roundCoord } from "./utils/round-coord";
 
 /**
  * Client state for the report form: the in-progress draft (so a refresh
@@ -26,24 +20,6 @@ const round = (value: number) => Number(value.toFixed(COORD_DECIMALS));
  * `skipHydration`: the server renders with an empty store, so the dashboard
  * rehydrates in an effect after mount to avoid a hydration mismatch.
  */
-type IncidentReportState = {
-  draft: IncidentDraft;
-  step: FormStep;
-  reports: Incident[];
-  setField: <K extends keyof IncidentDraft>(key: K, value: IncidentDraft[K]) => void;
-  setLocation: (lat: number, lon: number) => void;
-  /** Not persisted — a lookup in flight doesn't survive a refresh. */
-  addressLookup: AddressLookupStatus;
-  /** Map click: sets the point and fills the address from it. */
-  pickLocation: (lat: number, lon: number) => Promise<void>;
-  /** Fills `draft.address` from the current coordinates (overwriting it). */
-  lookupAddress: () => Promise<void>;
-  setStep: (step: FormStep) => void;
-  /** Validates the whole draft, stores it as a `new` incident and resets the
-   * form. Throws if the draft is invalid — the form validates per step first. */
-  submit: (now?: Date) => Incident;
-};
-
 export const useIncidentReportStore = create<IncidentReportState>()(
   persist(
     (set, get) => ({
@@ -58,7 +34,7 @@ export const useIncidentReportStore = create<IncidentReportState>()(
       pickLocation: async (lat, lon) => {
         // A clicked point is no longer a district's center.
         set((state) => ({
-          draft: { ...state.draft, lat: round(lat), lon: round(lon), district: "" },
+          draft: { ...state.draft, lat: roundCoord(lat), lon: roundCoord(lon), district: "" },
         }));
         await get().lookupAddress();
       },
@@ -69,11 +45,7 @@ export const useIncidentReportStore = create<IncidentReportState>()(
         // Ignore the answer if the point moved while it was in flight.
         const isCurrent = () => get().draft.lat === lat && get().draft.lon === lon;
         try {
-          const response = await fetch(
-            `/api/incident-report/geocode?lat=${lat}&lon=${lon}`,
-          );
-          if (!response.ok) throw new Error(String(response.status));
-          const { address } = (await response.json()) as GeocodeResult;
+          const { address } = await fetchAddress(lat, lon);
           if (!isCurrent()) return;
           if (address === null) {
             set({ addressLookup: "not-found" });
@@ -90,25 +62,7 @@ export const useIncidentReportStore = create<IncidentReportState>()(
       setStep: (step) => set({ step }),
       submit: (now = new Date()) => {
         const input = incidentReportSchema.parse(get().draft);
-        const incident: Incident = {
-          id: crypto.randomUUID(),
-          reference: createReference(now),
-          title: input.title,
-          description: input.description,
-          category: input.category,
-          severity: input.severity,
-          status: "new",
-          lat: input.lat,
-          lon: input.lon,
-          address: input.address,
-          occurredAt: new Date(input.occurredAt).toISOString(),
-          reportedAt: now.toISOString(),
-          reporter: {
-            name: input.reporterName,
-            email: input.reporterEmail,
-            phone: input.reporterPhone,
-          },
-        };
+        const incident = toIncident(input, now);
         set((state) => ({
           reports: [incident, ...state.reports],
           draft: EMPTY_DRAFT,

@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { cn } from "cn";
+import { cn } from "@/shared/utils/cn";
 import { STEPS } from "../../constants";
 import type { FormStep } from "../../types";
 

@@ -1,23 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
 import { Card } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { SEED_INCIDENTS } from "../constants";
 import { useIncidentReportStore } from "../store";
 import type { Incident } from "../types";
+import { draftPoint } from "../utils/draft";
+import { LazyIncidentMap } from "./_internal/lazy-incident-map";
 import { IncidentForm } from "./incident-form";
 import { IncidentList } from "./incident-list";
-
-// Leaflet touches `window` on import — client-only, as in transit/parking.
-const IncidentMap = dynamic(
-  () => import("./incident-map").then((m) => m.IncidentMap),
-  {
-    ssr: false,
-    loading: () => <Skeleton className="h-full w-full" />,
-  },
-);
 
 export function IncidentReportDashboard() {
   const [hydrated, setHydrated] = useState(false);
@@ -41,10 +33,7 @@ export function IncidentReportDashboard() {
   );
 
   const picking = hydrated && step === 1;
-  const picked: [number, number] | null =
-    draft.lat !== null && draft.lon !== null
-      ? [draft.lat, draft.lon]
-      : null;
+  const picked = draftPoint(draft);
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,7 +87,7 @@ export function IncidentReportDashboard() {
               picking ? "border-primary ring-3 ring-primary/30" : "border-chart-baseline/30"
             }`}
           >
-            <IncidentMap
+            <LazyIncidentMap
               incidents={incidents}
               selectedId={selectedId}
               onSelect={setSelectedId}

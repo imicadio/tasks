@@ -1,14 +1,8 @@
-const DATE_TIME = new Intl.DateTimeFormat("pl-PL", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
+import { DATE_TIME_FORMAT, MISSING_VALUE } from "../constants";
 
 export function formatDateTime(iso: string): string {
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "—" : DATE_TIME.format(date);
+  return Number.isNaN(date.getTime()) ? MISSING_VALUE : DATE_TIME_FORMAT.format(date);
 }
 
 export function formatCoords(lat: number, lon: number): string {

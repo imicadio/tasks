@@ -1,23 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, CircleCheck, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { DISTRICTS, STEPS, SUBMIT_DELAY_MS } from "../constants";
+import { wait } from "@/shared/utils/wait";
+import {
+  DISTRICTS,
+  LAST_STEP,
+  STEP_FIELDS,
+  STEPS,
+  SUBMIT_DELAY_MS,
+} from "../constants";
 import { validateStep } from "../schemas";
 import { useIncidentReportStore } from "../store";
 import type { FormStep, Incident, StepErrors } from "../types";
-import { ContactStep, DetailsStep, LocationStep } from "./_internal/steps";
+import { ContactStep } from "./_internal/contact-step";
+import { DetailsStep } from "./_internal/details-step";
+import { LocationStep } from "./_internal/location-step";
 import { Stepper } from "./_internal/stepper";
-
-/** Focus order for "jump to the first invalid field", per step. */
-const STEP_FIELDS: (keyof StepErrors)[][] = [
-  ["category", "severity", "title", "description"],
-  ["location", "address", "occurredAt"],
-  ["reporterName", "reporterEmail", "reporterPhone", "consent"],
-];
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { SubmitSuccess } from "./_internal/submit-success";
 
 export function IncidentForm({
   onSubmitted,
@@ -36,7 +37,6 @@ export function IncidentForm({
   const [submitted, setSubmitted] = useState<Incident | null>(null);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const successRef = useRef<HTMLHeadingElement>(null);
   const movedFocus = useRef(false);
 
   // Move focus to the new step's heading after Dalej/Wstecz — but not on the
@@ -45,10 +45,6 @@ export function IncidentForm({
     if (!movedFocus.current) return;
     headingRef.current?.focus();
   }, [step]);
-
-  useEffect(() => {
-    if (submitted) successRef.current?.focus();
-  }, [submitted]);
 
   const goTo = (next: FormStep) => {
     movedFocus.current = true;
@@ -73,7 +69,7 @@ export function IncidentForm({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitting || !validateCurrent()) return;
-    if (step < 2) {
+    if (step < LAST_STEP) {
       goTo((step + 1) as FormStep);
       return;
     }
@@ -95,37 +91,7 @@ export function IncidentForm({
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-start gap-4 py-2">
-        <div
-          role="status"
-          className="flex w-full items-start gap-3 rounded-lg border border-status-good/50 bg-status-good/10 p-4"
-        >
-          <CircleCheck
-            aria-hidden="true"
-            className="mt-0.5 size-6 shrink-0 text-status-good"
-          />
-          <div className="flex flex-col gap-1">
-            <h2
-              ref={successRef}
-              tabIndex={-1}
-              className="text-lg font-semibold text-foreground outline-none"
-            >
-              Zgłoszenie zostało wysłane pomyślnie
-            </h2>
-            <p className="text-sm text-foreground">
-              Numer zgłoszenia:{" "}
-              <strong className="font-mono">{submitted.reference}</strong>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Incydent „{submitted.title}” jest już widoczny na mapie jako{" "}
-              <strong className="text-foreground">NOWY INCYDENT</strong>.
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" onClick={() => setSubmitted(null)}>
-          Zgłoś kolejny incydent
-        </Button>
-      </div>
+      <SubmitSuccess incident={submitted} onReset={() => setSubmitted(null)} />
     );
   }
 
@@ -169,7 +135,7 @@ export function IncidentForm({
             Szkic zapisuje się automatycznie.
           </span>
         )}
-        {step < 2 ? (
+        {step < LAST_STEP ? (
           <Button type="submit" size="lg">
             Dalej
             <ArrowRight data-icon="inline-end" aria-hidden="true" />

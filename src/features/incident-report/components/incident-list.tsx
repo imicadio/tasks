@@ -1,11 +1,11 @@
-import { cn } from "cn";
+import { cn } from "@/shared/utils/cn";
 import {
   CATEGORY_LABELS,
   SEVERITY_COLOR_VAR,
   SEVERITY_LABELS,
   STATUS_LABELS,
 } from "../constants";
-import { formatDateTime } from "../lib/format";
+import { formatDateTime } from "../utils/format";
 import type { Incident } from "../types";
 
 /** The map's text equivalent: every incident as a list item; activating one
