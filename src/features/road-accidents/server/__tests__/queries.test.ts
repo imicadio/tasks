@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getNationalTrend, getVoivodeshipBreakdown } from "../queries";
+import {
+  getNationalTrend,
+  getVoivodeshipBreakdown,
+  getYearValue,
+} from "../queries";
 
 function jsonResponse(body: unknown, ok = true) {
   return {
@@ -80,5 +84,40 @@ describe("getVoivodeshipBreakdown", () => {
     const result = await getVoivodeshipBreakdown("fatalities", 2024);
 
     expect(result.map((r) => r.name)).toEqual(["ŚLĄSKIE", "MAŁOPOLSKIE"]);
+  });
+});
+
+describe("getYearValue", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("returns the national value for the requested year", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          totalRecords: 1,
+          results: [
+            {
+              id: "000000000000",
+              name: "POLSKA",
+              values: [{ year: "2025", val: 1896, attrId: 1 }],
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await getYearValue("fatalities", 2025)).toBe(1896);
+  });
+
+  it("returns null when GUS has no data for that year", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(jsonResponse({ totalRecords: 0, results: [] })),
+    );
+
+    expect(await getYearValue("injured", 2025)).toBeNull();
   });
 });

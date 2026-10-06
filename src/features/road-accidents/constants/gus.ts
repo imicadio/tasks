@@ -1,4 +1,4 @@
-import type { Metric } from "./types";
+import type { Metric } from "../types";
 
 // GUS "Bank Danych Lokalnych" (BDL) public API — https://bdl.stat.gov.pl/api/v1
 // Subject P1754 "Wypadki drogowe i ich ofiary" (subgroup 245). No API key
@@ -16,18 +16,3 @@ export const METRIC_VARIABLE_ID: Record<Metric, number> = {
   fatalities: 7850, // ofiary śmiertelne
   injured: 7851, // ranni
 };
-
-export const METRIC_LABELS: Record<Metric, string> = {
-  accidents: "Wypadki",
-  fatalities: "Ofiary śmiertelne",
-  injured: "Ranni",
-};
-
-export const METRIC_COLORS: Record<Metric, string> = {
-  accidents: "var(--metric-accidents)",
-  fatalities: "var(--metric-fatalities)",
-  injured: "var(--metric-injured)",
-};
-
-export const MIN_YEAR = 2000;
-export const MAX_YEAR = 2025;
