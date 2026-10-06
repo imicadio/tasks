@@ -3,14 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { POLL_INTERVAL_MS } from "../constants";
 import type { ParkingSnapshot } from "../types";
-
-async function fetchParkingLots(): Promise<ParkingSnapshot> {
-  const response = await fetch("/api/parking");
-  if (!response.ok) {
-    throw new Error("Nie udało się pobrać danych o parkingach.");
-  }
-  return response.json();
-}
+import { fetchParkingLots } from "../utils/fetch-parking-lots";
 
 export function useParkingLots(initialData?: ParkingSnapshot) {
   return useQuery({

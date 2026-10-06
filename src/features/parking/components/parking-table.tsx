@@ -4,7 +4,8 @@ import { MapPin } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/cn";
 import { AvailabilityBadge } from "./availability-badge";
-import { formatDateTime } from "../lib/format";
+import { MISSING_VALUE } from "../constants";
+import { formatDateTime } from "../utils/format";
 import type { ParkingLot, ParkingLotId } from "../types";
 
 /**
@@ -89,10 +90,10 @@ export function ParkingTable({
                     {lot.address}
                   </span>
                 </th>
-                <td className="px-3 py-2">{lot.streetEntrance || "—"}</td>
+                <td className="px-3 py-2">{lot.streetEntrance || MISSING_VALUE}</td>
                 <td className="px-3 py-2 text-right tabular-nums">
                   {lot.availableSpots === null ? (
-                    <span className="text-muted-foreground">—</span>
+                    <span className="text-muted-foreground">{MISSING_VALUE}</span>
                   ) : (
                     <span className="text-base font-semibold text-foreground">
                       {lot.availableSpots}

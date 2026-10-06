@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { availabilityStatus, joinAvailability } from "../queries";
+import { availabilityStatus, joinAvailability } from "../availability";
 import type { RawParkingAvailability, RawParkingLots } from "../../schemas";
 
 const NOW = Date.parse("2026-10-03T22:00:00Z");
