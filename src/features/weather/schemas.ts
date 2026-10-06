@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiNullableNumber } from "@/shared/lib/api-validation";
+import { apiNullableNumber } from "@/shared/utils/api-validation";
 import type { WeatherStation } from "./types";
 
 // Raw shape of https://danepubliczne.imgw.pl/api/data/synop. Same

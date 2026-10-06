@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiNullableNumber } from "@/shared/lib/api-validation";
+import { apiNullableNumber } from "@/shared/utils/api-validation";
 
 // The source pads some strings (e.g. "ul.Dmowskiego ") — trim, and treat a
 // missing value as empty rather than rejecting the whole list over it.

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/shared/ui/card";
-import { degreesToCompass } from "@/shared/lib/compass";
+import { degreesToCompass } from "@/shared/utils/compass";
 import type { WeatherStation } from "../types";
 
 function Stat({ label, value }: { label: string; value: string }) {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiNullableNumber } from "@/shared/lib/api-validation";
+import { apiNullableNumber } from "@/shared/utils/api-validation";
 import { deriveStationStatus, toStationId } from "./types";
 import type { HydroStation } from "./types";
 

@@ -1,21 +1,4 @@
-const COMPASS_POINTS = [
-  "N",
-  "NNE",
-  "NE",
-  "ENE",
-  "E",
-  "ESE",
-  "SE",
-  "SSE",
-  "S",
-  "SSW",
-  "SW",
-  "WSW",
-  "W",
-  "WNW",
-  "NW",
-  "NNW",
-] as const;
+import { COMPASS_POINTS } from "@/shared/constants/compass";
 
 /** Converts a compass bearing in degrees (0-360) to its 16-point label. */
 export function degreesToCompass(degrees: number): string {

@@ -2,7 +2,7 @@
 
 import { MapPin } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/utils/cn";
 import { AvailabilityBadge } from "./availability-badge";
 import { formatDateTime } from "../lib/format";
 import type { ParkingLot, ParkingLotId } from "../types";

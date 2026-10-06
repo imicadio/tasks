@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiNullableNumber } from "@/shared/lib/api-validation";
+import { apiNullableNumber } from "@/shared/utils/api-validation";
 import type { Direction, Vehicle, VehiclesSnapshot, VehicleType } from "./types";
 
 /** Snaps an arbitrary bearing to the nearest of the 8 compass points the
