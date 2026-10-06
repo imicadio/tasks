@@ -3,38 +3,11 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import { useMap } from "react-leaflet";
-import { interpolateLatLng } from "../lib/interpolate";
 import { POLL_INTERVAL_MS } from "../constants";
-import type { Vehicle, VehicleId, VehicleType } from "../types";
-
-type TrackedMarker = {
-  marker: L.Marker;
-  from: { lat: number; lon: number };
-  to: { lat: number; lon: number };
-  fromTime: number;
-  toTime: number;
-  currentLat: number;
-  currentLon: number;
-};
-
-function createIcon(
-  direction: number,
-  type: VehicleType,
-  highlighted: boolean,
-): L.DivIcon {
-  const classes = ["transit-marker", `transit-marker--${type}`];
-  if (highlighted) classes.push("transit-marker--selected");
-  return L.divIcon({
-    className: "",
-    html: `<div class="${classes.join(" ")}"><div class="transit-marker__arrow" style="transform: rotate(${direction}deg)"></div></div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  });
-}
-
-function tooltipText(vehicle: Vehicle): string {
-  return `${vehicle.routeShortName} → ${vehicle.headsign || "?"}`;
-}
+import type { TrackedMarker, Vehicle, VehicleId } from "../types";
+import { formatVehicleTooltip } from "../utils/format";
+import { interpolateLatLng } from "../utils/interpolate";
+import { createVehicleIcon } from "../utils/marker-icon";
 
 /**
  * Renders nothing itself — it manages raw Leaflet markers imperatively on
@@ -79,7 +52,7 @@ export function VehicleMarkersLayer({
 
       if (!existing) {
         const marker = L.marker([vehicle.lat, vehicle.lon], {
-          icon: createIcon(
+          icon: createVehicleIcon(
             vehicle.direction,
             vehicle.vehicleType,
             vehicle.id === selectedVehicleId,
@@ -91,7 +64,7 @@ export function VehicleMarkersLayer({
         })
           .addTo(map)
           .on("click", () => onSelectRef.current(vehicle.id));
-        marker.bindTooltip(tooltipText(vehicle));
+        marker.bindTooltip(formatVehicleTooltip(vehicle));
         tracked.set(vehicle.id, {
           marker,
           from: { lat: vehicle.lat, lon: vehicle.lon },
@@ -109,13 +82,13 @@ export function VehicleMarkersLayer({
       existing.fromTime = now;
       existing.toTime = now + POLL_INTERVAL_MS;
       existing.marker.setIcon(
-        createIcon(
+        createVehicleIcon(
           vehicle.direction,
           vehicle.vehicleType,
           vehicle.id === selectedVehicleId,
         ),
       );
-      existing.marker.setTooltipContent(tooltipText(vehicle));
+      existing.marker.setTooltipContent(formatVehicleTooltip(vehicle));
     }
 
     for (const [id, entry] of tracked) {
@@ -134,7 +107,7 @@ export function VehicleMarkersLayer({
     for (const [id, entry] of markersRef.current) {
       const vehicle = vehiclesRef.current.find((v) => v.id === id);
       entry.marker.setIcon(
-        createIcon(
+        createVehicleIcon(
           vehicle?.direction ?? 0,
           vehicle?.vehicleType ?? "other",
           id === selectedVehicleId,

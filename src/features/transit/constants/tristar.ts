@@ -1,5 +1,3 @@
-import type { VehicleType } from "./types";
-
 // Tristar (ZTM Gdańsk / tri-city public transport) live GPS feed. No API
 // key required. See https://ckan.multimediagdansk.pl/dataset/tristar for
 // the dataset listing.
@@ -19,24 +17,3 @@ export const TRISTAR_ROUTES_URL =
 // "who's still out there" stays reasonably current without hammering a
 // public, unauthenticated endpoint.
 export const POLL_INTERVAL_MS = 15_000;
-
-// Centered on central Gdańsk; covers the tri-city area Tristar reports on
-// (Gdańsk/Sopot/Gdynia) at this zoom without the user needing to pan on load.
-export const GDANSK_CENTER: [number, number] = [54.372, 18.6386];
-export const DEFAULT_ZOOM = 12;
-
-export const VEHICLE_TYPE_LABELS = {
-  bus: "Autobus",
-  tram: "Tramwaj",
-  other: "Inny",
-} as const satisfies Record<VehicleType, string>;
-
-// CSS custom property name per type — consumed by both the map markers
-// (globals.css's .transit-marker--{type} classes) and the list/legend's
-// inline dot indicators, so there's one source of truth for "which color
-// means which vehicle type".
-export const VEHICLE_TYPE_COLOR_VAR = {
-  bus: "var(--transit-bus)",
-  tram: "var(--transit-tram)",
-  other: "var(--transit-other)",
-} as const satisfies Record<VehicleType, string>;

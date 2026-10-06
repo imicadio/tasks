@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { applyVehicleTypes, filterByRoute } from "../queries";
+import {
+  applyVehicleTypes,
+  averageDelaySeconds,
+  countRoutes,
+  filterByRoute,
+  visibleVehicleTypes,
+} from "../vehicles";
 import type { Vehicle, VehicleType } from "../../types";
 
 function vehicle(overrides: Partial<Vehicle>): Vehicle {
@@ -63,5 +69,42 @@ describe("applyVehicleTypes", () => {
       new Map(),
     );
     expect(result[0].vehicleType).toBe("other");
+  });
+});
+
+describe("countRoutes", () => {
+  it("counts distinct route numbers", () => {
+    const vehicles = ["3", "3", "148"].map((routeShortName) =>
+      vehicle({ routeShortName }),
+    );
+    expect(countRoutes(vehicles)).toBe(2);
+  });
+});
+
+describe("averageDelaySeconds", () => {
+  it("rounds the mean delay", () => {
+    const vehicles = [10, 20, 31].map((delaySeconds) => vehicle({ delaySeconds }));
+    expect(averageDelaySeconds(vehicles)).toBe(20);
+  });
+
+  it("is 0 with no vehicles", () => {
+    expect(averageDelaySeconds([])).toBe(0);
+  });
+});
+
+describe("visibleVehicleTypes", () => {
+  const types: VehicleType[] = ["bus", "tram", "other"];
+
+  it("hides 'other' when no vehicle has it", () => {
+    expect(visibleVehicleTypes(types, [vehicle({ vehicleType: "bus" })])).toEqual([
+      "bus",
+      "tram",
+    ]);
+  });
+
+  it("shows 'other' when a vehicle has it", () => {
+    expect(visibleVehicleTypes(types, [vehicle({ vehicleType: "other" })])).toEqual(
+      types,
+    );
   });
 });

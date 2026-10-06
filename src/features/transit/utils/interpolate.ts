@@ -1,4 +1,4 @@
-export type LatLng = { lat: number; lon: number };
+import type { LatLng } from "../types";
 
 /** Linear interpolation, clamped to [a, b] for t outside [0, 1]. */
 export function lerp(a: number, b: number, t: number): number {

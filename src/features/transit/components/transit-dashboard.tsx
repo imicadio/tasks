@@ -1,29 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Card } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
-import { Skeleton } from "@/shared/ui/skeleton";
+import { SEARCH_DEBOUNCE_MS } from "../constants";
 import { useVehiclePositions } from "../hooks/use-vehicle-positions";
+import type { Vehicle, VehicleId, VehiclesSnapshot } from "../types";
+import { LazyTransitMap } from "./_internal/lazy-transit-map";
+import { TransitKpiTiles } from "./_internal/transit-kpi-tiles";
+import { VehicleTypeLegend } from "./_internal/vehicle-type-legend";
 import { VehicleList } from "./vehicle-list";
-import {
-  VEHICLE_TYPE_COLOR_VAR,
-  VEHICLE_TYPE_LABELS,
-} from "../constants";
-import type { Vehicle, VehicleId, VehicleType, VehiclesSnapshot } from "../types";
-
-const LEGEND_TYPES: VehicleType[] = ["bus", "tram", "other"];
-
-const TransitMap = dynamic(
-  () => import("./transit-map").then((m) => m.TransitMap),
-  {
-    ssr: false,
-    loading: () => <Skeleton className="h-full w-full" />,
-  },
-);
 
 type Props = {
   initialRoute: string;
@@ -42,7 +30,7 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
     null,
   );
 
-  const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
   useEffect(() => {
     if (debouncedSearch !== route) setRoute(debouncedSearch);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only route's setter should react to the debounced value
@@ -53,27 +41,8 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
   const snapshot = data ?? (isInitial ? initialSnapshot : null);
   const vehicles = useMemo(() => snapshot?.vehicles ?? [], [snapshot]);
 
-  const routeCount = useMemo(
-    () => new Set(vehicles.map((v) => v.routeShortName)).size,
-    [vehicles],
-  );
-  const avgDelay = useMemo(() => {
-    if (vehicles.length === 0) return 0;
-    return Math.round(
-      vehicles.reduce((sum, v) => sum + v.delaySeconds, 0) / vehicles.length,
-    );
-  }, [vehicles]);
-
   const selectedVehicle: Vehicle | null =
     vehicles.find((v) => v.id === selectedVehicleId) ?? null;
-
-  // "other" is a real, handled case (see server/queries.ts) but doesn't
-  // currently occur in practice — only show it in the legend if a vehicle
-  // actually has that type, rather than permanently showing a category
-  // that would otherwise always be empty.
-  const legendTypes = LEGEND_TYPES.filter(
-    (type) => type !== "other" || vehicles.some((v) => v.vehicleType === type),
-  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -88,31 +57,7 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">
-            Aktywne pojazdy
-          </span>
-          <span className="text-3xl font-semibold tabular-nums text-foreground">
-            {vehicles.length}
-          </span>
-        </Card>
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">Linie</span>
-          <span className="text-3xl font-semibold tabular-nums text-foreground">
-            {routeCount}
-          </span>
-        </Card>
-        <Card className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">
-            Średnie opóźnienie
-          </span>
-          <span className="text-3xl font-semibold tabular-nums text-foreground">
-            {avgDelay >= 0 ? "+" : ""}
-            {Math.round(avgDelay / 60)} min
-          </span>
-        </Card>
-      </div>
+      <TransitKpiTiles vehicles={vehicles} />
 
       <Card className="flex flex-wrap items-center gap-4">
         <Input
@@ -122,18 +67,7 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
           aria-label="Filtruj po numerze linii"
           className="max-w-xs"
         />
-        <ul className="flex items-center gap-4 text-sm text-muted-foreground">
-          {legendTypes.map((type) => (
-            <li key={type} className="flex items-center gap-1.5">
-              <span
-                aria-hidden="true"
-                className="size-2.5 shrink-0 rounded-full"
-                style={{ backgroundColor: VEHICLE_TYPE_COLOR_VAR[type] }}
-              />
-              {VEHICLE_TYPE_LABELS[type]}
-            </li>
-          ))}
-        </ul>
+        <VehicleTypeLegend vehicles={vehicles} />
       </Card>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
@@ -143,7 +77,7 @@ export function TransitDashboard({ initialRoute, initialSnapshot }: Props) {
             so it's not safe to rely on. A plain div mirroring Card's other
             styles avoids the conflict entirely. */}
         <div className="h-[560px] overflow-hidden rounded-lg border border-chart-baseline/30 bg-chart-surface">
-          <TransitMap
+          <LazyTransitMap
             vehicles={vehicles}
             selectedVehicleId={selectedVehicleId}
             onSelectVehicle={setSelectedVehicleId}

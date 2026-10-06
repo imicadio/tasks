@@ -3,12 +3,7 @@
 import { Badge } from "@/shared/ui/badge";
 import { VEHICLE_TYPE_COLOR_VAR, VEHICLE_TYPE_LABELS } from "../constants";
 import type { Vehicle, VehicleId } from "../types";
-
-function formatDelay(seconds: number): string {
-  if (Math.abs(seconds) < 60) return "na czas";
-  const minutes = Math.round(seconds / 60);
-  return minutes > 0 ? `+${minutes} min` : `${minutes} min`;
-}
+import { formatDelay } from "../utils/format";
 
 export function VehicleList({
   vehicles,
