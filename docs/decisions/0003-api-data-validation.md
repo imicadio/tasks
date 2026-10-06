@@ -31,14 +31,14 @@ Treat every third-party API response as untrusted at the wire-format level,
 not just at the "is this JSON" level:
 
 1. **Never trust a field's declared type from a sample.** A numeric-looking
-   field gets a coercing schema (`src/shared/lib/api-validation.ts`'s
+   field gets a coercing schema (`src/shared/utils/api-validation.ts`'s
    `apiNullableNumber()`), not a strict one, unless there's a documented
    contract guaranteeing the type (IMGW has no such contract).
 2. **Anti-corruption layer.** Each feature's `schemas.ts` validates the raw
    wire shape (field names in the API's own language — `stacja`,
    `stan_wody`) and immediately `.transform()`s it into the feature's own
    domain type (`HydroStation`, in our own field names — `name`,
-   `waterLevelCm`). Nothing outside `schemas.ts`/`types.ts` ever sees the
+   `waterLevelCm`). Nothing outside `schemas.ts`/`types/` ever sees the
    raw IMGW shape again. This is what makes `deriveStationStatus()` (which
    turns three raw thresholds into one `StationStatus` the rest of the app
    reasons about) a pure, independently testable function rather than
@@ -60,7 +60,7 @@ not just at the "is this JSON" level:
 - One regression test (`src/features/hydro-monitor/__tests__/schemas.test.ts`)
   encodes the exact mixed-type shape observed live, so this specific class
   of bug can't silently come back.
-- The coercion helper is shared (`src/shared/lib/api-validation.ts`) between
+- The coercion helper is shared (`src/shared/utils/api-validation.ts`) between
   `hydro-monitor` and `weather`, since the weather feature hits the same
   IMGW inconsistency on `/api/data/synop`. One helper, tested once, instead
   of copy-pasted per feature.

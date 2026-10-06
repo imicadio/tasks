@@ -7,7 +7,7 @@ localStorage.
 ## Purpose
 
 - The map starts with three hard-coded, made-up incidents
-  (`SEED_INCIDENTS` in `constants.ts`).
+  (`SEED_INCIDENTS` in `constants/seed.ts`).
 - The form (`IncidentForm`) has three steps — description (category,
   severity, title, description), location (district or map click, address,
   date/time) and contact + summary (name, e-mail, optional phone, consent).
@@ -40,7 +40,8 @@ after mount so the server render and first client render agree.
 
 - `IncidentReportDashboard` — top-level client component.
 - `useIncidentReportStore` — draft, step, submitted reports, address lookup.
-- `incidentReportQueries.reverseGeocode()`, `formatNominatimAddress()`.
+- `incidentReportQueries.reverseGeocode()` (the address formatting it uses,
+  `formatNominatimAddress()`, is internal: `utils/nominatim-address.ts`).
 - `incidentReportSchema`, `validateStep`, `geocodeQuerySchema`.
 - `SEED_INCIDENTS`.
 - Types: `Incident`, `IncidentDraft`, `IncidentCategory`,

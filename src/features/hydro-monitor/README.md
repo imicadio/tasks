@@ -23,10 +23,13 @@ minutes by IMGW itself.
   hooks.
 - `hydroMonitorQueries` namespace: `hydroMonitorQueries.getHydroStations()`,
   `hydroMonitorQueries.filterAndSortStations()`.
+- `getHydroPageData(params)` — the page's initial data in one call: the
+  filtered list plus the voivodeship options and per-status counts
+  (`utils/list-voivodeships.ts`, `utils/count-by-status.ts`).
 - `hydroQuerySchema` — validates `src/app/api/hydro-monitor/route.ts`'s
   query params.
 - `STATUS_LABELS`, `STATUS_COLORS`, `deriveStationStatus`, `toStationId`.
-- Types: `HydroStation`, `StationId` (branded), `StationStatus`,
+- Types: `HydroPageData`, `HydroStation`, `StationId` (branded), `StationStatus`,
   `StatusFilter`, `SortField`, `SortDirection`.
 
 ## Owned routes
@@ -75,7 +78,7 @@ about it):
 - **The response is not internally type-consistent.** See
   `docs/decisions/0003-api-data-validation.md` — some records return
   numeric fields as JSON numbers, others as numeric strings, deep in the
-  same array. `src/shared/lib/api-validation.ts`'s `apiNullableNumber()`
+  same array. `src/shared/utils/api-validation.ts`'s `apiNullableNumber()`
   handles this; don't replace it with plain `z.number()`.
 - `stan_ostrzegawczy` (warning level) and `stan_alarmowy` (alarm level) are
   genuinely absent (not zero) for many stations — not every gauge has a

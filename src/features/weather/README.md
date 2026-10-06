@@ -17,10 +17,13 @@ Data: IMGW-PIB public API, `https://danepubliczne.imgw.pl/api/data/synop`.
 
 - `WeatherDashboard` — top-level client component.
 - `useWeatherStations` — server-state hook.
-- `weatherQueries.getWeatherStations()`, `weatherQueries.filterAndSortWeatherStations()`,
-  `weatherQueries.summarizeWeather()`.
+- `weatherQueries.getWeatherStations()`, `weatherQueries.getWeatherStationById()`,
+  `weatherQueries.filterAndSortWeatherStations()`.
+- `getWeatherPageData(params)` — the page's initial data (sorted list +
+  nationwide summary from `utils/summarize-weather.ts`) in one call.
 - `weatherQuerySchema`.
-- Types: `WeatherStation`, `WeatherSortField`, `SortDirection`.
+- Types: `WeatherStation`, `WeatherSortField`, `SortDirection`,
+  `WeatherPageData`, `WeatherSummary`.
 
 ## Owned routes
 

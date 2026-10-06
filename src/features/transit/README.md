@@ -18,11 +18,11 @@ last transmission. See the dataset listing at
 - `TransitDashboard` — top-level client component.
 - `useVehiclePositions` — server-state hook (polls every
   `POLL_INTERVAL_MS`, currently 15s).
-- `transitQueries.getVehiclePositions()`, `transitQueries.filterByRoute()`,
-  `transitQueries.getRouteTypes()`, `transitQueries.applyVehicleTypes()`.
+- `transitQueries.getVehiclePositions()`, `transitQueries.getVehiclesByRoute(route)`,
+  `transitQueries.getRouteTypes()`. The pure helpers they use
+  (`applyVehicleTypes`, `filterByRoute`) are internal: `utils/vehicles.ts`.
 - `transitQuerySchema`.
-- `GDANSK_CENTER`, `DEFAULT_ZOOM`, `POLL_INTERVAL_MS`,
-  `VEHICLE_TYPE_LABELS`, `VEHICLE_TYPE_COLOR_VAR`.
+- `GDANSK_CENTER`, `DEFAULT_ZOOM`, `POLL_INTERVAL_MS`.
 - Types: `Vehicle`, `VehicleId` (branded), `VehicleType`, `Direction`,
   `VehiclesSnapshot`.
 
@@ -32,7 +32,7 @@ Colored by real data, not guessed from the route number: ZTM Gdańsk's own
 "Lista linii" resource (`TRISTAR_ROUTES_URL`) maps every `routeId` to a
 `routeType` ("BUS"/"TRAM"/anything else). `getVehiclePositions()` fetches
 both feeds in parallel and joins them
-(`applyVehicleTypes` in `server/queries.ts`, independently tested). Verified
+(`applyVehicleTypes` in `utils/vehicles.ts`, independently tested). Verified
 live at the time this was built: every currently-active vehicle's `routeId`
 resolved to `BUS` or `TRAM` — `"other"` is a real, handled case (a third
 marker color and legend entry exist for it) but wasn't observed in

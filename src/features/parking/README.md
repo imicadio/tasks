@@ -6,9 +6,9 @@ accessible table.
 ## Purpose
 
 Data: ckan.multimediagdansk.pl (no API key), two feeds joined on
-`id === parkingId` (`joinAvailability()` in `server/queries.ts`):
+`id === parkingId` (`joinAvailability()` in `utils/availability.ts`):
 
-- Lot list (static-ish, cached 1h): `PARKING_LOTS_URL` in `constants.ts`.
+- Lot list (static-ish, cached 1h): `PARKING_LOTS_URL` in `constants/ckan.ts`.
 - Live free spots (cached 30s, matching the source's own `Expires`):
   `PARKING_AVAILABILITY_URL` (`https://ckan3.multimediagdansk.pl/parkingLots`;
   ckan2 301-redirects there).
@@ -29,8 +29,9 @@ timestamp is shown in the table's "Odczyt" column.
 - `ParkingDashboard` — top-level client component.
 - `useParkingLots` — server-state hook (SSR `initialData`, polls every
   `POLL_INTERVAL_MS`).
-- `parkingQueries.getParkingLots()`, `parkingQueries.joinAvailability()`,
-  `parkingQueries.availabilityStatus()`.
+- `parkingQueries.getParkingLots()` (the join and status logic it uses,
+  `joinAvailability()` / `availabilityStatus()`, is internal:
+  `utils/availability.ts`).
 - `GDANSK_CENTER`, `DEFAULT_ZOOM`, `POLL_INTERVAL_MS`.
 - Types: `ParkingLot`, `ParkingLotId` (branded), `ParkingSnapshot`,
   `AvailabilityStatus`.

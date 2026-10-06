@@ -35,23 +35,36 @@ may import from `app/`.
 src/features/<feature>/
   index.ts                # REQUIRED — the ONLY file other layers may import from
   README.md               # REQUIRED — purpose, public exports, owned routes, dependencies
-  types.ts                # domain types & DTOs
-  schemas.ts               # zod schemas — shared by client forms, server actions, route handlers
-  constants.ts             # optional: feature-local constants/enums
-  store.ts                 # optional: client state — only if the feature needs cross-component client state
+  schemas.ts              # zod schemas — shared by client forms, server actions, route handlers
+  store.ts                # optional: client state — only if the feature needs cross-component client state
+  constants/              # every constant: URLs, labels, option lists, sizes, Intl formatters
+    <topic>.ts            #   one file per topic (labels.ts, map.ts, sort.ts, ...)
+    index.ts              #   barrel: `export * from "./<topic>"`
+  types/                  # every type/interface except a component's own `Props`
+    <topic>.ts
+    index.ts
+  utils/                  # every pure / standalone function: formatters, mappers, math, client fetchers
+    <name>.ts             #   one function or one tight group of related functions per file
+    index.ts              #   barrel — except client-only files (Leaflet etc.), imported directly
+    __tests__/            #   REQUIRED for anything added here
   components/
-    <Feature>Overview.tsx  # top-level composable(s) exported via index.ts
-    _internal/              # optional: private helper components, never exported
+    <feature>-dashboard.tsx # top-level composable(s) exported via index.ts
+    _internal/            # sub-components, one per file, never exported via index.ts
     __tests__/
   hooks/
     use-<feature>.ts
     __tests__/
   server/
-    queries.ts              # server-only reads — starts with `import "server-only"`
-    actions.ts               # server actions — starts with `"use server"` (if the feature has mutations)
-    service.ts                # optional: framework-agnostic business logic reused by queries/actions
+    queries.ts            # server-only reads — starts with `import "server-only"`
+    page-data.ts          # optional: get<Feature>PageData() — everything a page needs, in one call
+    actions.ts            # server actions — starts with `"use server"` (if the feature has mutations)
     __tests__/
 ```
+
+`constants/index.ts` and `types/index.ts` re-export every topic file, so
+code inside the feature imports `../constants` / `../types` and doesn't care
+which topic file a name lives in. `utils/` is usually imported per file
+(`../utils/format`) to keep each component's dependencies obvious.
 
 A feature must have at least one of `components/` or `server/`. If it has
 neither, it isn't a feature — it belongs in `shared/`.
@@ -64,6 +77,44 @@ import from a Client Component fails the build instead of leaking
 server-only code into the client bundle. `server/actions.ts` starts with
 `"use server"`; Server Actions can be imported directly into Client
 Components — no separate client-safe wrapper is needed.
+
+### What goes where
+
+The rule: **a file holds one kind of thing.** A component file holds a
+component; constants, types and helpers each have their own folder.
+
+| You're writing… | It goes in |
+|---|---|
+| A top-level `const` (URL, label map, option list, size, `Intl.*Format`, a value derived once from other constants) | `constants/<topic>.ts` |
+| A `type` / `interface` used by more than one file, or describing domain data, API responses, store state, page data | `types/<topic>.ts` |
+| A component's own `Props` type | **stays in the component file** — it's the component's contract |
+| A pure function (formatting, mapping, counting, sorting, parsing, building ids/class lists) or a client-side `fetch` wrapper | `utils/<name>.ts` + a test in `utils/__tests__/` |
+| A second component in the same file (`KpiRow`, `FlyTo`, a table, a marker) | its own file in `components/_internal/` |
+| A `next/dynamic` lazy loader | `components/_internal/lazy-<name>.tsx` |
+| Multi-step data assembly for a page (`Promise.all` over several queries, `Object.fromEntries`, `reduce` over results) | a named function in `server/page-data.ts` |
+| Anything above that two or more features need | `src/shared/{constants,types,utils}/` |
+
+So a component file contains imports, its `Props` type, the component, and
+JSX. A hook file contains imports and the hook. Inline expressions inside
+JSX are fine when they're trivial (`a ?? b`, a single ternary); anything
+you'd want to name or test is a util.
+
+**Pages and route handlers** follow the same rule from the `app/` side:
+parse the input with the feature's schema (`firstValues` /
+`requestSearchParams` from `@/shared/utils/search-params`), make **one**
+call into the feature, render or return it. For example:
+
+```tsx
+// src/app/(dashboard)/road-accidents/page.tsx
+export default async function RoadAccidentsPage() {
+  const { trend, breakdown, latest } = await getRoadAccidentsPageData();
+  return <RoadAccidentsDashboard initialTrend={trend} initialBreakdown={breakdown} initialLatest={latest} />;
+}
+```
+
+Use Next's generated `PageProps<"/route">`, `LayoutProps<"/route">` and
+`RouteContext<"/api/route">` for params instead of writing their shapes
+inline.
 
 ### The `index.ts`-only rule
 
@@ -93,11 +144,17 @@ makes the ESLint boundary rule in §4 mechanically enforceable.
 src/shared/
   ui/          # design-system primitives: button.tsx, input.tsx, sidebar.tsx, card.tsx — no product concepts
   hooks/       # generic hooks: use-url-state.ts, use-debounced-value.ts, use-mobile.ts
-  lib/         # generic utilities: utils.ts (cn), api-validation.ts (apiNullableNumber)
-  types/       # cross-cutting generic types: pagination.ts (Paginated<T>)
+  constants/   # generic constants: map.ts (OSM tiles, Gdańsk center/zoom), compass.ts
+  types/       # cross-cutting generic types: pagination.ts (Paginated<T>), search-params.ts, nav.ts
+  utils/       # generic utilities: cn.ts, api-validation.ts, search-params.ts, http.ts (badRequest),
+               #   paginate.ts, escape-html.ts, compass.ts, wait.ts
   providers/   # cross-cutting React context providers: app-providers.tsx (theme, React Query, tooltips)
-  config/      # env var access wrapper (env.ts), site constants
 ```
+
+The "what goes where" rule from §2 applies here too. shadcn-generated
+files (`ui/*` except `app-sidebar.tsx` and `theme-toggle.tsx`, and
+`hooks/use-mobile.ts`) are exempt — they're regenerated by `shadcn add`,
+not hand-edited.
 
 `providers/` holds app-wide context providers mounted once in the root
 layout (`src/app/layout.tsx`) — theme (`next-themes`), the React Query
@@ -105,7 +162,7 @@ layout (`src/app/layout.tsx`) — theme (`next-themes`), the React Query
 concept" test as the rest of `shared/`.
 
 **shadcn/ui** is configured (`components.json`) to install into this layer —
-its aliases point `ui`/`components`/`lib`/`hooks` at `@/shared/*` instead of
+its aliases point `ui`/`components`/`lib`/`hooks` at `@/shared/*` (`lib` and `utils` at `@/shared/utils`) instead of
 the tool's own defaults (`@/components`, `@/lib`) — so `npx shadcn add
 <component>` adds primitives here rather than creating a competing
 top-level location. Don't hand-edit a shadcn-generated file's internals
@@ -161,8 +218,10 @@ guarantees with zero extra dependencies.)
 - Route groups (`(group)`) organize routes by section without affecting the
   URL, and can give a section its own root layout.
 - Private folders (`_folder`) hold page-local, non-reusable, non-business
-  cosmetic bits only. Anything reusable across ≥2 routes, or with business
-  logic, belongs in `features/` or `shared/`.
+  cosmetic bits only — e.g. `(dashboard)/_constants/nav-items.tsx` (sidebar
+  links) and `app/_constants/fonts.ts` (font loaders). Anything reusable
+  across ≥2 routes, or with business logic, belongs in `features/` or
+  `shared/`.
 - A `route.ts` delegates to `features/<feature>/server/`:
 
 ```ts
@@ -202,6 +261,8 @@ export default function NotificationsPage() {
 
 Test runner: Vitest + React Testing Library. Per layer:
 - `schemas.ts` — valid/invalid input cases.
+- `utils/` — every exported function, including edge cases (null input,
+  empty lists, rounding boundaries).
 - `server/queries.ts` / `server/actions.ts` — happy path + validation/error cases.
 - `components/` — render + key interaction + `jest-axe`'s `toHaveNoViolations`
   (with the `color-contrast` rule disabled — jsdom doesn't do real
@@ -223,9 +284,9 @@ Not fully designed here — out of scope for this document.
 
 | Feature | Path | Purpose | Owned routes | Public exports | Depends on |
 |---|---|---|---|---|---|
-| `road-accidents` | `src/features/road-accidents/` | Dashboard of Polish road-accident statistics sourced from GUS BDL (`api.stat.gov.pl`) | `/road-accidents`, `/api/road-accidents` | `RoadAccidentsDashboard`, `useRoadAccidents`, `roadAccidentsQueries`, types/schemas | `shared` only |
-| `hydro-monitor` | `src/features/hydro-monitor/` | Live river gauge station monitoring (water level vs. warning/alarm thresholds) from IMGW-PIB | `/hydrologia`, `/api/hydro-monitor` | `HydroMonitorDashboard`, `useHydroStations`, `useFavoriteStations`, `hydroMonitorQueries`, types/schemas | `shared` only |
-| `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/api/weather` | `WeatherDashboard`, `useWeatherStations`, `weatherQueries`, types/schemas | `shared` only |
+| `road-accidents` | `src/features/road-accidents/` | Dashboard of Polish road-accident statistics sourced from GUS BDL (`api.stat.gov.pl`) | `/road-accidents`, `/api/road-accidents` | `RoadAccidentsDashboard`, `useRoadAccidents`, `roadAccidentsQueries`, `getRoadAccidentsPageData`, types/schemas | `shared` only |
+| `hydro-monitor` | `src/features/hydro-monitor/` | Live river gauge station monitoring (water level vs. warning/alarm thresholds) from IMGW-PIB | `/hydrologia`, `/api/hydro-monitor` | `HydroMonitorDashboard`, `useHydroStations`, `useFavoriteStations`, `hydroMonitorQueries`, `getHydroPageData`, types/schemas | `shared` only |
+| `weather` | `src/features/weather/` | Current weather conditions across IMGW synoptic stations | `/pogoda`, `/pogoda/[id]`, `/api/weather`, `/api/weather/[id]` | `WeatherDashboard`, `WeatherStationDetail`, `useWeatherStations`, `weatherQueries`, `getWeatherPageData`, types/schemas | `shared` only |
 | `transit` | `src/features/transit/` | Live map of Gdańsk-area public transport vehicles (Tristar GPS feed) | `/transport`, `/api/transit` | `TransitDashboard`, `useVehiclePositions`, `transitQueries`, types/schemas | `shared` only |
 | `parking` | `src/features/parking/` | Gdańsk parking lots with live free-spot counts (ckan.multimediagdansk.pl), on a map + accessible table | `/parkingi`, `/api/parking` | `ParkingDashboard`, `useParkingLots`, `parkingQueries`, types | `shared` only |
 | `incident-report` | `src/features/incident-report/` | Three-step incident report form with a map of Gdańsk incidents (3 seeded + submitted ones), persisted to localStorage; map click reverse-geocodes the address (OSM Nominatim) | `/formularz`, `/api/incident-report/geocode` | `IncidentReportDashboard`, `useIncidentReportStore`, `incidentReportQueries`, `incidentReportSchema`, `geocodeQuerySchema`, `validateStep`, `SEED_INCIDENTS`, types | `shared` only |
