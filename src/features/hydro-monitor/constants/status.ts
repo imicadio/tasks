@@ -1,10 +1,4 @@
-import type { StationStatus } from "./types";
-
-// IMGW ("Instytut Meteorologii i Gospodarki Wodnej – PIB")
-// public data API. No API key required; see
-// https://danepubliczne.imgw.pl/pl/apiinfo. Attribution is required by
-// IMGW's terms — see the footer note rendered in the dashboard component.
-export const IMGW_HYDRO_URL = "https://danepubliczne.imgw.pl/api/data/hydro";
+import type { StationStatus, StatusCounts, StatusFilter } from "../types";
 
 export const STATUS_LABELS = {
   alarm: "Alarmowy",
@@ -28,3 +22,31 @@ export const STATUS_ORDER = [
   "unknown",
   "normal",
 ] as const satisfies readonly StationStatus[];
+
+/** Order of the KPI tiles above the list (severity, then "no data"). */
+export const STATUS_KPI_ORDER = [
+  "alarm",
+  "warning",
+  "normal",
+  "unknown",
+] as const satisfies readonly StationStatus[];
+
+export const EMPTY_STATUS_COUNTS: StatusCounts = {
+  alarm: 0,
+  warning: 0,
+  normal: 0,
+  unknown: 0,
+};
+
+export const STATUS_FILTERS: StatusFilter[] = [
+  "all",
+  "alarm",
+  "warning",
+  "normal",
+  "unknown",
+];
+
+export const STATUS_FILTER_LABELS: Record<StatusFilter, string> = {
+  all: "Wszystkie statusy",
+  ...STATUS_LABELS,
+};

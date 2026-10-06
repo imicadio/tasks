@@ -3,6 +3,8 @@ import { Star } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
 import { STATUS_COLORS, STATUS_LABELS } from "../constants";
 import type { HydroStation, StationId } from "../types";
+import { formatCm } from "../utils/format-cm";
+import { gaugePercent } from "../utils/gauge-percent";
 
 export type StationRowProps = {
   station: HydroStation;
@@ -12,10 +14,6 @@ export type StationRowProps = {
   onToggleFavorite: (id: StationId) => void;
 };
 
-function formatCm(value: number | null): string {
-  return value === null ? "—" : `${value} cm`;
-}
-
 function StationRowImpl({
   station,
   isFavorite,
@@ -23,11 +21,7 @@ function StationRowImpl({
   onHover,
   onToggleFavorite,
 }: StationRowProps) {
-  const gaugeMax = station.alarmLevelCm ?? station.warningLevelCm ?? null;
-  const gaugePct =
-    gaugeMax && station.waterLevelCm !== null
-      ? Math.min(100, Math.round((station.waterLevelCm / gaugeMax) * 100))
-      : null;
+  const gaugePct = gaugePercent(station);
 
   return (
     <div

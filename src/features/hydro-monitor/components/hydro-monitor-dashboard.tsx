@@ -14,57 +14,32 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { Switch } from "@/shared/ui/switch";
-import { STATUS_COLORS, STATUS_LABELS } from "../constants";
+import {
+  DIR_LABELS,
+  LIST_HEIGHT,
+  ROW_HEIGHT,
+  SEARCH_DEBOUNCE_MS,
+  SORT_LABELS,
+  STATUS_FILTER_LABELS,
+  STATUS_FILTERS,
+} from "../constants";
 import { useFavoriteStations } from "../store";
 import { useHydroStations } from "../hooks/use-hydro-stations";
 import { StationRow, StationRowUnmemoized } from "./station-row";
+import { StationsTable } from "./_internal/stations-table";
+import { StatusKpiTiles } from "./_internal/status-kpi-tiles";
 import type {
-  HydroStation,
+  HydroPageData,
+  HydroStationsParams,
+  PerfMode,
   SortDirection,
   SortField,
   StationId,
-  StationStatus,
   StatusFilter,
 } from "../types";
 
-const STATUS_FILTERS: StatusFilter[] = [
-  "all",
-  "alarm",
-  "warning",
-  "normal",
-  "unknown",
-];
-
-const STATUS_FILTER_LABELS: Record<StatusFilter, string> = {
-  all: "Wszystkie statusy",
-  ...STATUS_LABELS,
-};
-
-const SORT_LABELS: Record<SortField, string> = {
-  status: "Sortuj: status",
-  waterLevelCm: "Sortuj: stan wody",
-  name: "Sortuj: nazwa",
-};
-
-const DIR_LABELS: Record<SortDirection, string> = {
-  desc: "Malejąco",
-  asc: "Rosnąco",
-};
-
-const ROW_HEIGHT = 56;
-const LIST_HEIGHT = 560;
-
-type Props = {
-  initialParams: {
-    q: string;
-    status: StatusFilter;
-    voivodeship: string;
-    sort: SortField;
-    dir: SortDirection;
-  };
-  initialData: { data: HydroStation[]; total: number };
-  voivodeships: string[];
-  statusCounts: Record<StationStatus, number>;
+type Props = HydroPageData & {
+  initialParams: HydroStationsParams;
 };
 
 export function HydroMonitorDashboard({
@@ -77,9 +52,7 @@ export function HydroMonitorDashboard({
   const [searchInput, setSearchInput] = useState(initialParams.q);
   const [hoveredId, setHoveredId] = useState<StationId | null>(null);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
-  const [perfMode, setPerfMode] = useState<"optimized" | "naive">(
-    "optimized",
-  );
+  const [perfMode, setPerfMode] = useState<PerfMode>("optimized");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // --- URL state: shareable/bookmarkable filters (the query itself).
@@ -99,7 +72,7 @@ export function HydroMonitorDashboard({
   const [dir, setDir] = useUrlState<SortDirection>("dir", initialParams.dir);
   const [q, setQ] = useUrlState("q", initialParams.q);
 
-  const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
   useEffect(() => {
     if (debouncedSearch !== q) setQ(debouncedSearch);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only q's setter should react to the debounced value
@@ -151,38 +124,11 @@ export function HydroMonitorDashboard({
         </p>
       </header>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {(["alarm", "warning", "normal", "unknown"] as const).map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setStatus(status === s ? "all" : s)}
-            aria-pressed={status === s}
-          >
-            <Card
-              className={`flex flex-col gap-1 text-left transition-shadow ${
-                status === s ? "ring-2 ring-ring" : ""
-              }`}
-            >
-              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <span
-                  aria-hidden="true"
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: STATUS_COLORS[s] }}
-                />
-                {STATUS_LABELS[s]}
-              </span>
-              {/* Ink text, not the status accent — see
-                  docs/decisions/0005-accessibility.md (the warning hue alone
-                  is 1.79:1 on this surface, well under WCAG's 3:1 floor for
-                  large text). The dot above carries the color identity. */}
-              <span className="text-3xl font-semibold tabular-nums text-foreground">
-                {statusCounts[s]}
-              </span>
-            </Card>
-          </button>
-        ))}
-      </div>
+      <StatusKpiTiles
+        counts={statusCounts}
+        activeStatus={status}
+        onSelect={(s) => setStatus(status === s ? "all" : s)}
+      />
 
       <Card className="flex flex-wrap items-center gap-3">
         <Input
@@ -358,41 +304,7 @@ export function HydroMonitorDashboard({
             replacement: the visual list above stays fully keyboard-operable
             on its own. Favoriting isn't available from this table yet; see
             docs/TECH_DEBT.md. */}
-        {/* `sr-only` sits on a wrapper div, not on the <table> itself: tables
-            size to their content and ignore `width/height: 1px`, so the
-            hidden table stayed ~22000px tall and stretched the page's
-            scroll area. A block-level div honors the 1px box and clips it. */}
-        <div className="sr-only">
-          <table>
-            <caption>
-              Stacje wodowskazowe, {visibleStations.length} wyników
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Stacja</th>
-                <th scope="col">Rzeka</th>
-                <th scope="col">Województwo</th>
-                <th scope="col">Stan wody</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleStations.map((station) => (
-                <tr key={station.id}>
-                  <td>{station.name}</td>
-                  <td>{station.river}</td>
-                  <td>{station.voivodeship}</td>
-                  <td>
-                    {station.waterLevelCm === null
-                      ? "brak danych"
-                      : `${station.waterLevelCm} cm`}
-                  </td>
-                  <td>{STATUS_LABELS[station.status]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <StationsTable stations={visibleStations} />
       </Card>
     </div>
   );

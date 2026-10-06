@@ -1,33 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type {
-  HydroStation,
-  SortDirection,
-  SortField,
-  StatusFilter,
-} from "../types";
-
-export type HydroStationsParams = {
-  q: string;
-  status: StatusFilter;
-  voivodeship: string;
-  sort: SortField;
-  dir: SortDirection;
-};
-
-type HydroStationsResponse = { data: HydroStation[]; total: number };
-
-async function fetchHydroStations(
-  params: HydroStationsParams,
-): Promise<HydroStationsResponse> {
-  const search = new URLSearchParams(params);
-  const response = await fetch(`/api/hydro-monitor?${search.toString()}`);
-  if (!response.ok) {
-    throw new Error("Nie udało się pobrać danych hydrologicznych.");
-  }
-  return response.json();
-}
+import type { HydroStationsParams } from "../types";
+import { fetchHydroStations } from "../utils/fetch-hydro-stations";
 
 /**
  * Server state: owned by IMGW, fetched through our own validated proxy,

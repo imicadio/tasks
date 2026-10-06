@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveStationStatus } from "../types";
+import { deriveStationStatus } from "../derive-station-status";
 
 describe("deriveStationStatus", () => {
   it("returns unknown when there is no water level reading", () => {

@@ -1,13 +1,7 @@
 import "server-only";
-import { IMGW_HYDRO_URL } from "../constants";
+import { IMGW_HYDRO_URL, STATUS_ORDER } from "../constants";
 import { hydroStationsResponseSchema } from "../schemas";
-import type {
-  HydroStation,
-  SortDirection,
-  SortField,
-  StatusFilter,
-} from "../types";
-import { STATUS_ORDER } from "../constants";
+import type { HydroStation, HydroStationsParams } from "../types";
 
 export async function getHydroStations(): Promise<HydroStation[]> {
   const response = await fetch(IMGW_HYDRO_URL, { next: { revalidate: 300 } });
@@ -23,13 +17,7 @@ export async function getHydroStations(): Promise<HydroStation[]> {
 
 export function filterAndSortStations(
   stations: HydroStation[],
-  options: {
-    q: string;
-    status: StatusFilter;
-    voivodeship: string;
-    sort: SortField;
-    dir: SortDirection;
-  },
+  options: HydroStationsParams,
 ): HydroStation[] {
   const { q, status, voivodeship, sort, dir } = options;
   const needle = q.toLowerCase();
