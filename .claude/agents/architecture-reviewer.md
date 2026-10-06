@@ -65,6 +65,11 @@ missing.
      function` in `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx`.
      ESLint's `react/function-component-definition` catches the named
      ones; check default exports by eye.
+   - **Function written inline in JSX** (`docs/ARCHITECTURE.md` §6): an
+     arrow/function expression as a JSX prop or render-prop child — it
+     should be a named `handleX` in the component body, a curried handler
+     inside `.map`, or a util. ESLint's `no-restricted-syntax` catches the
+     direct cases; also look for ones nested deeper in the expression.
    - **Bypassing the public API**: a feature itself importing from another
      feature's internals rather than that feature's `index.ts`.
 

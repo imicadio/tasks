@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
@@ -14,6 +21,7 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { Switch } from "@/shared/ui/switch";
+import { labelOf } from "@/shared/utils/label-of";
 import {
   DIR_LABELS,
   LIST_HEIGHT,
@@ -35,8 +43,10 @@ import type {
   SortDirection,
   SortField,
   StationId,
+  StationStatus,
   StatusFilter,
 } from "../types";
+import { formatVoivodeshipOption } from "../utils/format-voivodeship-option";
 
 type Props = HydroPageData & {
   initialParams: HydroStationsParams;
@@ -104,6 +114,30 @@ export const HydroMonitorDashboard = ({
     [toggleFavorite],
   );
 
+  const handleKpiSelect = (selected: StationStatus) =>
+    setStatus(status === selected ? "all" : selected);
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setSearchInput(event.target.value);
+  const handleStatusChange = (value: StatusFilter | null) => {
+    if (value) setStatus(value);
+  };
+  const handleVoivodeshipChange = (value: string | null) =>
+    setVoivodeship(value ?? "all");
+  const handleSortChange = (value: SortField | null) => {
+    if (value) setSort(value);
+  };
+  const handleDirChange = (value: SortDirection | null) => {
+    if (value) setDir(value);
+  };
+  const handlePerfModeChange = (naive: boolean) =>
+    setPerfMode(naive ? "naive" : "optimized");
+  // Naive mode only: plain functions recreated on every render, so each
+  // unmemoized row gets new props every time — that's the point of the
+  // demo (see README.md). The optimized rows use the stable useCallback
+  // handlers above.
+  const handleHoverNaive = (id: StationId) => setHoveredId(id);
+  const handleToggleFavoriteNaive = (id: StationId) => toggleFavorite(id);
+
   const virtualizer = useVirtualizer({
     count: visibleStations.length,
     getScrollElement: () => scrollRef.current,
@@ -127,13 +161,13 @@ export const HydroMonitorDashboard = ({
       <StatusKpiTiles
         counts={statusCounts}
         activeStatus={status}
-        onSelect={(s) => setStatus(status === s ? "all" : s)}
+        onSelect={handleKpiSelect}
       />
 
       <Card className="flex flex-wrap items-center gap-3">
         <Input
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={handleSearchChange}
           placeholder="Szukaj stacji lub rzeki…"
           aria-label="Szukaj stacji lub rzeki"
           className="max-w-xs"
@@ -141,11 +175,11 @@ export const HydroMonitorDashboard = ({
 
         <Select
           value={status}
-          onValueChange={(v) => v && setStatus(v as StatusFilter)}
+          onValueChange={handleStatusChange}
         >
           <SelectTrigger aria-label="Filtruj według statusu" className="w-44">
             <SelectValue>
-              {(v: StatusFilter) => STATUS_FILTER_LABELS[v]}
+              {labelOf(STATUS_FILTER_LABELS)}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -159,11 +193,11 @@ export const HydroMonitorDashboard = ({
 
         <Select
           value={voivodeship}
-          onValueChange={(v) => setVoivodeship(v ?? "all")}
+          onValueChange={handleVoivodeshipChange}
         >
           <SelectTrigger aria-label="Filtruj według województwa" className="w-52">
             <SelectValue>
-              {(v: string) => (v === "all" ? "Wszystkie województwa" : v)}
+              {formatVoivodeshipOption}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -178,10 +212,10 @@ export const HydroMonitorDashboard = ({
 
         <Select
           value={sort}
-          onValueChange={(v) => v && setSort(v as SortField)}
+          onValueChange={handleSortChange}
         >
           <SelectTrigger aria-label="Sortuj wyniki według" className="w-44">
-            <SelectValue>{(v: SortField) => SORT_LABELS[v]}</SelectValue>
+            <SelectValue>{labelOf(SORT_LABELS)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="status">{SORT_LABELS.status}</SelectItem>
@@ -192,10 +226,10 @@ export const HydroMonitorDashboard = ({
 
         <Select
           value={dir}
-          onValueChange={(v) => v && setDir(v as SortDirection)}
+          onValueChange={handleDirChange}
         >
           <SelectTrigger aria-label="Kierunek sortowania" className="w-36">
-            <SelectValue>{(v: SortDirection) => DIR_LABELS[v]}</SelectValue>
+            <SelectValue>{labelOf(DIR_LABELS)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="desc">{DIR_LABELS.desc}</SelectItem>
@@ -226,9 +260,7 @@ export const HydroMonitorDashboard = ({
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
             <Switch
               checked={perfMode === "naive"}
-              onCheckedChange={(checked) =>
-                setPerfMode(checked ? "naive" : "optimized")
-              }
+              onCheckedChange={handlePerfModeChange}
             />
             Tryb naiwny (demo wydajności) — patrz README.md
           </label>
@@ -286,8 +318,8 @@ export const HydroMonitorDashboard = ({
                 station={station}
                 isFavorite={favoriteSet.has(station.id)}
                 isHovered={hoveredId === station.id}
-                onHover={(id) => setHoveredId(id)}
-                onToggleFavorite={(id) => toggleFavorite(id)}
+                onHover={handleHoverNaive}
+                onToggleFavorite={handleToggleFavoriteNaive}
               />
             ))
           )}

@@ -13,13 +13,16 @@ export const ThemeToggle = () => {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
+  const handleToggle = () =>
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
       aria-label="Przełącz motyw"
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      onClick={handleToggle}
     >
       {mounted && resolvedTheme === "dark" ? (
         <Sun className="size-4" />

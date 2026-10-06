@@ -1,9 +1,14 @@
+import type { ChangeEvent } from "react";
 import { LocateFixed, MousePointerClick } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { CONTROL_CLASS, DISTRICTS, LOOKUP_MESSAGES } from "../../constants";
 import { useIncidentReportStore } from "../../store";
 import type { StepProps } from "../../types";
+import {
+  textFieldHandler,
+  valueFieldHandler,
+} from "../../utils/field-handlers";
 import { describedBy, errorId, hintId } from "../../utils/field-ids";
 import { toDateTimeLocal } from "../../utils/format";
 import { CoordinateInput } from "./coordinate-input";
@@ -19,6 +24,9 @@ export const LocationStep = ({
   const addressLookup = useIncidentReportStore((state) => state.addressLookup);
   const lookupAddress = useIncidentReportStore((state) => state.lookupAddress);
   const hasPoint = draft.lat !== null && draft.lon !== null;
+  const handleDistrictChange = (event: ChangeEvent<HTMLSelectElement>) =>
+    onPickDistrict(event.target.value);
+  const handleLookupClick = () => void lookupAddress();
   const coordsDescribedBy = [hintId("coordinates"), errors.location && errorId("location")]
     .filter(Boolean)
     .join(" ");
@@ -56,7 +64,7 @@ export const LocationStep = ({
               placeholder="54.34850"
               aria-invalid={errors.location ? true : undefined}
               aria-describedby={coordsDescribedBy}
-              onChange={(value) => setField("lat", value)}
+              onChange={valueFieldHandler(setField, "lat")}
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -69,7 +77,7 @@ export const LocationStep = ({
               placeholder="18.65260"
               aria-invalid={errors.location ? true : undefined}
               aria-describedby={coordsDescribedBy}
-              onChange={(value) => setField("lon", value)}
+              onChange={valueFieldHandler(setField, "lon")}
             />
           </div>
         </div>
@@ -77,7 +85,7 @@ export const LocationStep = ({
           <select
             id="district"
             value={draft.district}
-            onChange={(event) => onPickDistrict(event.target.value)}
+            onChange={handleDistrictChange}
             className={`${CONTROL_CLASS} h-8 py-1`}
           >
             <option value="">— wybierz —</option>
@@ -112,13 +120,13 @@ export const LocationStep = ({
             ]
               .filter(Boolean)
               .join(" ")}
-            onChange={(event) => setField("address", event.target.value)}
+            onChange={textFieldHandler(setField, "address")}
           />
           <Button
             type="button"
             variant="outline"
             disabled={!hasPoint || addressLookup === "loading"}
-            onClick={() => void lookupAddress()}
+            onClick={handleLookupClick}
             className="sm:h-8"
           >
             <LocateFixed data-icon="inline-start" aria-hidden="true" />
@@ -142,7 +150,7 @@ export const LocationStep = ({
           max={toDateTimeLocal(new Date())}
           aria-invalid={errors.occurredAt ? true : undefined}
           aria-describedby={describedBy("occurredAt", false, errors.occurredAt)}
-          onChange={(event) => setField("occurredAt", event.target.value)}
+          onChange={textFieldHandler(setField, "occurredAt")}
           className="w-fit"
         />
       </Field>

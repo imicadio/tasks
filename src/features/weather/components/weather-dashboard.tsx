@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
+import { labelOf } from "@/shared/utils/label-of";
 import { Card } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import {
@@ -51,6 +52,19 @@ export const WeatherDashboard = ({ initialParams, initialData, summary }: Props)
   const { data, isFetching, isError } = useWeatherStations(queryParams);
   const stations = data?.data ?? (isInitialParams ? initialData.data : []);
 
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setSearchInput(event.target.value);
+  const handleSortChange = (value: WeatherSortField | null) => {
+    if (value) setSort(value);
+  };
+  const handleDirChange = (value: SortDirection | null) => {
+    if (value) setDir(value);
+  };
+  // The whole row is clickable for pointer users; the name link inside it
+  // is the keyboard/screen-reader path and mustn't trigger a second push.
+  const handleRowClick = (id: string) => () => router.push(`/pogoda/${id}`);
+  const handleLinkClick = (event: MouseEvent) => event.stopPropagation();
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -66,14 +80,14 @@ export const WeatherDashboard = ({ initialParams, initialData, summary }: Props)
       <Card className="flex flex-wrap items-center gap-3">
         <Input
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={handleSearchChange}
           placeholder="Szukaj stacji…"
           aria-label="Szukaj stacji pogodowej"
           className="max-w-xs"
         />
-        <Select value={sort} onValueChange={(v) => v && setSort(v as WeatherSortField)}>
+        <Select value={sort} onValueChange={handleSortChange}>
           <SelectTrigger aria-label="Sortuj wyniki według" className="w-48">
-            <SelectValue>{(v: WeatherSortField) => SORT_LABELS[v]}</SelectValue>
+            <SelectValue>{labelOf(SORT_LABELS)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="temperatureC">{SORT_LABELS.temperatureC}</SelectItem>
@@ -81,9 +95,9 @@ export const WeatherDashboard = ({ initialParams, initialData, summary }: Props)
             <SelectItem value="name">{SORT_LABELS.name}</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={dir} onValueChange={(v) => v && setDir(v as SortDirection)}>
+        <Select value={dir} onValueChange={handleDirChange}>
           <SelectTrigger aria-label="Kierunek sortowania" className="w-36">
-            <SelectValue>{(v: SortDirection) => DIR_LABELS[v]}</SelectValue>
+            <SelectValue>{labelOf(DIR_LABELS)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="desc">{DIR_LABELS.desc}</SelectItem>
@@ -128,14 +142,14 @@ export const WeatherDashboard = ({ initialParams, initialData, summary }: Props)
             {stations.map((s) => (
               <tr
                 key={s.id}
-                onClick={() => router.push(`/pogoda/${s.id}`)}
+                onClick={handleRowClick(s.id)}
                 className="cursor-pointer border-b border-border/60 hover:bg-accent"
               >
                 <td className="py-1.5 text-foreground">
                   <Link
                     href={`/pogoda/${s.id}`}
                     className="hover:underline"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={handleLinkClick}
                   >
                     {s.name}
                   </Link>

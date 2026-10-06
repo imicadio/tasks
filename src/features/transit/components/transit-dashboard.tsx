@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Card } from "@/shared/ui/card";
@@ -44,6 +44,9 @@ export const TransitDashboard = ({ initialRoute, initialSnapshot }: Props) => {
   const selectedVehicle: Vehicle | null =
     vehicles.find((v) => v.id === selectedVehicleId) ?? null;
 
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setSearchInput(event.target.value);
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -62,7 +65,7 @@ export const TransitDashboard = ({ initialRoute, initialSnapshot }: Props) => {
       <Card className="flex flex-wrap items-center gap-4">
         <Input
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={handleSearchChange}
           placeholder="Filtruj po numerze linii…"
           aria-label="Filtruj po numerze linii"
           className="max-w-xs"

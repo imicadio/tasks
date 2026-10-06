@@ -19,6 +19,8 @@ export const IncidentList = ({
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) => {
+  const handleSelect = (id: string) => () => onSelect(id);
+
   return (
     <ul aria-label="Lista incydentów" className="flex flex-col gap-2">
       {incidents.map((incident) => {
@@ -28,7 +30,7 @@ export const IncidentList = ({
             <button
               type="button"
               aria-pressed={incident.id === selectedId}
-              onClick={() => onSelect(incident.id)}
+              onClick={handleSelect(incident.id)}
               className={cn(
                 "flex w-full items-start gap-3 rounded-lg border bg-chart-surface p-3 text-left transition-colors outline-none hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50",
                 incident.id === selectedId ? "border-primary" : "border-chart-baseline/30",

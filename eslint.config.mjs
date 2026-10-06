@@ -79,6 +79,7 @@ const eslintConfig = defineConfig([
   {
     files: ["src/**/*.tsx"],
     ignores: [
+      "src/**/__tests__/**",
       "src/shared/ui/{badge,button,input,scroll-area,select,separator,sheet,sidebar,skeleton,switch,tooltip}.tsx",
     ],
     rules: {
@@ -87,6 +88,24 @@ const eslintConfig = defineConfig([
         {
           namedComponents: "arrow-function",
           unnamedComponents: "arrow-function",
+        },
+      ],
+      // No functions written inline in JSX (props or render-prop children):
+      // name them as handlers in the component body, or as utils — see
+      // docs/ARCHITECTURE.md §6. `.map(...)` callbacks are fine.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression)",
+          message:
+            "Don't write functions inline in JSX — extract a named handler (`const handleX = …`) or a util. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector:
+            "JSXExpressionContainer > :matches(ConditionalExpression, LogicalExpression) > :matches(ArrowFunctionExpression, FunctionExpression)",
+          message:
+            "Don't write functions inline in JSX — extract a named handler (`const handleX = …`) or a util. See docs/ARCHITECTURE.md §6.",
         },
       ],
     },

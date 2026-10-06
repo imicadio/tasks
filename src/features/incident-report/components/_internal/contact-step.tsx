@@ -6,6 +6,10 @@ import {
   SEVERITY_LABELS,
 } from "../../constants";
 import type { StepProps } from "../../types";
+import {
+  checkboxFieldHandler,
+  textFieldHandler,
+} from "../../utils/field-handlers";
 import { describedBy, errorId } from "../../utils/field-ids";
 import { formatDateTime } from "../../utils/format";
 import { Field } from "./field";
@@ -24,7 +28,7 @@ export const ContactStep = ({ draft, errors, setField }: StepProps) => {
               autoComplete="name"
               aria-invalid={errors.reporterName ? true : undefined}
               aria-describedby={describedBy("reporterName", false, errors.reporterName)}
-              onChange={(event) => setField("reporterName", event.target.value)}
+              onChange={textFieldHandler(setField, "reporterName")}
             />
           </Field>
         </div>
@@ -36,7 +40,7 @@ export const ContactStep = ({ draft, errors, setField }: StepProps) => {
             autoComplete="email"
             aria-invalid={errors.reporterEmail ? true : undefined}
             aria-describedby={describedBy("reporterEmail", false, errors.reporterEmail)}
-            onChange={(event) => setField("reporterEmail", event.target.value)}
+            onChange={textFieldHandler(setField, "reporterEmail")}
           />
         </Field>
         <Field id="reporterPhone" label="Telefon" optional error={errors.reporterPhone}>
@@ -48,7 +52,7 @@ export const ContactStep = ({ draft, errors, setField }: StepProps) => {
             placeholder="600 100 200"
             aria-invalid={errors.reporterPhone ? true : undefined}
             aria-describedby={describedBy("reporterPhone", false, errors.reporterPhone)}
-            onChange={(event) => setField("reporterPhone", event.target.value)}
+            onChange={textFieldHandler(setField, "reporterPhone")}
           />
         </Field>
       </div>
@@ -88,7 +92,7 @@ export const ContactStep = ({ draft, errors, setField }: StepProps) => {
             checked={draft.consent}
             aria-invalid={errors.consent ? true : undefined}
             aria-describedby={errors.consent ? errorId("consent") : undefined}
-            onChange={(event) => setField("consent", event.target.checked)}
+            onChange={checkboxFieldHandler(setField, "consent")}
             className="mt-0.5 size-4 shrink-0 accent-primary"
           />
           <span>

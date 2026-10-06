@@ -1,5 +1,6 @@
 "use client";
 
+import type { ChangeEvent } from "react";
 import {
   Area,
   AreaChart,
@@ -22,8 +23,13 @@ import {
   YEARS_DESC,
 } from "../constants";
 import { useRoadAccidents } from "../hooks/use-road-accidents";
-import type { LatestByMetric, VoivodeshipDatum, YearDatum } from "../types";
-import { formatNumber } from "../utils/format-number";
+import type {
+  LatestByMetric,
+  Metric,
+  VoivodeshipDatum,
+  YearDatum,
+} from "../types";
+import { formatTooltipNumber, formatYearLabel } from "../utils/chart-format";
 import { BreakdownTable } from "./_internal/breakdown-table";
 import { KpiRow } from "./_internal/kpi-row";
 import { Card } from "@/shared/ui/card";
@@ -45,6 +51,10 @@ export const RoadAccidentsDashboard = ({
       breakdown: initialBreakdown,
     });
 
+  const handleMetricClick = (selected: Metric) => () => setMetric(selected);
+  const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) =>
+    setYear(Number(event.target.value));
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -65,7 +75,7 @@ export const RoadAccidentsDashboard = ({
             <button
               key={m}
               type="button"
-              onClick={() => setMetric(m)}
+              onClick={handleMetricClick(m)}
               aria-pressed={metric === m}
               className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
                 metric === m
@@ -82,7 +92,7 @@ export const RoadAccidentsDashboard = ({
           Rok (mapa województw):
           <select
             value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
+            onChange={handleYearChange}
             className="rounded border border-chart-baseline/40 bg-chart-surface px-2 py-1.5 text-chart-ink"
           >
             {YEARS_DESC.map((y) => (
@@ -127,8 +137,8 @@ export const RoadAccidentsDashboard = ({
             />
             <Tooltip
               contentStyle={CHART_TOOLTIP_STYLE}
-              formatter={(value) => formatNumber(typeof value === "number" ? value : null)}
-              labelFormatter={(label) => `Rok ${label}`}
+              formatter={formatTooltipNumber}
+              labelFormatter={formatYearLabel}
             />
             <Area
               type="monotone"
@@ -172,7 +182,7 @@ export const RoadAccidentsDashboard = ({
             />
             <Tooltip
               contentStyle={CHART_TOOLTIP_STYLE}
-              formatter={(value) => formatNumber(typeof value === "number" ? value : null)}
+              formatter={formatTooltipNumber}
             />
             <Bar
               dataKey="value"

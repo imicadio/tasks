@@ -35,6 +35,12 @@ export const IncidentReportDashboard = () => {
   const picking = hydrated && step === 1;
   const picked = draftPoint(draft);
 
+  const handleSubmitted = (incident: Incident) => setSelectedId(incident.id);
+  const handlePick = (lat: number, lon: number) => {
+    setSelectedId(null);
+    void pickLocation(lat, lon);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -55,7 +61,7 @@ export const IncidentReportDashboard = () => {
             </h2>
             {hydrated ? (
               <IncidentForm
-                onSubmitted={(incident) => setSelectedId(incident.id)}
+                onSubmitted={handleSubmitted}
               />
             ) : (
               <div className="flex flex-col gap-4" aria-busy="true">
@@ -92,14 +98,7 @@ export const IncidentReportDashboard = () => {
               selectedId={selectedId}
               onSelect={setSelectedId}
               picked={picked}
-              onPick={
-                picking
-                  ? (lat, lon) => {
-                      setSelectedId(null);
-                      void pickLocation(lat, lon);
-                    }
-                  : undefined
-              }
+              onPick={picking ? handlePick : undefined}
             />
           </div>
           <IncidentList

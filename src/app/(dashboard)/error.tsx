@@ -15,6 +15,8 @@ const DashboardError = ({ error, retry }: Props) => {
     console.error(error);
   }, [error]);
 
+  const handleRetry = () => retry();
+
   return (
     <div className="mx-auto flex max-w-xl flex-col items-start gap-4 px-4 py-16">
       <h1 className="text-2xl font-semibold text-foreground">
@@ -24,7 +26,7 @@ const DashboardError = ({ error, retry }: Props) => {
         Źródło danych nie odpowiedziało albo zwróciło błąd. Spróbuj ponownie
         za chwilę.
       </p>
-      <Button onClick={() => retry()}>Spróbuj ponownie</Button>
+      <Button onClick={handleRetry}>Spróbuj ponownie</Button>
     </div>
   );
 };

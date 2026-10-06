@@ -89,9 +89,12 @@ export const IncidentForm = ({
     setErrors((current) => ({ ...current, location: undefined }));
   };
 
+  const handleReset = () => setSubmitted(null);
+  const handleBack = () => goTo((step - 1) as FormStep);
+
   if (submitted) {
     return (
-      <SubmitSuccess incident={submitted} onReset={() => setSubmitted(null)} />
+      <SubmitSuccess incident={submitted} onReset={handleReset} />
     );
   }
 
@@ -125,7 +128,7 @@ export const IncidentForm = ({
             type="button"
             variant="outline"
             disabled={submitting}
-            onClick={() => goTo((step - 1) as FormStep)}
+            onClick={handleBack}
           >
             <ArrowLeft data-icon="inline-start" aria-hidden="true" />
             Wstecz

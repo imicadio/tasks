@@ -22,10 +22,12 @@ const StationRowImpl = ({
   onToggleFavorite,
 }: StationRowProps) => {
   const gaugePct = gaugePercent(station);
+  const handleMouseEnter = () => onHover(station.id);
+  const handleFavoriteClick = () => onToggleFavorite(station.id);
 
   return (
     <div
-      onMouseEnter={() => onHover(station.id)}
+      onMouseEnter={handleMouseEnter}
       className={`grid h-14 grid-cols-[auto_1.4fr_1fr_1.2fr_auto] items-center gap-3 border-b border-border px-3 text-sm transition-colors ${
         isHovered ? "bg-accent" : ""
       }`}
@@ -34,7 +36,7 @@ const StationRowImpl = ({
         type="button"
         aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
         aria-pressed={isFavorite}
-        onClick={() => onToggleFavorite(station.id)}
+        onClick={handleFavoriteClick}
         className="text-muted-foreground hover:text-foreground"
       >
         <Star

@@ -14,6 +14,8 @@ export const VehicleList = ({
   selectedVehicleId: VehicleId | null;
   onSelectVehicle: (id: VehicleId) => void;
 }) => {
+  const handleSelect = (id: VehicleId) => () => onSelectVehicle(id);
+
   return (
     <ul
       aria-label="Lista pojazdów"
@@ -28,7 +30,7 @@ export const VehicleList = ({
         <li key={vehicle.id}>
           <button
             type="button"
-            onClick={() => onSelectVehicle(vehicle.id)}
+            onClick={handleSelect(vehicle.id)}
             aria-current={vehicle.id === selectedVehicleId ? "true" : undefined}
             className={`relative flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
               vehicle.id === selectedVehicleId ? "bg-accent" : ""

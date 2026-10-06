@@ -5,6 +5,10 @@ import {
   SEVERITY_OPTIONS,
 } from "../../constants";
 import type { StepProps } from "../../types";
+import {
+  textFieldHandler,
+  valueFieldHandler,
+} from "../../utils/field-handlers";
 import { describedBy } from "../../utils/field-ids";
 import { ChoiceGroup } from "./choice-group";
 import { Field } from "./field";
@@ -19,7 +23,7 @@ export const DetailsStep = ({ draft, errors, setField }: StepProps) => {
         value={draft.category}
         options={CATEGORY_OPTIONS}
         error={errors.category}
-        onChange={(value) => setField("category", value)}
+        onChange={valueFieldHandler(setField, "category")}
       />
       <ChoiceGroup
         id="severity"
@@ -29,7 +33,7 @@ export const DetailsStep = ({ draft, errors, setField }: StepProps) => {
         options={SEVERITY_OPTIONS}
         error={errors.severity}
         columns={3}
-        onChange={(value) => setField("severity", value)}
+        onChange={valueFieldHandler(setField, "severity")}
       />
       <Field id="title" label="Tytuł zgłoszenia" error={errors.title}>
         <Input
@@ -39,7 +43,7 @@ export const DetailsStep = ({ draft, errors, setField }: StepProps) => {
           placeholder="np. Uszkodzona latarnia przy przejściu"
           aria-invalid={errors.title ? true : undefined}
           aria-describedby={describedBy("title", false, errors.title)}
-          onChange={(event) => setField("title", event.target.value)}
+          onChange={textFieldHandler(setField, "title")}
         />
       </Field>
       <Field
@@ -55,7 +59,7 @@ export const DetailsStep = ({ draft, errors, setField }: StepProps) => {
           maxLength={1000}
           aria-invalid={errors.description ? true : undefined}
           aria-describedby={describedBy("description", true, errors.description)}
-          onChange={(event) => setField("description", event.target.value)}
+          onChange={textFieldHandler(setField, "description")}
           className={CONTROL_CLASS}
         />
         <span className="self-end text-xs tabular-nums text-muted-foreground">

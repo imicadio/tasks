@@ -11,13 +11,15 @@ type Props = {
 /** One tile per status with its station count; clicking a tile filters
  * the list to that status. */
 export const StatusKpiTiles = ({ counts, activeStatus, onSelect }: Props) => {
+  const handleSelect = (status: StationStatus) => () => onSelect(status);
+
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {STATUS_KPI_ORDER.map((s) => (
         <button
           key={s}
           type="button"
-          onClick={() => onSelect(s)}
+          onClick={handleSelect(s)}
           aria-pressed={activeStatus === s}
         >
           <Card

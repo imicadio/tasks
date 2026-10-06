@@ -23,6 +23,8 @@ export const ParkingTable = ({
   selectedLotId: ParkingLotId | null;
   onSelectLot: (id: ParkingLotId) => void;
 }) => {
+  const handleShowOnMap = (id: ParkingLotId) => () => onSelectLot(id);
+
   return (
     // Focusable scroll container: on narrow screens the table scrolls
     // horizontally, and keyboard users must be able to reach that scroll
@@ -110,7 +112,7 @@ export const ParkingTable = ({
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => onSelectLot(lot.id)}
+                    onClick={handleShowOnMap(lot.id)}
                     aria-pressed={selected}
                     aria-label={`Pokaż na mapie: ${lot.name}`}
                   >

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Input } from "@/shared/ui/input";
 import { parseCoordinate } from "../../utils/parse-coordinate";
 
@@ -24,6 +24,11 @@ export const CoordinateInput = ({
     setSyncedValue(value);
     if (parseCoordinate(text) !== value) setText(value === null ? "" : String(value));
   }
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+    onChange(parseCoordinate(event.target.value));
+  };
+
   return (
     <Input
       {...props}
@@ -31,10 +36,7 @@ export const CoordinateInput = ({
       inputMode="decimal"
       autoComplete="off"
       value={text}
-      onChange={(event) => {
-        setText(event.target.value);
-        onChange(parseCoordinate(event.target.value));
-      }}
+      onChange={handleChange}
     />
   );
 };

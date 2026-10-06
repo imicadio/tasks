@@ -24,6 +24,8 @@ export const ChoiceGroup = <T extends string>({
   columns?: 2 | 3;
   onChange: (value: T) => void;
 }) => {
+  const handleSelect = (selected: T) => () => onChange(selected);
+
   return (
     <fieldset
       id={id}
@@ -54,7 +56,7 @@ export const ChoiceGroup = <T extends string>({
               name={name}
               value={option.value}
               checked={value === option.value}
-              onChange={() => onChange(option.value)}
+              onChange={handleSelect(option.value)}
               className="mt-0.5 size-4 shrink-0 accent-primary"
             />
             <span className="flex flex-col gap-0.5">

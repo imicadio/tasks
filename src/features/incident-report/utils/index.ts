@@ -8,3 +8,4 @@ export * from "./map-focus";
 export * from "./nominatim-address";
 export * from "./parse-coordinate";
 export * from "./round-coord";
+export * from "./field-handlers";

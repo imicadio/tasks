@@ -286,6 +286,22 @@ export default function NotificationsPage() {
   exempt, since `shadcn add` regenerates them. Non-component functions —
   utils, hooks, server queries, `generateMetadata`, route handlers — stay
   as `function` declarations.
+- **No functions written inline in JSX** — neither in props
+  (`onClick={() => …}`, `formatter={(v) => …}`, `onPick={a ? (x) => … : undefined}`)
+  nor as render-prop children (`<SelectValue>{(v) => …}</SelectValue>`).
+  Name them instead:
+
+  | Case | Write |
+  |---|---|
+  | Event handler | `const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => setSearchInput(event.target.value);` in the component body, then `onChange={handleSearchChange}` |
+  | Handler needing the current item inside `.map` | a curried handler: `const handleSelect = (id: VehicleId) => () => onSelect(id);` → `onClick={handleSelect(vehicle.id)}` |
+  | Same handler shape repeated across fields | a factory in `utils/`, e.g. `textFieldHandler(setField, "title")` (`incident-report/utils/field-handlers.ts`) |
+  | Pure formatter / label lookup passed to a library | a util: `formatter={formatTooltipNumber}`, `<SelectValue>{labelOf(SORT_LABELS)}</SelectValue>` (`shared/utils/label-of.ts`) |
+
+  `.map((item) => <Row … />)` callbacks rendering children are fine.
+  Enforced by `no-restricted-syntax` in `eslint.config.mjs` (tests and
+  shadcn primitives exempt). Where a handler's identity matters for
+  memoized children, wrap it in `useCallback` as before.
 - Feature folder names: singular product noun, kebab-case (`billing`,
   `road-accidents`).
 - Tests: `*.test.ts(x)` inside a colocated `__tests__/`.
