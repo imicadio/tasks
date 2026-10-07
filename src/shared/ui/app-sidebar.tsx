@@ -17,13 +17,12 @@ import {
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import type { NavItem } from "@/shared/types/nav";
 
-export const AppSidebar = ({
-  navItems,
-  repoUrl,
-}: {
+type Props = {
   navItems: NavItem[];
   repoUrl?: string;
-}) => {
+};
+
+export const AppSidebar = ({ navItems, repoUrl }: Props) => {
   const pathname = usePathname();
 
   return (

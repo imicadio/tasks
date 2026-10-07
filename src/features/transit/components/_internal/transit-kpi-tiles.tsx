@@ -4,8 +4,10 @@ import type { Vehicle } from "../../types";
 import { formatAverageDelay } from "../../utils/format";
 import { averageDelaySeconds, countRoutes } from "../../utils/vehicles";
 
+type Props = { vehicles: Vehicle[] };
+
 /** Active vehicles, distinct routes and the fleet's average delay. */
-export const TransitKpiTiles = ({ vehicles }: { vehicles: Vehicle[] }) => {
+export const TransitKpiTiles = ({ vehicles }: Props) => {
   const routeCount = useMemo(() => countRoutes(vehicles), [vehicles]);
   const avgDelay = useMemo(() => averageDelaySeconds(vehicles), [vehicles]);
 

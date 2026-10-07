@@ -5,15 +5,13 @@ import { VEHICLE_TYPE_COLOR_VAR, VEHICLE_TYPE_LABELS } from "../constants";
 import type { Vehicle, VehicleId } from "../types";
 import { formatDelay } from "../utils/format";
 
-export const VehicleList = ({
-  vehicles,
-  selectedVehicleId,
-  onSelectVehicle,
-}: {
+type Props = {
   vehicles: Vehicle[];
   selectedVehicleId: VehicleId | null;
   onSelectVehicle: (id: VehicleId) => void;
-}) => {
+};
+
+export const VehicleList = ({ vehicles, selectedVehicleId, onSelectVehicle }: Props) => {
   const handleSelect = (id: VehicleId) => () => onSelectVehicle(id);
 
   return (

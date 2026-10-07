@@ -87,7 +87,7 @@ component; constants, types and helpers each have their own folder.
 |---|---|
 | A top-level `const` (URL, label map, option list, size, `Intl.*Format`, a value derived once from other constants) | `constants/<topic>.ts` |
 | A `type` / `interface` used by more than one file, or describing domain data, API responses, store state, page data | `types/<topic>.ts` |
-| A component's own `Props` type | **stays in the component file** — it's the component's contract |
+| A component's own `Props` type | **stays in the component file** as a named `type Props` above the component — never inline in the signature (§6) |
 | A pure function (formatting, mapping, counting, sorting, parsing, building ids/class lists) or a client-side `fetch` wrapper | `utils/<name>.ts` + a test in `utils/__tests__/` |
 | A second component in the same file (`KpiRow`, `FlyTo`, a table, a marker) | its own file in `components/_internal/` |
 | A `next/dynamic` lazy loader | `components/_internal/lazy-<name>.tsx` |
@@ -280,6 +280,26 @@ export default function NotificationsPage() {
 
   Generic components keep the type parameter on the arrow:
   `export const ChoiceGroup = <T extends string>({ … }: Props<T>) => { … };`.
+- **Props are a named type, never inline.** Declare `type Props = { … }`
+  directly above the component (above its JSDoc) and destructure with
+  `({ … }: Props)` — also for a single prop, and also when extending
+  another type (`type Props = StepProps & { onPickDistrict: … }`). Don't
+  write `({ lots }: { lots: ParkingLot[] })`.
+
+  ```tsx
+  type Props = {
+    lots: ParkingLot[];
+    selectedLotId: ParkingLotId | null;
+    onSelectLot: (id: ParkingLotId) => void;
+  };
+
+  export const ParkingTable = ({ lots, selectedLotId, onSelectLot }: Props) => { … };
+  ```
+
+  `Props` stays in the component file (it's that component's contract);
+  export it under a specific name (`StationRowProps`) only when another
+  file needs it. Shared shapes several components use go in `types/`
+  (`StepProps`, `StationRowsProps`).
   Enforced by ESLint's `react/function-component-definition` (fixable with
   `npx eslint --fix` for named components; default exports need the
   manual split above). shadcn-generated primitives in `src/shared/ui/` are

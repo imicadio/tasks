@@ -4,16 +4,14 @@ import type { ParkingLot, ParkingLotId } from "../../types";
 import { formatLotName } from "../../utils/format";
 import { createLotIcon } from "../../utils/marker-icon";
 
-/** One lot's map marker, labelled with its free-spot count. */
-export const LotMarker = ({
-  lot,
-  selected,
-  onSelect,
-}: {
+type Props = {
   lot: ParkingLot;
   selected: boolean;
   onSelect: (id: ParkingLotId) => void;
-}) => {
+};
+
+/** One lot's map marker, labelled with its free-spot count. */
+export const LotMarker = ({ lot, selected, onSelect }: Props) => {
   const icon = useMemo(() => createLotIcon(lot, selected), [lot, selected]);
   return (
     <Marker

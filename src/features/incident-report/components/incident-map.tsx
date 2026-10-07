@@ -12,13 +12,7 @@ import { FlyTo } from "./_internal/fly-to";
 import { IncidentMarker } from "./_internal/incident-marker";
 import { PickOnClick } from "./_internal/pick-on-click";
 
-export const IncidentMap = ({
-  incidents,
-  selectedId,
-  onSelect,
-  picked,
-  onPick,
-}: {
+type Props = {
   incidents: Incident[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -26,7 +20,15 @@ export const IncidentMap = ({
   picked: LatLngTuple | null;
   /** Set only while the form's location step is active. */
   onPick?: (lat: number, lon: number) => void;
-}) => {
+};
+
+export const IncidentMap = ({
+  incidents,
+  selectedId,
+  onSelect,
+  picked,
+  onPick,
+}: Props) => {
   const selected = incidents.find((incident) => incident.id === selectedId);
   const flyTarget = mapFocusTarget(selected, picked, Boolean(onPick));
   const pickedIcon = useMemo(() => createPickedIcon(), []);

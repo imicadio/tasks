@@ -1,13 +1,12 @@
 import type { VoivodeshipDatum } from "../../types";
 import { formatNumber } from "../../utils/format-number";
 
-export const BreakdownTable = ({
-  data,
-  metricLabel,
-}: {
+type Props = {
   data: VoivodeshipDatum[];
   metricLabel: string;
-}) => {
+};
+
+export const BreakdownTable = ({ data, metricLabel }: Props) => {
   return (
     <table className="mt-4 w-full text-left text-sm">
       <caption className="sr-only">

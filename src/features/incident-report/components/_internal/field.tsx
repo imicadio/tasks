@@ -2,21 +2,16 @@ import type { ReactNode } from "react";
 import { hintId } from "../../utils/field-ids";
 import { FieldError } from "./field-error";
 
-export const Field = ({
-  id,
-  label,
-  hint,
-  error,
-  optional,
-  children,
-}: {
+type Props = {
   id: string;
   label: string;
   hint?: string;
   error?: string;
   optional?: boolean;
   children: ReactNode;
-}) => {
+};
+
+export const Field = ({ id, label, hint, error, optional, children }: Props) => {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-foreground">

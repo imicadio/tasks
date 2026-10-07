@@ -39,7 +39,8 @@ doesn't exist, stop and tell the user to create it before scaffolding.
      component/hook/page files, one component per file (extra ones in
      `components/_internal/`).
    - Write every component — including `page.tsx` and other Next.js
-     special files — as an arrow function, with no functions inline in
+     special files — as an arrow function with a named `type Props`
+     above it (never an inline props type), with no functions inline in
      JSX: named handlers in the component body instead
      (`docs/ARCHITECTURE.md` §6).
    - Follow §6's engineering principles: state/effects in hooks,

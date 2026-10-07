@@ -3,8 +3,10 @@ import { useMap } from "react-leaflet";
 import { FOCUS_ZOOM } from "../../constants";
 import type { LatLng } from "../../types";
 
+type Props = { target: LatLng | null };
+
 /** Pans and zooms the map to the selected vehicle. Renders nothing. */
-export const FlyToVehicle = ({ target }: { target: LatLng | null }) => {
+export const FlyToVehicle = ({ target }: Props) => {
   const map = useMap();
   useEffect(() => {
     if (!target) return;

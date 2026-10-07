@@ -3,7 +3,9 @@ import type { LatestByMetric } from "../../types";
 import { formatNumber } from "../../utils/format-number";
 import { StatTile } from "@/shared/ui/stat-tile";
 
-export const KpiRow = ({ latest }: { latest: LatestByMetric }) => {
+type Props = { latest: LatestByMetric };
+
+export const KpiRow = ({ latest }: Props) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {METRICS.map((m) => (

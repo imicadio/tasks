@@ -3,7 +3,9 @@ import { STEPS } from "../../constants";
 import type { FormStep } from "../../types";
 import { StepMarker } from "./step-marker";
 
-export const Stepper = ({ current }: { current: FormStep }) => {
+type Props = { current: FormStep };
+
+export const Stepper = ({ current }: Props) => {
   return (
     <ol aria-label="Kroki formularza" className="grid grid-cols-3 gap-2">
       {STEPS.map((step, index) => {

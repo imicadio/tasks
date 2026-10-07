@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 
-export const AppProviders = ({ children }: { children: React.ReactNode }) => {
+type Props = { children: React.ReactNode };
+
+export const AppProviders = ({ children }: Props) => {
   const [queryClient] = useState(() => new QueryClient());
 
   return (

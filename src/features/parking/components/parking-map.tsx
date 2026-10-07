@@ -8,15 +8,13 @@ import type { ParkingLot, ParkingLotId } from "../types";
 import { FlyToLot } from "./_internal/fly-to-lot";
 import { LotMarker } from "./_internal/lot-marker";
 
-export const ParkingMap = ({
-  lots,
-  selectedLotId,
-  onSelectLot,
-}: {
+type Props = {
   lots: ParkingLot[];
   selectedLotId: ParkingLotId | null;
   onSelectLot: (id: ParkingLotId) => void;
-}) => {
+};
+
+export const ParkingMap = ({ lots, selectedLotId, onSelectLot }: Props) => {
   const selectedLot = lots.find((lot) => lot.id === selectedLotId) ?? null;
   return (
     <MapContainer

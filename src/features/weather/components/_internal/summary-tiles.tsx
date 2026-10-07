@@ -2,8 +2,10 @@ import type { WeatherSummary } from "../../types";
 import { formatTemp, formatTempAtStation } from "../../utils/format";
 import { Card } from "@/shared/ui/card";
 
+type Props = { summary: WeatherSummary };
+
 /** Average, warmest and coldest temperature across all stations. */
-export const SummaryTiles = ({ summary }: { summary: WeatherSummary }) => {
+export const SummaryTiles = ({ summary }: Props) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <Card className="flex flex-col gap-1">

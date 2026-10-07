@@ -2,8 +2,10 @@ import { Card } from "@/shared/ui/card";
 import type { WeatherStation } from "../../types";
 import { StationTableRow } from "./station-table-row";
 
+type Props = { stations: WeatherStation[] };
+
 /** Every station's current readings, one row each. */
-export const StationsTable = ({ stations }: { stations: WeatherStation[] }) => {
+export const StationsTable = ({ stations }: Props) => {
   return (
     <Card>
       <table className="w-full text-left text-sm">

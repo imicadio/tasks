@@ -3,21 +3,19 @@
 import type { ParkingLot, ParkingLotId } from "../types";
 import { ParkingRow } from "./_internal/parking-row";
 
+type Props = {
+  lots: ParkingLot[];
+  selectedLotId: ParkingLotId | null;
+  onSelectLot: (id: ParkingLotId) => void;
+};
+
 /**
  * The primary, fully keyboard- and screen-reader-accessible view of the
  * data: everything the map shows is here too, as a native <table> with a
  * caption and scoped headers. The map is a visual complement, not the only
  * way to get at a lot's numbers.
  */
-export const ParkingTable = ({
-  lots,
-  selectedLotId,
-  onSelectLot,
-}: {
-  lots: ParkingLot[];
-  selectedLotId: ParkingLotId | null;
-  onSelectLot: (id: ParkingLotId) => void;
-}) => {
+export const ParkingTable = ({ lots, selectedLotId, onSelectLot }: Props) => {
   const handleShowOnMap = (id: ParkingLotId) => () => onSelectLot(id);
 
   return (

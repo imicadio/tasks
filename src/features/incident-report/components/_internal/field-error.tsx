@@ -1,6 +1,8 @@
 import { errorId } from "../../utils/field-ids";
 
-export const FieldError = ({ id, message }: { id: string; message?: string }) => {
+type Props = { id: string; message?: string };
+
+export const FieldError = ({ id, message }: Props) => {
   if (!message) return null;
   return (
     <p id={errorId(id)} className="text-sm font-medium text-destructive">

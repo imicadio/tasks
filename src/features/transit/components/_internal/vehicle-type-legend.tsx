@@ -6,8 +6,10 @@ import {
 import type { Vehicle } from "../../types";
 import { visibleVehicleTypes } from "../../utils/vehicles";
 
+type Props = { vehicles: Vehicle[] };
+
 /** Color key for the map markers and list dots. */
-export const VehicleTypeLegend = ({ vehicles }: { vehicles: Vehicle[] }) => {
+export const VehicleTypeLegend = ({ vehicles }: Props) => {
   return (
     <ul className="flex items-center gap-4 text-sm text-muted-foreground">
       {visibleVehicleTypes(VEHICLE_TYPES, vehicles).map((type) => (

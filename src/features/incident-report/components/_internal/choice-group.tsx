@@ -3,6 +3,17 @@ import type { ChoiceOption } from "../../types";
 import { errorId } from "../../utils/field-ids";
 import { FieldError } from "./field-error";
 
+type Props<T extends string> = {
+  id: string;
+  legend: string;
+  name: string;
+  value: T | "";
+  options: ChoiceOption<T>[];
+  error?: string;
+  columns?: 2 | 3;
+  onChange: (value: T) => void;
+};
+
 /** A radio group rendered as selectable cards. Native radios underneath, so
  * arrow-key navigation and the group semantics come for free. */
 export const ChoiceGroup = <T extends string>({
@@ -14,16 +25,7 @@ export const ChoiceGroup = <T extends string>({
   error,
   columns = 2,
   onChange,
-}: {
-  id: string;
-  legend: string;
-  name: string;
-  value: T | "";
-  options: ChoiceOption<T>[];
-  error?: string;
-  columns?: 2 | 3;
-  onChange: (value: T) => void;
-}) => {
+}: Props<T>) => {
   const handleSelect = (selected: T) => () => onChange(selected);
 
   return (

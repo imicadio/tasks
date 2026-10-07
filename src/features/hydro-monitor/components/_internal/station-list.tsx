@@ -10,9 +10,11 @@ import { StationListHeader } from "./station-list-header";
 import { StationRows } from "./station-rows";
 import { StationsTable } from "./stations-table";
 
+type Props = { stations: HydroStation[] };
+
 /** The station list card: heading, perf-demo toggle, the scrollable rows,
  * and the screen-reader table carrying the same data. */
-export const StationList = ({ stations }: { stations: HydroStation[] }) => {
+export const StationList = ({ stations }: Props) => {
   const [perfMode, setPerfMode] = useState<PerfMode>("optimized");
   const [hoveredId, setHoveredId] = useState<StationId | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);

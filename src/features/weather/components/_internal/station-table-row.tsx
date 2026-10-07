@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import type { WeatherStation } from "../../types";
 import { formatTemp, formatWithUnit } from "../../utils/format";
 
+type Props = { station: WeatherStation };
+
 /** One station: the whole row opens its detail page for pointer users; the
  * name link is the keyboard/screen-reader path. */
-export const StationTableRow = ({ station }: { station: WeatherStation }) => {
+export const StationTableRow = ({ station }: Props) => {
   const router = useRouter();
   const href = `/pogoda/${station.id}`;
   const handleRowClick = () => router.push(href);

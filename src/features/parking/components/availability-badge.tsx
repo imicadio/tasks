@@ -1,8 +1,10 @@
 import { AVAILABILITY_COLOR_VAR, AVAILABILITY_LABELS } from "../constants";
 import type { AvailabilityStatus } from "../types";
 
+type Props = { status: AvailabilityStatus };
+
 /** Status as text, with color only as a reinforcing dot (WCAG 1.4.1). */
-export const AvailabilityBadge = ({ status }: { status: AvailabilityStatus }) => {
+export const AvailabilityBadge = ({ status }: Props) => {
   return (
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
       <span

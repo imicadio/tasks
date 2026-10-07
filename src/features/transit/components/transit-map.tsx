@@ -8,17 +8,19 @@ import type { LatLng, Vehicle, VehicleId } from "../types";
 import { FlyToVehicle } from "./_internal/fly-to-vehicle";
 import { VehicleMarkersLayer } from "./vehicle-markers-layer";
 
+type Props = {
+  vehicles: Vehicle[];
+  selectedVehicleId: VehicleId | null;
+  onSelectVehicle: (id: VehicleId) => void;
+  flyToTarget: LatLng | null;
+};
+
 export const TransitMap = ({
   vehicles,
   selectedVehicleId,
   onSelectVehicle,
   flyToTarget,
-}: {
-  vehicles: Vehicle[];
-  selectedVehicleId: VehicleId | null;
-  onSelectVehicle: (id: VehicleId) => void;
-  flyToTarget: LatLng | null;
-}) => {
+}: Props) => {
   return (
     <MapContainer
       center={GDANSK_CENTER}

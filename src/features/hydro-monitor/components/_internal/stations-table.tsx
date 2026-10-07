@@ -1,9 +1,11 @@
 import { STATUS_LABELS } from "../../constants";
 import type { HydroStation } from "../../types";
 
+type Props = { stations: HydroStation[] };
+
 /** Screen-reader-only table of the visible stations — see the comment
  * where it's rendered in hydro-monitor-dashboard.tsx. */
-export const StationsTable = ({ stations }: { stations: HydroStation[] }) => {
+export const StationsTable = ({ stations }: Props) => {
   // `sr-only` sits on a wrapper div, not on the <table> itself: tables size
   // to their content and ignore `width/height: 1px`, so the hidden table
   // stayed ~22000px tall and stretched the page's scroll area. A

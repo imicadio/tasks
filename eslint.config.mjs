@@ -112,6 +112,12 @@ const eslintConfig = defineConfig([
           message:
             "Don't choose between two JSX trees with a ternary — move the choice into a small component with early returns. See docs/ARCHITECTURE.md §6.",
         },
+        {
+          selector:
+            "VariableDeclarator[id.name=/^[A-Z]/] > ArrowFunctionExpression > ObjectPattern > TSTypeAnnotation TSTypeLiteral",
+          message:
+            "Don't type a component's props inline — declare `type Props = { … }` above the component and use `({ … }: Props)`. See docs/ARCHITECTURE.md §6.",
+        },
       ],
       // Small files, one job each — see docs/ARCHITECTURE.md §6.
       "max-lines": ["error", { max: 100, skipBlankLines: true, skipComments: true }],

@@ -3,8 +3,10 @@ import { useMap } from "react-leaflet";
 import { FOCUS_ZOOM } from "../../constants";
 import type { ParkingLot } from "../../types";
 
+type Props = { target: ParkingLot | null };
+
 /** Pans and zooms the map to the selected lot. Renders nothing. */
-export const FlyToLot = ({ target }: { target: ParkingLot | null }) => {
+export const FlyToLot = ({ target }: Props) => {
   const map = useMap();
   useEffect(() => {
     if (!target) return;

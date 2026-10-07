@@ -2,6 +2,11 @@ import { useState, type ChangeEvent } from "react";
 import { Input } from "@/shared/ui/input";
 import { parseCoordinate } from "../../utils/parse-coordinate";
 
+type Props = Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> & {
+  value: number | null;
+  onChange: (value: number | null) => void;
+};
+
 /**
  * A free-text coordinate field bound to a numeric value. It keeps its own
  * text so in-between states ("54.", "54,3") don't get reformatted under the
@@ -12,10 +17,7 @@ export const CoordinateInput = ({
   value,
   onChange,
   ...props
-}: Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> & {
-  value: number | null;
-  onChange: (value: number | null) => void;
-}) => {
+}: Props) => {
   const [text, setText] = useState(value === null ? "" : String(value));
   const [syncedValue, setSyncedValue] = useState(value);
   // Adjusting state during render (not in an effect) — see

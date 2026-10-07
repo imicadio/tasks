@@ -1,8 +1,10 @@
 import type { IncidentDraft } from "../../types";
 import { draftSummary } from "../../utils/draft-summary";
 
+type Props = { draft: IncidentDraft };
+
 /** Read-only recap of the draft before it's sent. */
-export const ReportSummary = ({ draft }: { draft: IncidentDraft }) => {
+export const ReportSummary = ({ draft }: Props) => {
   const summary = draftSummary(draft);
 
   return (

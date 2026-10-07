@@ -10,6 +10,8 @@ import {
 } from "../utils/format";
 import { StatTile } from "@/shared/ui/stat-tile";
 
+type Props = { station: WeatherStation };
+
 /**
  * Shows every one of the 10 raw fields IMGW's single-station endpoint
  * returns (see src/features/weather/README.md) as its own stat — including
@@ -17,7 +19,7 @@ import { StatTile } from "@/shared/ui/stat-tile";
  * version folded into a single "last measured" sentence instead of
  * surfacing individually.
  */
-export const WeatherStationDetail = ({ station }: { station: WeatherStation }) => {
+export const WeatherStationDetail = ({ station }: Props) => {
   return (
     <div className="flex flex-col gap-6">
       <div>

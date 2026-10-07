@@ -65,6 +65,10 @@ missing.
      function` in `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx`.
      ESLint's `react/function-component-definition` catches the named
      ones; check default exports by eye.
+   - **Inline props type** (`docs/ARCHITECTURE.md` §6): a component whose
+     props are typed in the signature (`({ a }: { a: string })` or
+     `({ … }: Base & { extra: … })`) instead of a named `type Props`
+     above it. ESLint's `no-restricted-syntax` flags these.
    - **Function written inline in JSX** (`docs/ARCHITECTURE.md` §6): an
      arrow/function expression as a JSX prop or render-prop child — it
      should be a named `handleX` in the component body, a curried handler
