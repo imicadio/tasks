@@ -1,18 +1,24 @@
 import type { Metric } from "../types";
 
-export const METRICS: Metric[] = ["accidents", "fatalities", "injured"];
+export const METRIC = {
+  Accidents: "accidents",
+  Fatalities: "fatalities",
+  Injured: "injured",
+} as const;
+
+export const METRICS: Metric[] = Object.values(METRIC);
 
 /** The metric the dashboard opens on. */
-export const DEFAULT_METRIC: Metric = "accidents";
+export const DEFAULT_METRIC: Metric = METRIC.Accidents;
 
 export const METRIC_LABELS: Record<Metric, string> = {
-  accidents: "Wypadki",
-  fatalities: "Ofiary śmiertelne",
-  injured: "Ranni",
+  [METRIC.Accidents]: "Wypadki",
+  [METRIC.Fatalities]: "Ofiary śmiertelne",
+  [METRIC.Injured]: "Ranni",
 };
 
 export const METRIC_COLORS: Record<Metric, string> = {
-  accidents: "var(--metric-accidents)",
-  fatalities: "var(--metric-fatalities)",
-  injured: "var(--metric-injured)",
+  [METRIC.Accidents]: "var(--metric-accidents)",
+  [METRIC.Fatalities]: "var(--metric-fatalities)",
+  [METRIC.Injured]: "var(--metric-injured)",
 };

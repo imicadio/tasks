@@ -7,6 +7,7 @@ import { OptionSelect } from "@/shared/ui/option-select";
 import { Switch } from "@/shared/ui/switch";
 import { labelOf } from "@/shared/utils/label-of";
 import {
+  ALL_FILTER,
   DIR_LABELS,
   SORT_DIRECTIONS,
   SORT_FIELDS,
@@ -56,7 +57,7 @@ export const FiltersBar = ({
       />
       <OptionSelect
         value={params.voivodeship}
-        options={["all", ...voivodeships]}
+        options={[ALL_FILTER, ...voivodeships]}
         getLabel={formatVoivodeshipOption}
         onChange={filters.setVoivodeship}
         ariaLabel="Filtruj według województwa"

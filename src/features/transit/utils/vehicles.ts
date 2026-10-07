@@ -1,3 +1,4 @@
+import { VEHICLE_TYPE } from "../constants";
 import type { Vehicle, VehicleType } from "../types";
 
 /** Sets each vehicle's type from the routeId → type map, falling back to
@@ -8,7 +9,7 @@ export function applyVehicleTypes(
 ): Vehicle[] {
   return vehicles.map((vehicle) => ({
     ...vehicle,
-    vehicleType: routeTypes.get(vehicle.routeId) ?? "other",
+    vehicleType: routeTypes.get(vehicle.routeId) ?? VEHICLE_TYPE.Other,
   }));
 }
 
@@ -43,6 +44,6 @@ export function visibleVehicleTypes(
   vehicles: Vehicle[],
 ): VehicleType[] {
   return types.filter(
-    (type) => type !== "other" || vehicles.some((v) => v.vehicleType === type),
+    (type) => type !== VEHICLE_TYPE.Other || vehicles.some((v) => v.vehicleType === type),
   );
 }

@@ -11,6 +11,7 @@ import {
   SEVERITY_COLOR_VAR,
   SEVERITY_LABELS,
 } from "./labels";
+import { INCIDENT_CATEGORY, INCIDENT_SEVERITY } from "./incident";
 
 /** There is no backend: submitting only writes to localStorage. The short
  * delay keeps the "Wysyłanie…" state visible, as a real request would. */
@@ -38,26 +39,34 @@ export const EMPTY_DRAFT: IncidentDraft = {
   consent: false,
 };
 
+/** Both coordinates report their errors under this one key — the
+ * coordinates fieldset — rather than per input. */
+export const LOCATION_ERROR_KEY = "location";
+
+/** Draft fields that make up the location; the first is focused when the
+ * location is invalid. */
+export const COORDINATE_FIELDS = ["lat", "lon"] as const satisfies readonly (keyof IncidentDraft)[];
+
 /** Focus order for "jump to the first invalid field", per step. */
 export const STEP_FIELDS: (keyof StepErrors)[][] = [
   ["category", "severity", "title", "description"],
-  ["location", "address", "occurredAt"],
+  [LOCATION_ERROR_KEY, "address", "occurredAt"],
   ["reporterName", "reporterEmail", "reporterPhone", "consent"],
 ];
 
 /** The last step's index — "Dalej" on earlier steps, "Wyślij" on this one. */
 export const LAST_STEP = 2;
 
-export const CATEGORY_OPTIONS: ChoiceOption<IncidentCategory>[] = (
-  Object.keys(CATEGORY_LABELS) as IncidentCategory[]
+export const CATEGORY_OPTIONS: ChoiceOption<IncidentCategory>[] = Object.values(
+  INCIDENT_CATEGORY,
 ).map((value) => ({
   value,
   label: CATEGORY_LABELS[value],
   hint: CATEGORY_HINTS[value],
 }));
 
-export const SEVERITY_OPTIONS: ChoiceOption<IncidentSeverity>[] = (
-  Object.keys(SEVERITY_LABELS) as IncidentSeverity[]
+export const SEVERITY_OPTIONS: ChoiceOption<IncidentSeverity>[] = Object.values(
+  INCIDENT_SEVERITY,
 ).map((value) => ({
   value,
   label: SEVERITY_LABELS[value],

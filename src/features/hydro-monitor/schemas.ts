@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { sortDirectionSchema } from "@/shared/schemas/sort";
+import { ALL_FILTER, SORT_DIRECTION, SORT_FIELD, STATUS_FILTER } from "./constants";
 import { apiNullableNumber } from "@/shared/utils/api-validation";
 import { deriveStationStatus } from "./utils/derive-station-status";
 import { toStationId } from "./utils/to-station-id";
@@ -49,21 +51,13 @@ export const hydroStationSchema = rawHydroStationSchema.transform(
 
 export const hydroStationsResponseSchema = z.array(hydroStationSchema);
 
-export const statusFilterSchema = z.enum([
-  "all",
-  "alarm",
-  "warning",
-  "normal",
-  "unknown",
-]);
-
-export const sortFieldSchema = z.enum(["name", "waterLevelCm", "status"]);
-export const sortDirectionSchema = z.enum(["asc", "desc"]);
+export const statusFilterSchema = z.enum(STATUS_FILTER);
+export const sortFieldSchema = z.enum(SORT_FIELD);
 
 export const hydroQuerySchema = z.object({
   q: z.string().trim().max(100).optional().default(""),
-  status: statusFilterSchema.optional().default("all"),
-  voivodeship: z.string().optional().default("all"),
-  sort: sortFieldSchema.optional().default("status"),
-  dir: sortDirectionSchema.optional().default("desc"),
+  status: statusFilterSchema.optional().default(STATUS_FILTER.All),
+  voivodeship: z.string().optional().default(ALL_FILTER),
+  sort: sortFieldSchema.optional().default(SORT_FIELD.Status),
+  dir: sortDirectionSchema.optional().default(SORT_DIRECTION.Desc),
 });

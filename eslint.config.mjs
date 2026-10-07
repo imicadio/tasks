@@ -114,6 +114,22 @@ const eslintConfig = defineConfig([
         },
         {
           selector:
+            "BinaryExpression[operator=/^[!=]==$/]:not(:has(UnaryExpression[operator='typeof'])) > Literal[value=/^[A-Za-z][\\w-]*$/]",
+          message:
+            "Compare against a named constant (e.g. `VEHICLE_TYPE.Other`), not a string literal. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector: "SwitchCase > Literal.test",
+          message:
+            "Switch on named constants (`case SORT_FIELD.Name:`), not string literals. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector: "TSTypeAliasDeclaration > TSUnionType > TSLiteralType:first-child > Literal[raw=/^[\"']/]",
+          message:
+            "Don't spell a union of string literals by hand — derive it from an `as const` map: `type X = ValueOf<typeof X_MAP>`. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector:
             "VariableDeclarator[id.name=/^[A-Z]/] > ArrowFunctionExpression > ObjectPattern > TSTypeAnnotation TSTypeLiteral",
           message:
             "Don't type a component's props inline — declare `type Props = { … }` above the component and use `({ … }: Props)`. See docs/ARCHITECTURE.md §6.",
@@ -122,6 +138,34 @@ const eslintConfig = defineConfig([
       // Small files, one job each — see docs/ARCHITECTURE.md §6.
       "max-lines": ["error", { max: 100, skipBlankLines: true, skipComments: true }],
       "no-nested-ternary": "error",
+    },
+  },
+  // Same literal rules for plain .ts files (the .tsx block above carries
+  // them alongside its JSX rules — two no-restricted-syntax entries for one
+  // file would override each other).
+  {
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/__tests__/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "BinaryExpression[operator=/^[!=]==$/]:not(:has(UnaryExpression[operator='typeof'])) > Literal[value=/^[A-Za-z][\\w-]*$/]",
+          message:
+            "Compare against a named constant (e.g. `VEHICLE_TYPE.Other`), not a string literal. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector: "SwitchCase > Literal.test",
+          message:
+            "Switch on named constants (`case SORT_FIELD.Name:`), not string literals. See docs/ARCHITECTURE.md §6.",
+        },
+        {
+          selector: "TSTypeAliasDeclaration > TSUnionType > TSLiteralType:first-child > Literal[raw=/^[\"']/]",
+          message:
+            "Don't spell a union of string literals by hand — derive it from an `as const` map: `type X = ValueOf<typeof X_MAP>`. See docs/ARCHITECTURE.md §6.",
+        },
+      ],
     },
   },
   // Override default ignores of eslint-config-next.

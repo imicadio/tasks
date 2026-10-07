@@ -1,17 +1,21 @@
 import { z } from "zod";
-import { GDANSK_BOUNDS } from "./constants";
+import {
+  GDANSK_BOUNDS,
+  INCIDENT_CATEGORY,
+  INCIDENT_SEVERITY,
+  LOCATION_ERROR_KEY,
+  LOCATION_REQUIRED,
+  OUTSIDE_GDANSK,
+  PHONE_RE,
+} from "./constants";
 import type { FormStep, IncidentDraft, StepErrors } from "./types";
-
-const PHONE_RE = /^(\+48[\s-]?)?\d{3}[\s-]?\d{3}[\s-]?\d{3}$/;
-
-const LOCATION_REQUIRED = "Wskaż miejsce na mapie lub wybierz dzielnicę.";
-const OUTSIDE_GDANSK = "Wskazany punkt leży poza Gdańskiem.";
+import { isCoordinateField } from "./utils/is-coordinate-field";
 
 export const detailsStepSchema = z.object({
-  category: z.enum(["road", "infrastructure", "environment", "safety"], {
+  category: z.enum(INCIDENT_CATEGORY, {
     error: "Wybierz kategorię incydentu.",
   }),
-  severity: z.enum(["low", "medium", "high"], {
+  severity: z.enum(INCIDENT_SEVERITY, {
     error: "Określ poziom zagrożenia.",
   }),
   title: z
@@ -114,7 +118,7 @@ export function validateStep(step: FormStep, draft: IncidentDraft): StepErrors {
   for (const issue of result.error.issues) {
     const field = issue.path[0];
     if (typeof field !== "string") continue;
-    const key = field === "lat" || field === "lon" ? "location" : field;
+    const key = isCoordinateField(field) ? LOCATION_ERROR_KEY : field;
     errors[key as keyof StepErrors] ??= issue.message;
   }
   return errors;

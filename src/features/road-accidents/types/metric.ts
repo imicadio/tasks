@@ -1,4 +1,7 @@
-export type Metric = "accidents" | "fatalities" | "injured";
+import type { ValueOf } from "@/shared/types/value-of";
+import type { METRIC } from "../constants";
+
+export type Metric = ValueOf<typeof METRIC>;
 
 export type YearDatum = {
   year: number;

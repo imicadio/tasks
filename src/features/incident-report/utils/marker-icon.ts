@@ -1,6 +1,6 @@
 import L from "leaflet";
 import { escapeHtml } from "@/shared/utils/escape-html";
-import { STATUS_LABELS } from "../constants";
+import { INCIDENT_STATUS, STATUS_LABELS } from "../constants";
 import type { Incident } from "../types";
 
 // Leaflet touches `window` on import: this file is client-only and is
@@ -11,7 +11,7 @@ import type { Incident } from "../types";
  * motion alone (WCAG 1.4.1, 2.3.3 — the pulse stops under reduced motion).
  * The sr-only text is the marker's accessible name. */
 export function createIncidentIcon(incident: Incident, selected: boolean): L.DivIcon {
-  const isNew = incident.status === "new";
+  const isNew = incident.status === INCIDENT_STATUS.New;
   const classes = [
     "incident-marker",
     `incident-marker--${incident.severity}`,

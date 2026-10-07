@@ -1,3 +1,4 @@
+import { INCIDENT_STATUS } from "../../constants";
 import { cn } from "@/shared/utils/cn";
 import type { Incident } from "../../types";
 import { formatDateTime, formatIncidentMeta } from "../../utils/format";
@@ -20,7 +21,7 @@ export const IncidentListItem = ({ incident, selected, onSelect }: Props) => {
       className={cn(
         "flex w-full items-start gap-3 rounded-lg border bg-chart-surface p-3 text-left transition-colors outline-none hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50",
         selected ? "border-primary" : "border-chart-baseline/30",
-        incident.status === "new" && "border-incident-new/60",
+        incident.status === INCIDENT_STATUS.New && "border-incident-new/60",
       )}
     >
       <IncidentDot incident={incident} />

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { MAX_YEAR, MIN_YEAR } from "./constants";
+import { MAX_YEAR, METRIC, MIN_YEAR } from "./constants";
 
-export const metricSchema = z.enum(["accidents", "fatalities", "injured"]);
+export const metricSchema = z.enum(METRIC);
 
 // Shape of a GUS BDL `/data/by-variable/{id}` response — validated live
 // against https://bdl.stat.gov.pl/api/v1.

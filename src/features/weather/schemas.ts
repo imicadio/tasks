@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { sortDirectionSchema } from "@/shared/schemas/sort";
+import { SORT_DIRECTION, WEATHER_SORT_FIELD } from "./constants";
 import { apiNullableNumber } from "@/shared/utils/api-validation";
 import type { WeatherStation } from "./types";
 
@@ -36,15 +38,10 @@ export const weatherStationSchema = rawSynopStationSchema.transform(
 
 export const weatherStationsResponseSchema = z.array(weatherStationSchema);
 
-export const weatherSortFieldSchema = z.enum([
-  "name",
-  "temperatureC",
-  "windSpeedMs",
-]);
-export const sortDirectionSchema = z.enum(["asc", "desc"]);
+export const weatherSortFieldSchema = z.enum(WEATHER_SORT_FIELD);
 
 export const weatherQuerySchema = z.object({
   q: z.string().trim().max(100).optional().default(""),
-  sort: weatherSortFieldSchema.optional().default("temperatureC"),
-  dir: sortDirectionSchema.optional().default("desc"),
+  sort: weatherSortFieldSchema.optional().default(WEATHER_SORT_FIELD.Temperature),
+  dir: sortDirectionSchema.optional().default(SORT_DIRECTION.Desc),
 });

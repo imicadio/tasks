@@ -1,7 +1,7 @@
 import { LocateFixed } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { LOOKUP_MESSAGES, LOOKUP_STATUS_ID } from "../../constants";
+import { ADDRESS_LOOKUP, LOOKUP_MESSAGES, LOOKUP_STATUS_ID } from "../../constants";
 import { useIncidentReportStore } from "../../store";
 import type { StepProps } from "../../types";
 import { textFieldHandler } from "../../utils/field-handlers";
@@ -14,7 +14,7 @@ export const AddressField = ({ draft, errors, setField }: StepProps) => {
   const addressLookup = useIncidentReportStore((state) => state.addressLookup);
   const lookupAddress = useIncidentReportStore((state) => state.lookupAddress);
   const handleLookupClick = () => void lookupAddress();
-  const canLookup = draftPoint(draft) !== null && addressLookup !== "loading";
+  const canLookup = draftPoint(draft) !== null && addressLookup !== ADDRESS_LOOKUP.Loading;
 
   return (
     <Field

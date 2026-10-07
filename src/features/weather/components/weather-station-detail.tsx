@@ -8,6 +8,7 @@ import {
   formatWindDirection,
   formatWithUnit,
 } from "../utils/format";
+import { STAT_TILE_SIZE } from "@/shared/constants/ui";
 import { StatTile } from "@/shared/ui/stat-tile";
 
 type Props = { station: WeatherStation };
@@ -43,40 +44,40 @@ export const WeatherStationDetail = ({ station }: Props) => {
       </header>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <StatTile size="md" label="ID stacji" value={station.id} />
+        <StatTile size={STAT_TILE_SIZE.Medium} label="ID stacji" value={station.id} />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Data pomiaru"
           value={station.measurementDate ?? MISSING_VALUE}
         />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Godzina pomiaru"
           value={formatMeasurementHour(station.measurementHour)}
         />
-        <StatTile size="md" label="Temperatura" value={formatTemp(station.temperatureC)} />
+        <StatTile size={STAT_TILE_SIZE.Medium} label="Temperatura" value={formatTemp(station.temperatureC)} />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Prędkość wiatru"
           value={formatWithUnit(station.windSpeedMs, " m/s")}
         />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Kierunek wiatru"
           value={formatWindDirection(station.windDirectionDeg)}
         />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Wilgotność względna"
           value={formatWithUnit(station.humidityPct, "%")}
         />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Suma opadu"
           value={formatWithUnit(station.precipitationMm, " mm")}
         />
         <StatTile
-          size="md"
+          size={STAT_TILE_SIZE.Medium}
           label="Ciśnienie"
           value={formatWithUnit(station.pressureHpa, " hPa")}
         />

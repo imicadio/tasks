@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { EMPTY_DRAFT, STORAGE_KEY } from "./constants";
+import { ADDRESS_LOOKUP, EMPTY_DRAFT, STORAGE_KEY } from "./constants";
 import { incidentReportSchema } from "./schemas";
 import type { IncidentReportState } from "./types";
 import { toIncident } from "./utils/draft";
@@ -30,7 +30,7 @@ export const useIncidentReportStore = create<IncidentReportState>()(
         set((state) => ({ draft: { ...state.draft, [key]: value } })),
       setLocation: (lat, lon) =>
         set((state) => ({ draft: { ...state.draft, lat, lon } })),
-      addressLookup: "idle",
+      addressLookup: ADDRESS_LOOKUP.Idle,
       pickLocation: async (lat, lon) => {
         // A clicked point is no longer a district's center.
         set((state) => ({
@@ -41,22 +41,22 @@ export const useIncidentReportStore = create<IncidentReportState>()(
       lookupAddress: async () => {
         const { lat, lon } = get().draft;
         if (lat === null || lon === null) return;
-        set({ addressLookup: "loading" });
+        set({ addressLookup: ADDRESS_LOOKUP.Loading });
         // Ignore the answer if the point moved while it was in flight.
         const isCurrent = () => get().draft.lat === lat && get().draft.lon === lon;
         try {
           const { address } = await fetchAddress(lat, lon);
           if (!isCurrent()) return;
           if (address === null) {
-            set({ addressLookup: "not-found" });
+            set({ addressLookup: ADDRESS_LOOKUP.NotFound });
             return;
           }
           set((state) => ({
             draft: { ...state.draft, address },
-            addressLookup: "done",
+            addressLookup: ADDRESS_LOOKUP.Done,
           }));
         } catch {
-          if (isCurrent()) set({ addressLookup: "error" });
+          if (isCurrent()) set({ addressLookup: ADDRESS_LOOKUP.Error });
         }
       },
       setStep: (step) => set({ step }),
@@ -67,7 +67,7 @@ export const useIncidentReportStore = create<IncidentReportState>()(
           reports: [incident, ...state.reports],
           draft: EMPTY_DRAFT,
           step: 0,
-          addressLookup: "idle",
+          addressLookup: ADDRESS_LOOKUP.Idle,
         }));
         return incident;
       },

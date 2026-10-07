@@ -1,3 +1,4 @@
+import { PERF_MODE } from "../../constants";
 import type { PerfMode, StationRowsProps } from "../../types";
 import { NaiveStationRows } from "./naive-station-rows";
 import { VirtualStationRows } from "./virtual-station-rows";
@@ -9,6 +10,6 @@ export const StationRows = ({
   perfMode,
   ...props
 }: Props) => {
-  if (perfMode === "naive") return <NaiveStationRows {...props} />;
+  if (perfMode === PERF_MODE.Naive) return <NaiveStationRows {...props} />;
   return <VirtualStationRows {...props} />;
 };

@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Star } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
-import { STATUS_COLORS, STATUS_LABELS } from "../constants";
+import { FAVORITE_COLOR, STATUS_COLORS, STATUS_LABELS } from "../constants";
 import type { HydroStation, StationId } from "../types";
 import { formatCm } from "../utils/format-cm";
 import { gaugePercent } from "../utils/gauge-percent";
@@ -41,8 +41,8 @@ const StationRowImpl = ({
       >
         <Star
           className="size-4"
-          fill={isFavorite ? "var(--status-warning)" : "none"}
-          stroke={isFavorite ? "var(--status-warning)" : "currentColor"}
+          fill={isFavorite ? FAVORITE_COLOR : "none"}
+          stroke={isFavorite ? FAVORITE_COLOR : "currentColor"}
         />
       </button>
 

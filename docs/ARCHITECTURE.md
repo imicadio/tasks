@@ -144,7 +144,8 @@ makes the ESLint boundary rule in §4 mechanically enforceable.
 src/shared/
   ui/          # design-system primitives: button.tsx, input.tsx, sidebar.tsx, card.tsx — no product concepts
   hooks/       # generic hooks: use-url-state.ts, use-debounced-value.ts, use-mobile.ts
-  constants/   # generic constants: map.ts (OSM tiles, Gdańsk center/zoom), compass.ts
+  constants/   # generic constants: map.ts (OSM tiles, Gdańsk center/zoom), compass.ts, sort.ts, theme.ts, ui.ts
+  schemas/     # generic zod schemas: sort.ts (sortDirectionSchema)
   types/       # cross-cutting generic types: pagination.ts (Paginated<T>), search-params.ts, nav.ts
   utils/       # generic utilities: cn.ts, api-validation.ts, search-params.ts, http.ts (badRequest),
                #   paginate.ts, escape-html.ts, compass.ts, wait.ts
@@ -325,6 +326,53 @@ export default function NotificationsPage() {
 - Feature folder names: singular product noun, kebab-case (`billing`,
   `road-accidents`).
 - Tests: `*.test.ts(x)` inside a colocated `__tests__/`.
+
+### Domain values are named constants
+
+Every closed set of string values — statuses, types, categories, sort
+fields, modes, API codes like `"BUS"`/`"TRAM"` — is defined **once**, as
+an `as const` map in `constants/`. Everything else derives from it:
+
+```ts
+// constants/vehicle-type.ts
+export const VEHICLE_TYPE = { Bus: "bus", Tram: "tram", Other: "other" } as const;
+export const VEHICLE_TYPES: VehicleType[] = Object.values(VEHICLE_TYPE);   // ordered options
+export const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
+  [VEHICLE_TYPE.Bus]: "Autobus",                                            // computed keys
+  // …
+};
+
+// types/vehicle.ts
+export type VehicleType = ValueOf<typeof VEHICLE_TYPE>;                    // "bus" | "tram" | "other"
+
+// schemas.ts
+vehicleType: z.enum(VEHICLE_TYPE)
+
+// anywhere
+if (vehicle.vehicleType === VEHICLE_TYPE.Other) …
+switch (sort) { case SORT_FIELD.Name: … }
+```
+
+- Map name: SCREAMING_SNAKE singular (`VEHICLE_TYPE`), keys PascalCase,
+  values the wire/URL strings. The ordered list of options is the plural
+  (`VEHICLE_TYPES`), usually `Object.values(...)`.
+- Types come from the map with `ValueOf` (`@/shared/types/value-of`) —
+  never a hand-written `"a" | "b"` union.
+- Raw values from an external API get their own map plus a lookup to our
+  values (`ROUTE_TYPE` → `ROUTE_TYPE_TO_VEHICLE_TYPE`), so the API's
+  spelling appears in exactly one place.
+- Label/color/etc. maps use computed keys (`[STATUS.InProgress]: …`), so
+  renaming a value can't leave a stale key behind.
+- Shared sets (sort direction, theme, UI variants like
+  `SKELETON_CONTENT`) live in `src/shared/constants/`, with their zod
+  schema in `src/shared/schemas/` (`sortDirectionSchema`).
+- Property keys of typed objects (`setField("title", …)`) are already
+  type-checked and stay as they are; a pseudo-key that several places must
+  agree on gets a constant (`LOCATION_ERROR_KEY`).
+
+Enforced by `no-restricted-syntax`: no `=== "literal"` comparisons (apart
+from `typeof`), no `case "literal":`, no hand-written string-literal union
+types.
 
 ### Engineering principles
 

@@ -1,4 +1,5 @@
 import type { Incident } from "../types";
+import { INCIDENT_CATEGORY, INCIDENT_SEVERITY, INCIDENT_STATUS } from "./incident";
 
 /** Hard-coded, made-up incidents so the map isn't empty before the first
  * report. */
@@ -9,9 +10,9 @@ export const SEED_INCIDENTS: Incident[] = [
     title: "Niedziałająca sygnalizacja świetlna",
     description:
       "Na skrzyżowaniu sygnalizator miga na żółto we wszystkich kierunkach, w godzinach szczytu tworzą się korki.",
-    category: "road",
-    severity: "high",
-    status: "in-progress",
+    category: INCIDENT_CATEGORY.Road,
+    severity: INCIDENT_SEVERITY.High,
+    status: INCIDENT_STATUS.InProgress,
     lat: 54.3809,
     lon: 18.6046,
     address: "al. Grunwaldzka / ul. Słowackiego, Wrzeszcz",
@@ -24,9 +25,9 @@ export const SEED_INCIDENTS: Incident[] = [
     title: "Zalana jezdnia po ulewie",
     description:
       "Po nocnej ulewie studzienki nie odbierają wody, prawy pas jest zalany na odcinku ok. 50 m.",
-    category: "infrastructure",
-    severity: "medium",
-    status: "verified",
+    category: INCIDENT_CATEGORY.Infrastructure,
+    severity: INCIDENT_SEVERITY.Medium,
+    status: INCIDENT_STATUS.Verified,
     lat: 54.3472,
     lon: 18.6489,
     address: "ul. Podwale Przedmiejskie, Śródmieście",
@@ -39,9 +40,9 @@ export const SEED_INCIDENTS: Incident[] = [
     title: "Nielegalne wysypisko odpadów",
     description:
       "Przy ścieżce w parku ktoś porzucił worki z gruzem i stare meble.",
-    category: "environment",
-    severity: "low",
-    status: "resolved",
+    category: INCIDENT_CATEGORY.Environment,
+    severity: INCIDENT_SEVERITY.Low,
+    status: INCIDENT_STATUS.Resolved,
     lat: 54.3268,
     lon: 18.6322,
     address: "Park Oruński, Orunia",

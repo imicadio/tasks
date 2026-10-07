@@ -65,6 +65,14 @@ missing.
      function` in `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx`.
      ESLint's `react/function-component-definition` catches the named
      ones; check default exports by eye.
+   - **String literal instead of a named constant** (`docs/ARCHITECTURE.md`
+     §6 "Domain values are named constants"): a status/type/category/mode/
+     sort-field/API code written as a raw string (`=== "bus"`,
+     `case "name":`, `status: "new"`, `z.enum(["a", "b"])`, a label map
+     with literal keys) or a hand-written `"a" | "b"` union — it should come
+     from an `as const` map in `constants/` with the type derived via
+     `ValueOf`. ESLint catches comparisons, `case` labels and unions;
+     check object values, zod enums and map keys by eye.
    - **Inline props type** (`docs/ARCHITECTURE.md` §6): a component whose
      props are typed in the signature (`({ a }: { a: string })` or
      `({ … }: Base & { extra: … })`) instead of a named `type Props`

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { YEARS_DESC } from "../constants";
+import { QUERY_KIND, YEARS_DESC } from "../constants";
 import type {
   Metric,
   RoadAccidentsInitialState,
@@ -33,10 +33,10 @@ export function useRoadAccidents(initial: RoadAccidentsInitialState) {
 
     Promise.all([
       fetch(
-        `/api/road-accidents?kind=trend&metric=${metric}&page=1&pageSize=${YEARS_DESC.length}`,
+        `/api/road-accidents?kind=${QUERY_KIND.Trend}&metric=${metric}&page=1&pageSize=${YEARS_DESC.length}`,
       ).then((res) => res.json() as Promise<Paginated<YearDatum>>),
       fetch(
-        `/api/road-accidents?kind=breakdown&metric=${metric}&year=${year}`,
+        `/api/road-accidents?kind=${QUERY_KIND.Breakdown}&metric=${metric}&year=${year}`,
       ).then((res) => res.json() as Promise<{ data: VoivodeshipDatum[] }>),
     ])
       .then(([trendRes, breakdownRes]) => {

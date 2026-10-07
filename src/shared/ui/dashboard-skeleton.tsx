@@ -1,3 +1,4 @@
+import { SKELETON_CONTENT } from "@/shared/constants/ui";
 import { cn } from "@/shared/utils/cn";
 import type { SkeletonContent } from "@/shared/types/skeleton";
 import { Skeleton } from "./skeleton";
@@ -19,7 +20,7 @@ type Props = {
 export const DashboardSkeleton = ({
   kpis,
   filters = true,
-  content = "block",
+  content = SKELETON_CONTENT.Block,
 }: Props) => {
   return (
     <div className="flex flex-col gap-6" aria-busy="true">
@@ -47,14 +48,14 @@ export const DashboardSkeleton = ({
 
       {filters && <Skeleton className="h-[66px]" />}
 
-      {content === "block" && <Skeleton className="h-[560px]" />}
-      {content === "map-with-list" && (
+      {content === SKELETON_CONTENT.Block && <Skeleton className="h-[560px]" />}
+      {content === SKELETON_CONTENT.MapWithList && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
           <Skeleton className="h-[560px]" />
           <Skeleton className="h-[560px]" />
         </div>
       )}
-      {content === "two-columns" && (
+      {content === SKELETON_CONTENT.TwoColumns && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Skeleton className="h-[480px]" />
           <Skeleton className="h-[480px]" />

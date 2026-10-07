@@ -1,7 +1,8 @@
+import type { CoordinateField as CoordinateFieldName } from "../../types";
 import { CoordinateInput } from "./coordinate-input";
 
 type Props = {
-  id: "lat" | "lon";
+  id: CoordinateFieldName;
   label: string;
   placeholder: string;
   value: number | null;

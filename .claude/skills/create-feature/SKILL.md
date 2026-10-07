@@ -15,8 +15,9 @@ description: Scaffold a new feature module following this repo's feature-based a
    and these decisions, instructing it to read `docs/ARCHITECTURE.md`
    first (it already knows to, but state it explicitly) — in particular
    the `constants/` / `types/` / `utils/` folder layout, the "What goes
-   where" rule in §2, and §6: arrow functions, a named `type Props` per
-   component (never inline), named handlers instead of functions inline
+   where" rule in §2, and §6: domain values as `as const` maps (no string
+   literals), arrow functions, a named `type Props` per component (never
+   inline), named handlers instead of functions inline
    in JSX, and the engineering principles (SRP with
    hooks for state, DRY via `src/shared/`, YAGNI, KISS, early returns,
    ≤100 lines of code per component file).
