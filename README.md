@@ -24,6 +24,7 @@ miejsca na parkingach (Gdańsk), oraz formularz zgłaszania incydentów z mapą.
   5. [Parkingi](#5-parkingi) — `/parkingi`
   6. [Formularz zgłoszenia](#6-formularz-zgłoszenia) — `/formularz`
 - [Architektura i style programowania](#architektura-i-style-programowania)
+- [Dostępność (WCAG 2.1 AA)](#dostępność-wcag-21-aa)
 - [Struktura katalogów](#struktura-katalogów)
 
 ## Stack i wersje
@@ -226,7 +227,7 @@ Dzięki temu feature można przenieść, usunąć albo przepisać w całości, a
 | **Warstwy stanu** | URL (filtry do udostępnienia) · React Query (dane serwera) · Zustand (globalny stan klienta) · `useState` (lokalny UI) — [ADR 0002](docs/decisions/0002-state-architecture.md) |
 | **Server-first** | dane startowe renderuje serwer (`get…PageData()`), klient tylko odświeża; każda trasa ma `loading.tsx`, więc nawigacja jest natychmiastowa |
 | **Imperatywna ścieżka dla wydajności** | animacja ~300 markerów idzie bezpośrednio przez Leaflet i `requestAnimationFrame`, bez re-renderów Reacta ([ADR 0006](docs/decisions/0006-realtime-map-rendering.md)) |
-| **Accessibility-first** | WCAG 2.1 AA: tabele dla czytników ekranu obok map i list, status nie tylko kolorem, fokus i `aria-describedby` w formularzu ([ADR 0005](docs/decisions/0005-accessibility.md)) |
+| **Accessibility-first** | WCAG 2.1 AA — szczegóły w sekcji [Dostępność](#dostępność-wcag-21-aa) |
 
 ### Jak te zasady są pilnowane
 
@@ -240,6 +241,35 @@ Dzięki temu feature można przenieść, usunąć albo przepisać w całości, a
 - **Testy** — ponad 200 testów Vitest per warstwa (schematy, zapytania serwerowe, utils, hooki, komponenty) z audytem dostępności `jest-axe`; testy leżą obok kodu w `__tests__/`.
 - **ADR** — decyzje architektoniczne z uzasadnieniem w [`docs/decisions/`](docs/decisions/), świadome skróty w [`docs/TECH_DEBT.md`](docs/TECH_DEBT.md).
 - **Agenci i skille Claude Code** (`.claude/`) — `architecture-reviewer` i `/feature-architecture-review` sprawdzają zmiany pod kątem tych zasad, a `/create-feature` generuje nowy moduł od razu w tej strukturze.
+
+## Dostępność (WCAG 2.1 AA)
+
+Celem jest zgodność z **WCAG 2.1 na poziomie AA** — standardem wymaganym od serwisów podmiotów publicznych przez *Ustawę o dostępności cyfrowej stron internetowych i aplikacji mobilnych podmiotów publicznych* (wdrażającą dyrektywę UE 2016/2102). Pełne uzasadnienie i wyniki audytu: [ADR 0005](docs/decisions/0005-accessibility.md).
+
+**Jak było audytowane:** automatyczny skan **axe-core** w prawdziwej przeglądarce **oraz** ręczny przegląd — axe nie wykrywa wszystkiego (np. nie oceni, czy `lang` zgadza się z językiem treści). Audyt znalazł i naprawił m.in. brak `lang="pl"`, selecty bez dostępnej nazwy, za niski kontrast plakietek i liczb KPI oraz domyślnego koloru `muted-foreground` w jasnym motywie.
+
+| Rozwiązanie | Gdzie | Kryterium WCAG |
+|---|---|---|
+| `<html lang="pl">` | cała aplikacja | 3.1.1 Język strony |
+| Link „Przejdź do treści głównej” jako pierwszy element strony | layout | 2.4.1 Pomijanie bloków |
+| Tekst zawsze w kolorze „ink” (≥ 4,5:1); kolor statusu tylko jako kropka obok tekstu | KPI, plakietki statusów, legendy | 1.4.3 Kontrast, 1.4.11 Kontrast elementów nietekstowych |
+| Status nigdy nie tylko kolorem — zawsze z tekstem lub liczbą (np. liczba wolnych miejsc na znaczniku, „NOWY INCYDENT”) | parkingi, incydenty, hydrologia | 1.4.1 Użycie koloru |
+| Tekstowy odpowiednik każdej mapy i wykresu: tabela lub lista z tymi samymi danymi | wykresy GUS, mapy, lista stacji | 1.1.1 Treść nietekstowa, 1.3.1 Informacje i relacje |
+| Ukryta (`sr-only`), semantyczna `<table>` obok wirtualizowanej listy ~900 stacji zamiast ręcznego ARIA grid („no ARIA is better than bad ARIA”) | hydrologia | 1.3.1 Informacje i relacje |
+| Pełna obsługa z klawiatury: prawdziwe `<button>`/`<a>`, przewijana tabela jako region z fokusem, znaczniki parkingów fokusowalne; w transporcie lista pojazdów zamiast ~300 punktów tabulacji na mapie | wszystkie zakładki | 2.1.1 Klawiatura, 2.4.3 Kolejność fokusu |
+| Alternatywa dla kliknięcia w mapę: wpisanie współrzędnych albo wybór dzielnicy z listy | formularz | 2.1.1 Klawiatura |
+| Każda kontrolka ma dostępną nazwę (`<label>`, `aria-label` na selectach i przyciskach-ikonach), przełączniki z `aria-pressed` | filtry, kafelki, lista | 4.1.2 Nazwa, rola, wartość |
+| Błędy formularza powiązane z polem przez `aria-describedby` + `aria-invalid`, fokus na pierwszym błędnym polu, wymagania opisane podpowiedziami | formularz | 3.3.1 Identyfikacja błędu, 3.3.2 Etykiety lub instrukcje |
+| Komunikaty statusu w regionach `role="status"` / `aria-live` (ładowanie, wynik geokodowania, wysłanie zgłoszenia, błąd odświeżania) — bez zasypywania czytnika co minutę zmianami liczb | formularz, parkingi, szkielety ładowania | 4.1.3 Komunikaty o stanie |
+| Po zmianie kroku formularza fokus przechodzi na nagłówek nowego kroku | formularz | 2.4.3 Kolejność fokusu |
+| Pulsowanie znacznika nowego incydentu wyłączone przy `prefers-reduced-motion` | mapa incydentów | 2.3.3 Animacja wywołana interakcją |
+| Widoczny fokus: pierścień `:focus-visible` w komponentach UI i znacznikach map, domyślny obrys przeglądarki tam, gdzie nie ma własnego stylu | cała aplikacja | 2.4.7 Widoczny fokus |
+
+**Jak jest pilnowane:** `jest-axe` (`toHaveNoViolations`) działa w testach komponentów (8 plików testów) i łapie przy każdym uruchomieniu błędy strukturalne: brak nazw, nieprawidłowe ARIA, zduplikowane `id`. Kontrast sprawdzany jest ręcznie w przeglądarce, na poziomie tokenów kolorów w `globals.css`, bo jsdom nie liczy prawdziwego renderowania.
+
+**Znane ograniczenia:**
+- Ukryta tabela stacji w hydrologii jest tylko do odczytu — dodawanie do ulubionych działa wyłącznie z widocznej listy ([`docs/TECH_DEBT.md`](docs/TECH_DEBT.md)).
+- Znaczniki pojazdów na mapie transportu celowo nie są fokusowalne. Dostęp z klawiatury i czytnika zapewnia lista pojazdów obok mapy ([ADR 0006](docs/decisions/0006-realtime-map-rendering.md)).
 
 ## Struktura katalogów
 
