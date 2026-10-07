@@ -23,7 +23,7 @@ miejsca na parkingach (Gdańsk), oraz formularz zgłaszania incydentów z mapą.
   4. [Transport publiczny](#4-transport-publiczny) — `/transport`
   5. [Parkingi](#5-parkingi) — `/parkingi`
   6. [Formularz zgłoszenia](#6-formularz-zgłoszenia) — `/formularz`
-- [Architektura i jakość](#architektura-i-jakość)
+- [Architektura i style programowania](#architektura-i-style-programowania)
 - [Struktura katalogów](#struktura-katalogów)
 
 ## Stack i wersje
@@ -54,7 +54,7 @@ Nie są potrzebne żadne zmienne środowiskowe ani klucze API.
 | `npm run dev` | serwer deweloperski (Turbopack) na `localhost:3000` |
 | `npm run build` | build produkcyjny |
 | `npm run start` | uruchamia build produkcyjny |
-| `npm run lint` | ESLint — w tym reguły architektury (patrz [Architektura i jakość](#architektura-i-jakość)) |
+| `npm run lint` | ESLint — w tym reguły architektury (patrz [Architektura i style programowania](#architektura-i-style-programowania)) |
 | `npm test` | testy Vitest (jednorazowo) |
 | `npm run test:watch` | testy w trybie watch |
 
@@ -175,18 +175,71 @@ Trzykrokowy formularz zgłoszenia incydentu w Gdańsku z mapą zgłoszeń.
   - walidacja per krok schematami zod, z fokusem na pierwszym błędnym polu i komunikatami powiązanymi przez `aria-describedby`;
   - geokodowanie idzie przez własny endpoint z cache 24 h, zgodnie z zasadami użycia Nominatim (User-Agent, ≤ 1 req/s).
 
-## Architektura i jakość
+## Architektura i style programowania
 
-- **Architektura oparta na featurach** — każdy dashboard to moduł w `src/features/<nazwa>/` z publicznym `index.ts`; `src/app/` zawiera tylko cienkie strony i route handlery, a `src/shared/` kod generyczny. Szczegóły: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
-- **Zasady kodu egzekwowane przez ESLint**:
-  - importy między featurami tylko przez `index.ts`;
+### Architektura plików: feature-based (vertical slices)
+
+Kod jest podzielony **według funkcji produktu, a nie według typu pliku**. Każdy dashboard to samodzielny moduł (pionowy „plaster” od API po UI), a całość to modularny monolit w trzech warstwach z zależnościami tylko w jedną stronę:
+
+```
+app  ──▶  features  ──▶  shared
+```
+
+| Warstwa | Zawartość | Zasada |
+|---|---|---|
+| `src/app/` | routing: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `api/*/route.ts` | cienka — parsuje parametry i wywołuje **jedną** funkcję z feature'a |
+| `src/features/<nazwa>/` | wszystko o jednym pojęciu produktu: UI, hooki, zapytania serwerowe, walidacja, typy | moduł zamknięty; inne warstwy importują go **tylko przez `index.ts`** |
+| `src/shared/` | kod bez pojęć domenowych: prymitywy UI, generyczne hooki i utils | nie zależy od `features/` ani `app/` |
+
+Wewnątrz feature'a każdy plik ma jeden rodzaj zawartości:
+
+```
+features/hydro-monitor/
+  index.ts          # publiczne API modułu (jedyne, co widzą inne warstwy)
+  schemas.ts        # zod: walidacja odpowiedzi API i parametrów
+  constants/        # wartości (as const), etykiety, URL-e
+  types/            # typy domenowe (wyprowadzane ze stałych)
+  utils/            # czyste funkcje + testy
+  hooks/            # stan i efekty (URL, React Query, store)
+  components/       # komponenty; pomocnicze w _internal/
+  server/           # queries.ts (server-only), page-data.ts
+```
+
+Dzięki temu feature można przenieść, usunąć albo przepisać w całości, a zależności między modułami widać w jednym pliku (`index.ts`). Granice pilnuje ESLint (`no-restricted-imports`). Pełna specyfikacja: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+### Zasady i style programowania
+
+| Zasada | Jak jest stosowana w projekcie |
+|---|---|
+| **SOLID — S** (single responsibility) | komponent renderuje jedno, hook zarządza jednym kawałkiem stanu, util robi jedną transformację; dashboard to tylko spis sekcji (`<StatusKpiTiles>`, `<FiltersBar>`, `<StationList>`) |
+| **SOLID — O, D** (open/closed, dependency inversion) | kompozycja zamiast flag: `<StationRows>` wybiera `<VirtualStationRows>` lub `<NaiveStationRows>`; komponenty dostają dane i callbacki przez propsy, logikę wstrzykują hooki |
+| **DRY** | przy drugim wystąpieniu kod trafia do wspólnego miejsca — np. `useDebouncedUrlParam`, `OptionSelect`, `StatTile`, `FetchStatus`, `paginate`, `escapeHtml` w `src/shared/` |
+| **YAGNI** | brak spekulatywnych propsów, opcji i warstw „na zapas”; martwy kod i zdublowane efekty są usuwane |
+| **KISS** | jawny kod zamiast sprytnej konfiguracji; małe pliki (maks. 100 linii kodu na komponent) |
+| **Early return** | wybór między dwoma drzewami JSX to osobny komponent z `if … return`, nie ternary w JSX |
+| **Programowanie funkcyjne** | logika w czystych funkcjach w `utils/` (bez efektów ubocznych, łatwe do testowania), dane niemutowalne |
+| **Deklaratywny UI + logika w hookach** | komponenty to JSX i propsy; stan, URL, fetchowanie i efekty żyją w `hooks/` (podział container / presentational) |
+| **Single source of truth** | każdy zbiór wartości (statusy, typy, sortowanie) to jedna mapa `as const`, z której wyprowadzane są typy (`ValueOf`), schematy zod i etykiety |
+| **Anti-corruption layer** (z DDD) | odpowiedzi zewnętrznych API są parsowane i mapowane na typy domenowe na wejściu — dalej nikt nie zna nazw pól IMGW czy GUS |
+| **Parse, don't validate** | zod przekształca niepewne dane w pewne typy już w `schemas.ts`; reszta kodu pracuje na typach, nie na `unknown` |
+| **Branded types** | identyfikatory (`StationId`, `VehicleId`, `ParkingLotId`) nie dają się pomylić ze zwykłym stringiem/liczbą |
+| **Warstwy stanu** | URL (filtry do udostępnienia) · React Query (dane serwera) · Zustand (globalny stan klienta) · `useState` (lokalny UI) — [ADR 0002](docs/decisions/0002-state-architecture.md) |
+| **Server-first** | dane startowe renderuje serwer (`get…PageData()`), klient tylko odświeża; każda trasa ma `loading.tsx`, więc nawigacja jest natychmiastowa |
+| **Imperatywna ścieżka dla wydajności** | animacja ~300 markerów idzie bezpośrednio przez Leaflet i `requestAnimationFrame`, bez re-renderów Reacta ([ADR 0006](docs/decisions/0006-realtime-map-rendering.md)) |
+| **Accessibility-first** | WCAG 2.1 AA: tabele dla czytników ekranu obok map i list, status nie tylko kolorem, fokus i `aria-describedby` w formularzu ([ADR 0005](docs/decisions/0005-accessibility.md)) |
+
+### Jak te zasady są pilnowane
+
+- **ESLint** egzekwuje mechanicznie:
+  - granice modułów;
   - komponenty jako arrow functions z nazwanym `type Props`;
-  - żadnych funkcji ani ternary wybierających drzewa JSX inline;
-  - maks. 100 linii kodu na plik komponentu;
-  - wartości domenowe jako mapy `as const` zamiast stringów.
-- **Natychmiastowa nawigacja** — każda zakładka ma `loading.tsx` ze szkieletem, dzięki czemu Next.js prefetchuje trasy dynamiczne.
-- **Testy** — ponad 200 testów Vitest: schematy, zapytania serwerowe, utils, hooki i komponenty, z automatycznym audytem dostępności `jest-axe`.
-- **Decyzje architektoniczne (ADR)** — [`docs/decisions/`](docs/decisions/): stan aplikacji, walidacja danych z API, wydajność list, dostępność WCAG 2.1 AA, mapy w czasie rzeczywistym. Świadome skróty: [`docs/TECH_DEBT.md`](docs/TECH_DEBT.md).
+  - brak funkcji i ternary wybierających drzewa JSX inline;
+  - brak zagnieżdżonych ternary;
+  - limit długości pliku;
+  - brak porównań z „gołymi” stringami domenowymi.
+- **Testy** — ponad 200 testów Vitest per warstwa (schematy, zapytania serwerowe, utils, hooki, komponenty) z audytem dostępności `jest-axe`; testy leżą obok kodu w `__tests__/`.
+- **ADR** — decyzje architektoniczne z uzasadnieniem w [`docs/decisions/`](docs/decisions/), świadome skróty w [`docs/TECH_DEBT.md`](docs/TECH_DEBT.md).
+- **Agenci i skille Claude Code** (`.claude/`) — `architecture-reviewer` i `/feature-architecture-review` sprawdzają zmiany pod kątem tych zasad, a `/create-feature` generuje nowy moduł od razu w tej strukturze.
 
 ## Struktura katalogów
 
