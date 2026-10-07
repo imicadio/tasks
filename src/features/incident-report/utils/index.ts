@@ -12,3 +12,4 @@ export * from "./field-handlers";
 export * from "./first-invalid-field";
 export * from "./marker-z-index";
 export * from "./draft-summary";
+export * from "./is-coordinate-field";

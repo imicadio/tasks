@@ -1,6 +1,8 @@
+import type { ValueOf } from "@/shared/types/value-of";
+import type { WEATHER_SORT_FIELD } from "../constants";
 import type { WeatherStation } from "./station";
 
-export type WeatherSortField = "name" | "temperatureC" | "windSpeedMs";
+export type WeatherSortField = ValueOf<typeof WEATHER_SORT_FIELD>;
 import type { SortDirection } from "@/shared/types/sort";
 
 export type { SortDirection };

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { STAT_TILE_SIZE } from "@/shared/constants/ui";
+import type { StatTileSize } from "@/shared/types/stat-tile";
 import { cn } from "@/shared/utils/cn";
 import { Card } from "./card";
 
@@ -9,12 +11,12 @@ type Props = {
    * in ink: accent colors used as text often fail WCAG contrast — see
    * docs/decisions/0005-accessibility.md. */
   dotColor?: string;
-  size?: "lg" | "md";
+  size?: StatTileSize;
   className?: string;
 };
 
 /** One headline number with its label (KPI tile). */
-export const StatTile = ({ label, value, dotColor, size = "lg", className }: Props) => {
+export const StatTile = ({ label, value, dotColor, size = STAT_TILE_SIZE.Large, className }: Props) => {
   return (
     <Card className={cn("flex flex-col gap-1 text-left", className)}>
       <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -30,7 +32,7 @@ export const StatTile = ({ label, value, dotColor, size = "lg", className }: Pro
       <span
         className={cn(
           "font-semibold tabular-nums text-foreground",
-          size === "lg" ? "text-3xl" : "text-2xl",
+          size === STAT_TILE_SIZE.Large ? "text-3xl" : "text-2xl",
         )}
       >
         {value}

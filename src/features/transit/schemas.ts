@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { apiNullableNumber } from "@/shared/utils/api-validation";
+import { VEHICLE_TYPE } from "./constants";
 import type { Direction, Vehicle, VehiclesSnapshot, VehicleType } from "./types";
+import { toVehicleType } from "./utils/to-vehicle-type";
 
 /** Snaps an arbitrary bearing to the nearest of the 8 compass points the
  * source system itself uses, rather than trusting it's already one of
@@ -50,7 +52,7 @@ export const vehiclesSnapshotSchema = rawSnapshotSchema.transform(
           // the routeId → type mapping this schema doesn't have access to
           // — "other" here is only ever a transient default, never what a
           // caller of getVehiclePositions() actually sees.
-          vehicleType: "other",
+          vehicleType: VEHICLE_TYPE.Other,
           headsign: v.headsign ?? "",
           vehicleCode: v.vehicleCode,
           lat: v.lat,
@@ -67,12 +69,6 @@ export const vehiclesSnapshotSchema = rawSnapshotSchema.transform(
 export const transitQuerySchema = z.object({
   route: z.string().trim().max(20).optional().default(""),
 });
-
-function toVehicleType(raw: string): VehicleType {
-  if (raw === "BUS") return "bus";
-  if (raw === "TRAM") return "tram";
-  return "other";
-}
 
 // ZTM Gdańsk's "Lista linii" resource — keyed by date (normally just
 // today's), each holding the full route list for that day.

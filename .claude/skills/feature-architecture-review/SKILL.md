@@ -11,7 +11,8 @@ description: Review the current diff or branch for violations of this repo's fea
    `docs/ARCHITECTURE.md` §2 (inline constants, types, helpers or extra
    components; multi-step data assembly in `app/`; helpers duplicated
    across features; untested utils) and §6: arrow-function components,
-   named `type Props` (no inline props types), no functions inline in JSX, and the engineering principles (SOLID/SRP,
+   named `type Props` (no inline props types), domain values as `as const`
+   maps instead of string literals, no functions inline in JSX, and the engineering principles (SOLID/SRP,
    DRY, YAGNI, KISS, early returns instead of JSX ternaries, ≤100 lines of
    code per component file) — not only import boundaries.
 4. Present its Violations / Warnings / Suggestions report to the user

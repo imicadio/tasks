@@ -1,4 +1,6 @@
-/** Label of a voivodeship filter option; "all" reads as every voivodeship. */
+import { ALL_FILTER } from "../constants";
+
+/** Label of a voivodeship filter option; ALL_FILTER reads as every voivodeship. */
 export function formatVoivodeshipOption(value: string): string {
-  return value === "all" ? "Wszystkie województwa" : value;
+  return value === ALL_FILTER ? "Wszystkie województwa" : value;
 }

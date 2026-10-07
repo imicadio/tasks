@@ -1,8 +1,10 @@
+import type { ValueOf } from "@/shared/types/value-of";
+import type { AVAILABILITY_STATUS } from "../constants";
+
 declare const parkingLotIdBrand: unique symbol;
 export type ParkingLotId = string & { readonly [parkingLotIdBrand]: true };
 
-/** "unknown" only when the live feed has no entry for a lot at all. */
-export type AvailabilityStatus = "available" | "few" | "full" | "unknown";
+export type AvailabilityStatus = ValueOf<typeof AVAILABILITY_STATUS>;
 
 export type ParkingLot = {
   id: ParkingLotId;

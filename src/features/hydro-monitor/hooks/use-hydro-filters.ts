@@ -2,7 +2,7 @@
 
 import { useUrlState } from "@/shared/hooks/use-url-state";
 import { useDebouncedUrlParam } from "@/shared/hooks/use-debounced-url-param";
-import { SEARCH_DEBOUNCE_MS } from "../constants";
+import { SEARCH_DEBOUNCE_MS, STATUS_FILTER } from "../constants";
 import type {
   HydroStationsParams,
   SortDirection,
@@ -26,7 +26,7 @@ export function useHydroFilters(initial: HydroStationsParams) {
 
   /** KPI tile click: filter to that status, or clear it if already active. */
   const toggleStatus = (selected: StationStatus) =>
-    setStatus(status === selected ? "all" : selected);
+    setStatus(status === selected ? STATUS_FILTER.All : selected);
 
   const params: HydroStationsParams = {
     q: search.value,

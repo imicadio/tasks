@@ -1,3 +1,4 @@
+import { INCIDENT_STATUS } from "../constants";
 import type { Incident, IncidentDraft, LatLngTuple } from "../types";
 import type { IncidentReportInput } from "../schemas";
 import { createReference } from "./format";
@@ -20,7 +21,7 @@ export function toIncident(
     description: input.description,
     category: input.category,
     severity: input.severity,
-    status: "new",
+    status: INCIDENT_STATUS.New,
     lat: input.lat,
     lon: input.lon,
     address: input.address,

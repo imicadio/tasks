@@ -1,5 +1,5 @@
 import "server-only";
-import { DEFAULT_METRIC, MAX_YEAR } from "../constants";
+import { DEFAULT_METRIC, MAX_YEAR, METRIC } from "../constants";
 import type { RoadAccidentsPageData } from "../types";
 import {
   getNationalTrend,
@@ -14,9 +14,9 @@ export async function getRoadAccidentsPageData(): Promise<RoadAccidentsPageData>
   const [trend, breakdown, accidents, fatalities, injured] = await Promise.all([
     getNationalTrend(DEFAULT_METRIC),
     getVoivodeshipBreakdown(DEFAULT_METRIC, MAX_YEAR),
-    getYearValue("accidents"),
-    getYearValue("fatalities"),
-    getYearValue("injured"),
+    getYearValue(METRIC.Accidents),
+    getYearValue(METRIC.Fatalities),
+    getYearValue(METRIC.Injured),
   ]);
 
   return { trend, breakdown, latest: { accidents, fatalities, injured } };

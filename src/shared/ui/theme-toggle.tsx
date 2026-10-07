@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ThemeIcon } from "./theme-icon";
 import { useTheme } from "next-themes";
+import { THEME } from "@/shared/constants/theme";
 import { Button } from "@/shared/ui/button";
 
 export const ThemeToggle = () => {
@@ -14,7 +15,7 @@ export const ThemeToggle = () => {
   useEffect(() => setMounted(true), []);
 
   const handleToggle = () =>
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    setTheme(resolvedTheme === THEME.Dark ? THEME.Light : THEME.Dark);
 
   return (
     <Button
@@ -24,7 +25,7 @@ export const ThemeToggle = () => {
       aria-label="Przełącz motyw"
       onClick={handleToggle}
     >
-      <ThemeIcon dark={mounted && resolvedTheme === "dark"} />
+      <ThemeIcon dark={mounted && resolvedTheme === THEME.Dark} />
     </Button>
   );
 };

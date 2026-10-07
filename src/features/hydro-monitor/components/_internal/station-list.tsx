@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Card } from "@/shared/ui/card";
-import { LIST_HEIGHT } from "../../constants";
+import { LIST_HEIGHT, PERF_MODE } from "../../constants";
 import { useFavoriteStations } from "../../store";
 import type { HydroStation, PerfMode, StationId } from "../../types";
 import { PerfModeSwitch } from "./perf-mode-switch";
@@ -15,7 +15,7 @@ type Props = { stations: HydroStation[] };
 /** The station list card: heading, perf-demo toggle, the scrollable rows,
  * and the screen-reader table carrying the same data. */
 export const StationList = ({ stations }: Props) => {
-  const [perfMode, setPerfMode] = useState<PerfMode>("optimized");
+  const [perfMode, setPerfMode] = useState<PerfMode>(PERF_MODE.Optimized);
   const [hoveredId, setHoveredId] = useState<StationId | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { favoriteIds, toggleFavorite } = useFavoriteStations();

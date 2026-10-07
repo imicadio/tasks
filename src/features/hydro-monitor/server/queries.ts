@@ -1,5 +1,12 @@
 import "server-only";
-import { IMGW_HYDRO_URL, STATUS_ORDER } from "../constants";
+import {
+  ALL_FILTER,
+  IMGW_HYDRO_URL,
+  SORT_DIRECTION,
+  SORT_FIELD,
+  STATUS_FILTER,
+  STATUS_ORDER,
+} from "../constants";
 import { hydroStationsResponseSchema } from "../schemas";
 import type { HydroStation, HydroStationsParams } from "../types";
 
@@ -23,8 +30,8 @@ export function filterAndSortStations(
   const needle = q.toLowerCase();
 
   const filtered = stations.filter((station) => {
-    if (status !== "all" && station.status !== status) return false;
-    if (voivodeship !== "all" && station.voivodeship !== voivodeship) {
+    if (status !== STATUS_FILTER.All && station.status !== status) return false;
+    if (voivodeship !== ALL_FILTER && station.voivodeship !== voivodeship) {
       return false;
     }
     if (
@@ -43,14 +50,14 @@ export function filterAndSortStations(
   const sorted = [...filtered].sort((a, b) => {
     let comparison: number;
     switch (sort) {
-      case "name":
+      case SORT_FIELD.Name:
         comparison = a.name.localeCompare(b.name, "pl");
         break;
-      case "waterLevelCm":
+      case SORT_FIELD.WaterLevel:
         comparison =
           (a.waterLevelCm ?? -Infinity) - (b.waterLevelCm ?? -Infinity);
         break;
-      case "status":
+      case SORT_FIELD.Status:
         comparison =
           (statusRank.get(a.status) ?? 0) - (statusRank.get(b.status) ?? 0);
         break;
@@ -59,7 +66,7 @@ export function filterAndSortStations(
         throw new Error(`Unhandled sort field: ${exhaustive}`);
       }
     }
-    return dir === "asc" ? comparison : -comparison;
+    return dir === SORT_DIRECTION.Asc ? comparison : -comparison;
   });
 
   return sorted;

@@ -1,8 +1,11 @@
+import type { ValueOf } from "@/shared/types/value-of";
+import type { STATION_STATUS } from "../constants";
+
 declare const stationIdBrand: unique symbol;
 /** Branded so a raw string can't be passed where a validated station id is expected. */
 export type StationId = string & { readonly [stationIdBrand]: true };
 
-export type StationStatus = "alarm" | "warning" | "normal" | "unknown";
+export type StationStatus = ValueOf<typeof STATION_STATUS>;
 
 export type HydroStation = {
   id: StationId;

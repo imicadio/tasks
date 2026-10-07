@@ -1,3 +1,4 @@
+import { STATION_STATUS } from "../constants";
 import type { StationStatus } from "../types";
 
 /**
@@ -11,10 +12,10 @@ export function deriveStationStatus(
   warningLevelCm: number | null,
   alarmLevelCm: number | null,
 ): StationStatus {
-  if (waterLevelCm === null) return "unknown";
-  if (alarmLevelCm !== null && waterLevelCm >= alarmLevelCm) return "alarm";
+  if (waterLevelCm === null) return STATION_STATUS.Unknown;
+  if (alarmLevelCm !== null && waterLevelCm >= alarmLevelCm) return STATION_STATUS.Alarm;
   if (warningLevelCm !== null && waterLevelCm >= warningLevelCm) {
-    return "warning";
+    return STATION_STATUS.Warning;
   }
-  return "normal";
+  return STATION_STATUS.Normal;
 }

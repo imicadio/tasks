@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { CONTROL_CLASS, DISTRICTS } from "../../constants";
+import { CONTROL_CLASS, DISTRICTS, LOCATION_ERROR_KEY } from "../../constants";
 import type { StepProps } from "../../types";
 import { valueFieldHandler } from "../../utils/field-handlers";
 import { errorId, hintId, joinIds } from "../../utils/field-ids";
@@ -12,7 +12,7 @@ type Props = StepProps & { onPickDistrict: (districtId: string) => void };
 /** Latitude/longitude inputs plus the district shortcut — the
  * keyboard-operable alternative to clicking the map (WCAG 2.1.1). */
 export const CoordinatesFieldset = ({ draft, errors, setField, onPickDistrict }: Props) => {
-  const coordsDescribedBy = joinIds(hintId("coordinates"), errors.location && errorId("location"));
+  const coordsDescribedBy = joinIds(hintId("coordinates"), errors.location && errorId(LOCATION_ERROR_KEY));
   const handleDistrictChange = (event: ChangeEvent<HTMLSelectElement>) =>
     onPickDistrict(event.target.value);
 
@@ -63,7 +63,7 @@ export const CoordinatesFieldset = ({ draft, errors, setField, onPickDistrict }:
           ))}
         </select>
       </Field>
-      <FieldError id="location" message={errors.location} />
+      <FieldError id={LOCATION_ERROR_KEY} message={errors.location} />
     </fieldset>
   );
 };

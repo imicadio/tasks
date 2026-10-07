@@ -1,3 +1,6 @@
+import type { ValueOf } from "@/shared/types/value-of";
+import type { ROUTE_TYPE, VEHICLE_TYPE } from "../constants";
+
 declare const vehicleIdBrand: unique symbol;
 export type VehicleId = number & { readonly [vehicleIdBrand]: true };
 
@@ -7,7 +10,10 @@ export type Direction = 0 | 45 | 90 | 135 | 180 | 225 | 270 | 315;
 
 /** From ZTM Gdańsk's routes feed (routeType: "BUS"/"TRAM"/anything else),
  * not guessed from the route number — see server/queries.ts. */
-export type VehicleType = "bus" | "tram" | "other";
+export type VehicleType = ValueOf<typeof VEHICLE_TYPE>;
+
+/** Raw `routeType` from the routes feed that we recognize. */
+export type RouteType = ValueOf<typeof ROUTE_TYPE>;
 
 export type Vehicle = {
   id: VehicleId;

@@ -1,5 +1,5 @@
 import "server-only";
-import { IMGW_SYNOP_URL } from "../constants";
+import { IMGW_SYNOP_URL, SORT_DIRECTION, WEATHER_SORT_FIELD } from "../constants";
 import { weatherStationSchema, weatherStationsResponseSchema } from "../schemas";
 import type { WeatherStation, WeatherStationsParams } from "../types";
 
@@ -57,13 +57,13 @@ export function filterAndSortWeatherStations(
   const sorted = [...filtered].sort((a, b) => {
     let comparison: number;
     switch (sort) {
-      case "name":
+      case WEATHER_SORT_FIELD.Name:
         comparison = a.name.localeCompare(b.name, "pl");
         break;
-      case "temperatureC":
+      case WEATHER_SORT_FIELD.Temperature:
         comparison = (a.temperatureC ?? -Infinity) - (b.temperatureC ?? -Infinity);
         break;
-      case "windSpeedMs":
+      case WEATHER_SORT_FIELD.WindSpeed:
         comparison = (a.windSpeedMs ?? -Infinity) - (b.windSpeedMs ?? -Infinity);
         break;
       default: {
@@ -71,7 +71,7 @@ export function filterAndSortWeatherStations(
         throw new Error(`Unhandled sort field: ${exhaustive}`);
       }
     }
-    return dir === "asc" ? comparison : -comparison;
+    return dir === SORT_DIRECTION.Asc ? comparison : -comparison;
   });
 
   return sorted;

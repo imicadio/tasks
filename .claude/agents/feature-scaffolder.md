@@ -43,6 +43,10 @@ doesn't exist, stop and tell the user to create it before scaffolding.
      above it (never an inline props type), with no functions inline in
      JSX: named handlers in the component body instead
      (`docs/ARCHITECTURE.md` §6).
+   - Define every closed set of string values (statuses, types, modes,
+     sort fields, API codes) as an `as const` map in `constants/`, derive
+     the type with `ValueOf`, the zod schema with `z.enum(MAP)`, and use
+     `MAP.Key` everywhere instead of string literals (§6).
    - Follow §6's engineering principles: state/effects in hooks,
      components ≤100 lines of code, early returns instead of JSX ternaries
      between trees, reuse `src/shared/` pieces (`StatTile`, `OptionSelect`,

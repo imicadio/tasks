@@ -1,3 +1,9 @@
+import type { ValueOf } from "@/shared/types/value-of";
+import type {
+  ADDRESS_LOOKUP,
+  COORDINATE_FIELDS,
+  LOCATION_ERROR_KEY,
+} from "../constants";
 import type { IncidentCategory, IncidentSeverity } from "./incident";
 
 /** The form's in-progress values. Every field starts empty, so the types are
@@ -21,11 +27,11 @@ export type IncidentDraft = {
 
 export type FormStep = 0 | 1 | 2;
 
-/** Field key → error message. Both `lat` and `lon` report under `location`. */
-export type StepErrors = Partial<Record<keyof IncidentDraft | "location", string>>;
+/** Field key → error message. Both coordinates report under
+ * LOCATION_ERROR_KEY. */
+export type StepErrors = Partial<Record<keyof IncidentDraft | typeof LOCATION_ERROR_KEY, string>>;
 
-/** State of the "fill the address from the map point" lookup. */
-export type AddressLookupStatus = "idle" | "loading" | "done" | "not-found" | "error";
+export type AddressLookupStatus = ValueOf<typeof ADDRESS_LOOKUP>;
 
 /** Sets one draft field, keeping the value's type tied to its key. */
 export type SetDraftField = <K extends keyof IncidentDraft>(
@@ -53,3 +59,6 @@ export type StepProps = {
   errors: StepErrors;
   setField: SetDraftField;
 };
+
+/** A coordinate draft field (`lat` or `lon`). */
+export type CoordinateField = (typeof COORDINATE_FIELDS)[number];

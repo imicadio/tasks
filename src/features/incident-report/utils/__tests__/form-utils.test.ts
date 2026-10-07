@@ -152,3 +152,12 @@ describe("draftSummary", () => {
     expect(summary.place).toBe("Długa 1, Śródmieście");
   });
 });
+
+describe("isCoordinateField", () => {
+  it("recognizes lat and lon only", async () => {
+    const { isCoordinateField } = await import("../is-coordinate-field");
+    expect(isCoordinateField("lat")).toBe(true);
+    expect(isCoordinateField("lon")).toBe(true);
+    expect(isCoordinateField("title")).toBe(false);
+  });
+});

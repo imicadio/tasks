@@ -1,4 +1,5 @@
 import type { Metric } from "../types";
+import { METRIC } from "./metrics";
 
 // GUS "Bank Danych Lokalnych" (BDL) public API — https://bdl.stat.gov.pl/api/v1
 // Subject P1754 "Wypadki drogowe i ich ofiary" (subgroup 245). No API key
@@ -12,7 +13,7 @@ export const POLAND_UNIT_LEVEL = 0;
 export const VOIVODESHIP_UNIT_LEVEL = 2;
 
 export const METRIC_VARIABLE_ID: Record<Metric, number> = {
-  accidents: 7849, // wypadki ogółem
-  fatalities: 7850, // ofiary śmiertelne
-  injured: 7851, // ranni
+  [METRIC.Accidents]: 7849, // wypadki ogółem
+  [METRIC.Fatalities]: 7850, // ofiary śmiertelne
+  [METRIC.Injured]: 7851, // ranni
 };

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   breakdownQuerySchema,
+  QUERY_KIND,
   trendQuerySchema,
   roadAccidentsQueries,
 } from "@/features/road-accidents";
@@ -11,7 +12,7 @@ import { requestSearchParams } from "@/shared/utils/search-params";
 export async function GET(request: Request) {
   const searchParams = requestSearchParams(request);
 
-  if (searchParams.kind === "breakdown") {
+  if (searchParams.kind === QUERY_KIND.Breakdown) {
     const parsed = breakdownQuerySchema.safeParse(searchParams);
     if (!parsed.success) return badRequest(parsed.error);
 

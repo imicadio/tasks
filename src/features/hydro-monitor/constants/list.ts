@@ -9,3 +9,6 @@ export const SEARCH_DEBOUNCE_MS = 300;
 
 /** Rows rendered beyond the visible window, so fast scrolling doesn't flash blanks. */
 export const VIRTUAL_OVERSCAN = 8;
+
+/** Fill of a favorited station's star. */
+export const FAVORITE_COLOR = "var(--status-warning)";

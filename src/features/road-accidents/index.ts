@@ -7,7 +7,14 @@ export {
   trendQuerySchema,
   metricSchema,
 } from "./schemas";
-export { METRIC_LABELS, METRIC_COLORS, MIN_YEAR, MAX_YEAR } from "./constants";
+export {
+  METRIC,
+  METRIC_LABELS,
+  METRIC_COLORS,
+  MIN_YEAR,
+  MAX_YEAR,
+  QUERY_KIND,
+} from "./constants";
 export type {
   LatestByMetric,
   Metric,

@@ -1,10 +1,15 @@
-export type IncidentCategory = "road" | "infrastructure" | "environment" | "safety";
+import type { ValueOf } from "@/shared/types/value-of";
+import type {
+  INCIDENT_CATEGORY,
+  INCIDENT_SEVERITY,
+  INCIDENT_STATUS,
+} from "../constants";
 
-export type IncidentSeverity = "low" | "medium" | "high";
+export type IncidentCategory = ValueOf<typeof INCIDENT_CATEGORY>;
 
-/** `new` is reserved for reports submitted through the form in this browser;
- * the seeded incidents already went through triage. */
-export type IncidentStatus = "new" | "verified" | "in-progress" | "resolved";
+export type IncidentSeverity = ValueOf<typeof INCIDENT_SEVERITY>;
+
+export type IncidentStatus = ValueOf<typeof INCIDENT_STATUS>;
 
 export type Incident = {
   id: string;
